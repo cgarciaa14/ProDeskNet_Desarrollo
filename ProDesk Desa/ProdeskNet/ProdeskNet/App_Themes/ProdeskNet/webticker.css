@@ -1,0 +1,144 @@
+/* liScroll styles */
+/* BUG-PD-04: GVARGAS: 11/01/2017: Cambios CSS carrucel pantalla consultaPanelControl.aspx */
+/*BUG-PD-289: CCHAVEZ: 06/12/2017:Div Cambio de estado Activo Inactivo.*/
+
+.tickeroverlay-left{
+	
+	background-image:url('../Imagenes/left.png');
+	
+	display:block;
+	
+	pointer-events:none;
+	
+	position:absolute;
+	
+	z-index:30;
+	
+	height:18px;
+	
+	width:150px;
+	
+	top:0;
+	
+	left:-2px;
+}
+	
+
+.tickeroverlay-right{
+	background-image:url('../Imagenes/right.png');
+	
+	display:block;
+	
+	pointer-events:none;
+	
+	position:absolute;
+	
+	z-index:30;
+	
+	height:18px;
+	
+	width:150px;
+	
+	top:0;
+	
+	right:-2px;
+}
+
+
+/*BUG-PD-289:Div Cambio de estado Activo Inactivo.*/
+.tickercontainer { /* the outer div */
+
+	background: #B5E5F9;/*#5089c3; */
+
+	width: 100%; 
+	
+    height: 100%; 
+	
+    margin: 0; 
+	
+    padding: 0;
+
+	overflow: hidden; 
+}
+
+
+
+
+
+
+
+.tickercontainer .mask { /* that serves as a mask. so you get a sort of padding both left and right */
+
+	position: relative;	
+
+	padding-left: 2px;
+
+	padding-right: 2px;
+
+	top: 24px; /*BUG PD 04 : 5px*/ 
+
+	height: 20px;
+
+	/*width: 92%;*/
+
+	overflow: hidden;
+}
+
+ul.newsticker { /* that's your list */
+
+	position: relative;
+
+	margin-left: 2px;
+
+	font: bold 15px Verdana;
+	
+	color: #5089c3;/*#FFFFFF;*/
+
+	list-style-type: none;
+	
+    margin: 0;
+
+	padding: 0;
+
+}
+
+ul.newsticker li {
+float: left; /* important: display inline gives incorrect results when you check for elem's width */
+
+	margin: 0;
+
+	padding-right: 15px;
+/*background: #fff;*/
+}
+
+ul.newsticker a {
+white-space: nowrap;
+
+	padding: 0;
+
+	color: #ff0000;
+
+	font: bold 10px Verdana;
+
+	margin: 0 50px 0 0;
+} 
+
+ul.newsticker span {
+margin: 0 10px 0 0;
+} 
+
+
+#webticker2{
+	float:right;
+}
+
+
+#webticker2 li {
+float: right; /* important: display inline gives incorrect results when you check for elem's width */
+
+	margin: 0;
+
+	padding-left: 15px;
+/*
+	background: #fff;*/
+}

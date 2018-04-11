@@ -1,0 +1,29 @@
+﻿<%@ Master Language="VB" MasterPageFile="~/Principal.Master" CodeFile="MasterPageVacia.master.vb" Inherits="aspx_MasterPageVacia" %>
+
+<%@ MasterType VirtualPath="~/Principal.Master" %>
+<%--<%@ Register Assembly="AjaxControlToolkit" Namespace ="AjaxControlToolkit" TagPrefix="cc1" %>--%>
+<%--BUG-PD-332 JBEJAR:11/01/2018 BLOQUEO F5--%>
+<%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
+
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="cphCuerpo">
+    <script type="text/javascript">
+        document.onkeydown = function (e) {
+            if (e)
+                document.onkeypress = function () { return true; }
+
+            var evt = e ? e : event;
+            if (evt.keyCode == 116) {
+                if (e)
+                    document.onkeypress = function () { return false; }
+                else {
+                    evt.keyCode = 0;
+                    evt.returnValue = false;
+                }
+            }
+        }
+    </script>
+    <div id="dvPrincipalVacio" style="background-color: red;">
+        <asp:ContentPlaceHolder ID="cphPantallas" runat="server">
+        </asp:ContentPlaceHolder>
+    </div>
+</asp:Content>

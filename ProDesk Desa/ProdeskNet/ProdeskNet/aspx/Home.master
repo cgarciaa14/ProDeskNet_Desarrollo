@@ -1,0 +1,884 @@
+﻿<%@ Master Language="VB" MasterPageFile="~/Principal.Master" AutoEventWireup="false" CodeFile="Home.master.vb" Inherits="aspx_Home" %>
+
+<%--<%@ Master Language="VB"  CodeBehind="Home.master.vb" Inherits="ProdeskNet.Home" %>--%>
+
+<%@ MasterType VirtualPath="~/Principal.Master" %>
+<%--<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>--%>
+<%-- <%@ Register src="~/aspx/CajaNotasExt.ascx" tagname="control" tagprefix="ctrl" %>--%>
+
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="cphCuerpo">
+    <!--  YAM-P-208  egonzalez 14/10/2015 Se comentó la carga del script ProdeskNet.js y rfc.js para que se cargue mediante el método de jQuery getScript agregandoles el timestamp para que siempre se carguen y no se guarden en caché también se agregó un campo oculto para tener siempre el path completo de la aplicación disponible -->
+    <%--'BBV-P-423: RQSOL-03: AVH: 10/11/2016 SE OCULTA PANEL DERECHO--%>
+    <%--BBV-P-423: RQSOL-04: AVH: 06/12/2016 SE AGREGA CSS LESS--%>
+    <%--BUG PD 04: GVARGAS: 11/01/2017 Cambios headers mostrar logos mas grandes--%>
+    <%--BUG PD 09: GVARGAS: 15/02/2017 Ajuste Look and Feel y cambio Menu (Minisculas y primer letra mayuscula)--%>
+	<%--BUG PD 11:AGARCIA:16.02.2017 SE AJUSTA ESTILO PARA QUE APARESCA MENSAJE DE ERROR COMPLETO EN contConfirm--%>
+	<%--BUG PD 10: GVARGAS: 20/02/2017 Ajuste Look and Feel y cambio Menu (Minisculas y primer letra mayuscula)--%>
+	<%--BUG-PD-15: JBB 01/03/2017 Validación en longitud de solicitud --%>
+    <%--BUG-PD-13  GVARGAS  28/02/2017 Cambios formato Date--%>
+    <%--BUG PD 14: JBB 03/03/2017 Se agrega validacion al buscar por cliente  se escoden las solicitudes para evitar que se muestren sin estilos.--%>
+    <%--BUG-PD-18  GVARGAS  06/03/2017 Cambios open & close datePicker--%>
+    <%--BUG-PD-23 29/03/2017 MAPH Cambios para realizar la búsqueda con o sin autocompletar --%>
+    <%--BUG-PD-39  erodriguez 26/04/2017 Cambios de usabilidad y estilos--%>
+    <%--BBV-P-423 RQLOGIN GVARGAS 17/05/2017 Cambios CSS Danamicos--%>
+    <%--BUG-PD-121 GVARGAS 27/06/2017 Scroll para panel de tareas--%>
+    <%--BUG-PC-88 GVARGAS 06/07/2017  Switch To ProDesk final--%>
+    <%--BUG-PD-146 GVARGAS 08/07/2017 Logos--%>
+    <%--BUG-PD-143 GVARGAS 25/07/2017 PopUpRedirect Nuevo--%>
+    <%--BUG-PD-174: RHERNANDEZ: 28/07/17 SE CAMBIA NOMBRE DEL LINK  DE PROCOTIZA A COTIZADOR--%>
+    <%--BUG-PD-209 GVARGAS 04/09/2017 Session time out--%>
+	<%--BUG-PD-249 GVARGAS 26/10/2017 Cierre de session cambio general--%>
+    <%--RQ-PI7-PD13: ERODRIGUEZ: 31/10/2017: Se agrego boton de desconexion de usuario y se actualiza estatus de actividad.--%>
+    <%--BUG-PD-280: CCHAVEZ: 29/11/2017: Se cambia Radio Butoton y se agrega Check Box para estatus de validaciòn  .--%>
+    <%--BUG-PD-289: CCHAVEZ: 06/12/2017:Div Cambio de estado Activo Inactivo.--%>
+    <%--BUG-PD-311 : ERODRIGUEZ: 18/12/2017: Se corrigieron etiquetas de actividad al cambiar de pantalla--%>
+    <%--RQ-PI7-PD13-3: ERODRIGUEZ: 21/12/2017: Se oculto Estatus de actividad--%>
+    <%--BUG-PD-313: DJUAREZ: 27/12/2017: Se evita el avanzar tareas cuando se presiona F5 cuando esta cargando una pagina.--%>
+    <%-- RQ-PI7-PD13-4: ERODRIGUEZ: 10/01/2017: se verifica si el parametro del balanceador esta activo--%>
+    <%--BUG-PD-332 JBJEAR: 11/01/2018 Se bloquea f5 para evitar duplicidad en transacciones en proceso. --%>
+    <%--BUG-PD-336: DJUAREZ: 15/01/2018: Se bloquea la pantalla cuando se esta ejecutando una pantalla automatica.--%>
+    <%--BUG-PD-358: DJUAREZ: 15/02/2018: Se cambia el texto de Telepro por procesando en el bloqueo de la pantalla. --%>
+<%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
+    <%--BUG-PD-382: DJUAREZ: 05/03/2018 Se corrige funcion ambigua --%>
+    <%--BUG-PD-392: DJUAREZ: 12/03/2018 Corrección de posición de la pantalla de bloqueo --%>
+    <%--BUG-PD-397: ERODRIGUEZ: 13/03/2018: Se corrige barra de estado de actividad.--%>
+
+    <%--<script type="text/javascript" src="../js/ProdeskNet.js"></script>--%>
+    <%--<script type="text/javascript" src="../js/rfc.js"></script>--%>
+    <script type="text/javascript">
+        var timestamp = '?' + $.now();
+        $.getScript("../js/ProdeskNet.js" + timestamp);
+        $.getScript("../js/rfc.js" + timestamp);
+    </script>
+    <link rel="stylesheet/less" type="text/css" href="../js/less.min.js" />
+    <style runat="server" id="LessCSS" type="text/css"></style>
+    <script src="../js/Funciones.js"></script>
+    <script language="javascript" type="text/javascript">
+        function PopUpLetreroRedirectValidateRequest(mesajeRe, redirect) {
+            $('#legendCarrusel').html('Notificacion');
+            $('#ventanaContain').show();
+            $('#divDetailsRequest').show();
+            $("#mensaje_").html(mesajeRe);
+            $('#Redirect_').val(redirect);
+        }
+
+        function OutToProDeskWithMsg(msgToShow) {
+            var domain = document.location.origin.toString();
+            var paths = document.location.pathname.toString().split("/")
+        
+            var settings = {
+                type: "POST",
+                url: "inicio.aspx/OutToProDeskMsg",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{ 'url' : '" + domain + "/" + paths[1] + "/" + "', 'msg' : '" + msgToShow.toString() + "' }",
+                success: function OnSuccessRedirect(response) { $("#Redirect").val(response.d.toString()); }
+            };
+            $.ajax(settings);
+        }
+
+
+        $(document).ready(function () {
+            OutToProDeskWithMsg("2");
+
+            setInterval(function () {
+                var msgToShow = "La sesión se ha terminado.";
+
+                $("[id$=lblMensaje]").text(msgToShow);
+                centraVentana($('#ventanaconfirm'));
+
+                $('#ventanaContain').show();
+                $('#ventanaconfirm').show();
+
+                var urlOut = $("#Redirect").val().toString();
+
+                window.location.href = urlOut;
+                
+            }, 1620 * 1000);
+
+            Date.prototype.addDays = function (days) {
+                this.setDate(this.getDate() + parseInt(days));
+                return this;
+            };
+
+
+            $('input[name=rdbusq]').change(function () { if (this.value.toString() == "rdFech") { $("#txtFecFin").prop("disabled", true); } });
+
+            $('#txtFecIni').change(function () { $("#txtFecFin").prop("disabled", false).val('').focus(); });
+
+            $('#txtFecFin').change(function () {
+                var a = $('#txtFecIni').val();
+                var b = $('#txtFecFin').val();
+                if (a == "") {
+                    $('#txtFecFin').val('');
+                    return;
+                }
+
+                var ar = a.split("/");
+                var br = b.split("/");
+
+                var aa = ar[2] + "/" + ar[1] + "/" + ar[0];
+                var bb = br[2] + "/" + br[1] + "/" + br[0];
+                if ((new Date(aa).getTime() > new Date(bb).getTime())) {
+                    alert("La Fecha Final no debe ser menor a la Fecha Inicial.");
+                    $('#txtFecFin').val('').focus();
+                }
+            });
+
+            $('[id = lblCerrConfirm]').click(function () { $('[id = ventanaconfirm]').hide(); })
+
+            $("input").click(function (e) {
+                var input_id = e.currentTarget.id.toString();
+
+                if (input_id == "txtFecIni") {
+                    $("#txtFecFin").off("focus").datepicker("hide");
+                    $("#txtFecIni").datepicker("show");
+                }
+
+                if (input_id == "txtFecFin") {
+                    $("#txtFecIni").off("focus").datepicker("hide");
+                    $("#txtFecFin").datepicker("show");
+                }
+            });
+
+            $.datepicker.regional['es'] = {
+                closeText: 'Cerrar',
+                prevText: '<Ant',
+                nextText: 'Sig>',
+                currentText: 'Hoy',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd-mm-yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['es']);
+
+            //jQuery(function ($) {            
+            //});
+
+            $.datepicker.regional['es'];
+
+            $.datepicker.setDefaults();
+            
+            //$("[id$=lista]").webTicker();
+
+            Divs = $("[id$=divMenuPricipal]")
+
+            Divs.find("div").each(function (i, e) {
+                $(this).children("td").each(function (i3, e3) { alert(i3 + ' ' + e3) })
+            })
+
+            ActualizaActividad()
+            //document.getElementById("LabelActivo").innerHTML = 'Activo'
+            /*  cambio para imagenes en un div  */
+           
+            $("#CloseBlockPage").on("click", function (e) {
+                $('#legendCarrusel').html('');
+                $('#ventanaContain').hide();
+                $('#divDetails').hide();
+                $("#tableFields tbody").empty();
+
+                if ($('#Redirect_') != null) {
+                    window.location.replace($('#Redirect_').val());
+                }
+            });
+
+        })
+
+       
+
+        function OutToProDesk() {
+
+            
+            var btn = document.getElementById("ctl00_ctl00_cphCuerpo_ButtonHideSalir");
+            if (btn) {
+                btn.click();
+            }
+
+            var domain = document.location.origin.toString();
+            var paths = document.location.pathname.toString().split("/")
+
+            var settings = {
+                type: "POST",
+                url: "inicio.aspx/OutToProDesk",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{ 'url' : '" + domain + "/" + paths[1] + "/" + "' }",
+                success: function OnSuccessRedirect(response) { window.location.href = response.d.toString(); }
+            };
+            $.ajax(settings);
+        }
+
+        function OutToProcotiza() {
+            var domain = document.location.origin.toString();
+            var paths = document.location.pathname.toString().split("/")
+
+            var settings = {
+                type: "POST",
+                url: "inicio.aspx/OutToProcotiza",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{ 'url' : '" + domain + "/" + paths[1] + "/" + "' }",
+                success: function OnSuccessRedirect(response) { window.location.href = response.d.toString(); }
+            };
+            $.ajax(settings);
+        }
+
+          
+
+        function fnChequea(chequea, deschequea) {
+            $(chequea).attr('disabled', '');
+            $(chequea).val("");
+            $(deschequea).removeAttr('disabled');
+            var des = deschequea.split(',');
+            $(des[0]).focus()
+        }
+
+        function fnFocus(objRadio, chequea, deschequea) {
+            $("input[value='" + objRadio + "']").attr('checked', 'checked');
+            fnChequea(chequea, deschequea);
+            //        var des = deschequea.split(',');
+            //        $(des[0]).focus();
+        }
+
+        function fnBuscar() {
+            $("#txtFecIni").datepicker();
+            $("#txtFecFin").datepicker();
+            centraVentana($('#dvBusqueda'));
+            $("#dvBusqueda").draggable();
+            $('#dvBusqueda').show('slide', options, 1000, '');
+            //fillAutocomplete('tags', 'lblNomUsu');
+            //fillAutocomplete('txtDistribuidor', '');
+            $("#tags").autocomplete({
+                source: $('[id$="hdACNombre"]').val().split(',')
+            });
+            $("#txtDistribuidor").autocomplete({
+                source: $('[id$="hdACDistribuidor"]').val().split(',')
+            });
+
+            fillAutocomplete('txtUsuAsign', 'lblNomUsu, txtDistribuidor')
+
+            //$("#txtFecFin").prop("disabled", true);
+        }
+
+        function showPopup(url) {
+            window.open(url, 'cmmi', 'height=300,width=600,top=200,left=300,resizable');
+        }
+
+        function fnIgualaText() {
+            
+            var Max_Length = 9;
+            var nombreseparo = $("[id$=tags]").val().split(".");
+            var nombreespar = nombreseparo[0].length;
+            var usuarioNomNum = $("#txtUsuAsign").val().split(".");
+            var usuarioNom = usuarioNomNum[0].length;
+            var numdist = $('#txtDistribuidor').val().split(".");
+            var numdis = numdist[0].length;
+
+            $("[id$=hdnCriterio]").val($("[name$=rdbusq]:checked").val());
+
+            switch ($("[name$=rdbusq]:checked").val()) {
+                case 'rdSolCli':
+                        var y = parseInt(nombreseparo[0]);
+                        if (isNaN(y) | nombreespar > Max_Length) {
+
+                        //BUG-PD-23 29/03/2017 MAPH Cambios para realizar la búsqueda con o sin autocompletar
+                        $("[id$=hdnNombreCliente]").val($("[id$=tags]").val());
+                            $("#tags").val("");
+                        $("[id$=hdnParametro1]").val("");
+                        autocompletePanelControl = false;
+                        //PopUpLetrero("No se encontró información con los parámetros proporcionados.")
+                        //$("#dvBusqueda").hide("slow", "");
+                        //$("#tags").val("");
+                        //return false;
+                        } else {
+                            $("[id$=hdnParametro1]").val(y);
+                            $("#tags").val("");
+                        $("[id$=hdnNombreCliente]").val("");
+                        }
+                    break;
+                case 'rdDist':
+                        var x = parseInt(numdist[0]);
+                        if (isNaN(x) | usuarioNom > Max_Length) {
+                            PopUpLetrero("No se encontró información con los parámetros proporcionados.")
+                            $("#dvBusqueda").hide("slow", "");
+                            $("#txtDistribuidor").val("");
+                            return false; 
+                        } else {
+                            $("[id$=hdnParametro1]").val(x);
+                            $("#txtDistribuidor").val("");
+                        }
+                    break;
+                case 'rdUsuAsig':
+                        var w = parseInt(usuarioNomNum[0]);
+                        if (isNaN(w) | numdis > Max_Length) {
+                            PopUpLetrero("No se encontró información con los parámetros proporcionados.")
+                            $("#dvBusqueda").hide("slow", "");
+                            $("#txtUsuAsign").val("");
+                            return false;
+                        } else {
+                            $("[id$=hdnParametro1]").val(w);
+                            $("#txtUsuAsign").val("");
+                        }
+                    break;
+                case 'rdFech':
+                    var aa = $("#txtFecIni").val().toString();
+                    var bb = $("#txtFecFin").val().toString();
+                    if (aa == bb) {
+                        var myDate = $("#txtFecIni").datepicker('getDate');
+                        myDate.setDate(myDate.getDate() + 1);
+                        var d = myDate.getDate().toString();
+                        var m = myDate.getMonth() + 1;
+                        if (d.length = 1) { d = "0" + d; }
+                        if (m.toString().length = 1) { m = "0" + m; }
+                        bb = d + "/" + m + "/" + myDate.getFullYear();
+                    }
+                    //alert(aa + "    " + bb);
+                    a = aa.split("/");
+                    b = bb.split("/");
+                    $("[id$=hdnParametro1]").val(a[2] + "/" + a[1] + "/" + a[0]);
+                    $("[id$=hdnParametro2]").val(b[2] + "/" + b[1] + "/" + b[0]);
+                    break;
+            }
+
+            $("#dvBusqueda").hide("slow", "")
+            btnBuscarCliente()
+        }
+
+        function fnMuestraBuscar() {
+            $("#dvBuscaCliente").css("display", "block");
+        }
+
+        function fnAddSol() {
+            Distribuidor = $('[id$=ddlDistribuidor]').val();
+            Producto = $('[id$=ddlProducto1]').val();
+            TPersona = $('[id$=ddlPersona]').val();
+            usuario = $('[id$=Estatus_Activo]').val();
+            empresa = $('[id$=ddlEmpresa1]').val();
+
+            if ((Distribuidor == "") || (Producto == "") || (TPersona == "") || (usuario == "") || (empresa == "")) {
+                dvSol.hide('slide', options, 500, '');
+                PopUpLetrero("Todos los campos marcados con * son obligatorios")
+                return;
+            }
+
+            btnInsUpdRedirect('exec sp_insertaSol ' + Distribuidor + ', ' + Producto + ', ' + TPersona + ', ' + usuario + ', ' + empresa);
+        }
+        //RQ - PI7 - PD13
+        //BUG-PD-280
+        //BUG-PD-289 Tikercontainer cambia estado activo,inactivo.
+        function CambiaStatus(Checkbtn) {
+            debugger;
+            var balanceo = $('[id$=hdBalanceo]').val();
+            var estatus = $('[id$=hdEstatus_Activo]').val();
+            var id_usu = $('[id$=hdidUsuario]').val();
+            if (estatus == '') {
+
+                if (!Checkbtn.checked) {
+                    estatus = 'True';
+                    $('[id$=hdEstatus_Activo]').val(estatus);                   
+                    btnInsUpd('UPDATE PDK_USUARIO SET ESTATUS_ACTIVO = 1 WHERE PDK_ID_USUARIO = ' + id_usu, '');
+                }        
+            }
+            debugger;
+            if (estatus == 'True') {
+                $(".tickercontainer").attr('style', 'background-color:#EFEFEF');
+
+                document.getElementById("LabelActivo").innerHTML = ''
+                document.getElementById("LabelInactivo").innerHTML = 'Inactivo'
+
+                Checkbtn.checked = false;
+                estatus = 'False';
+                $('[id$=hdEstatus_Activo]').val(estatus);                
+                btnInsUpd('UPDATE PDK_USUARIO SET ESTATUS_ACTIVO = 0 WHERE PDK_ID_USUARIO = ' + id_usu, '');
+            }
+            else if (estatus == 'False') {
+                $(".tickercontainer").attr('style', 'background-color:#B5E5F9');
+
+                document.getElementById("LabelActivo").innerHTML = 'Activo'
+                document.getElementById("LabelInactivo").innerHTML = ''
+
+                Checkbtn.checked = true;
+                estatus = 'True';
+                $('[id$=hdEstatus_Activo]').val(estatus);               
+                
+                if (balanceo == "False") {
+                    btnInsUpd('UPDATE PDK_USUARIO SET ESTATUS_ACTIVO = 1 WHERE PDK_ID_USUARIO = ' + id_usu, '');
+                }
+                else if (balanceo == "True") {
+                //Se ejecuta spspManejaTareaUsuario como si se iniciara sesion
+                btnInsUpd('EXEC spManejaTareaUsuario 0,' + id_usu + ', 3, 0, 0 ', '');
+                }
+            }
+
+    }
+
+        function ActualizaActividad() {
+           
+            $("[id$=lista]").webTicker();
+            var estatus = $('[id$=hdEstatus_Activo]').val();
+            var id_usu = $('[id$=hdidUsuario]').val();
+            if (estatus == 'True') {
+              
+                $(".tickercontainer").attr('style', 'display:visible');
+                $(".dvBarraNot").attr('style', 'display:visible');
+                $(".tickercontainer").attr('style', 'background-color:#B5E5F9');
+                
+                document.getElementById("LabelActivo").innerHTML = 'Activo';
+                document.getElementById("LabelInactivo").innerHTML = '';
+                document.getElementById("ChkEstatus").checked = true;
+
+            }
+            else if (estatus == 'False') {
+                $(".tickercontainer").attr('style', 'background-color:#EFEFEF');
+
+                document.getElementById("LabelActivo").innerHTML = '';
+                document.getElementById("LabelInactivo").innerHTML = 'Inactivo';
+                document.getElementById("ChkEstatus").checked = false;
+            }
+           
+        }
+
+
+
+    </script>
+    <script type="text/javascript"> <%--BUG-PD-332- BLOQUEO F5 JBEJAR--%>
+        document.onkeydown = function (e) {
+            if (e)
+                document.onkeypress = function () { return true; }
+
+            var evt = e ? e : event;
+            if (evt.keyCode == 116) {
+                if (e)
+                    document.onkeypress = function () { return false; }
+                else {
+                    evt.keyCode = 0;
+                    evt.returnValue = false;
+                }
+            }
+        }
+    </script>
+    <style>
+        .divCuerpoConsul 
+        {
+            height: 85% !important;
+            /*overflow: hidden !important;*/
+        }
+
+        #ventanaContain 
+        {
+            opacity: 0.3;
+            background-color: black;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            z-index: 1000;
+            display: none;
+        }
+
+        #divDetailsRequest 
+        {
+	        height: 75px !important;
+        }
+    </style>
+    <div id="ventanaContain">
+    </div>
+    <div id="ventanaconfirm" class="panel" style="z-index: 1001;">
+        <!--<div id = "lblCerrConfirm"><table width = "100%"><tr><td style = "width:95%;"></td><td class = "cssCerrar" style = "width:5%;">X</td></tr></table></div>-->
+        <div id="contConfirm" style="position: absolute; top: 75px; left: 100px; width: auto; height: 100px; text-align: left !important;">
+            <asp:Label ID="lblMensaje" Text="" CssClass="contpanel" ForeColor="black" runat="server" Width="100%"></asp:Label>
+        </div>    
+    </div>
+
+    <div id="dvCarousel" style="display: none;">
+        <div id="dvCarrouselArrawD">
+        </div>
+        <div id="dvCarrouselArrawI">
+        </div>
+        <div id="dvCarouselImg">
+        </div>
+    </div>
+
+    <div id="dvBusqueda" class="cssbuscar">
+        <table style="width: auto; height: 85%;">
+            <tr>
+                <th colspan="3" style="text-align: right;">
+                    <label id="lblCerrar" class="cssCerrar" onclick="$('#dvBusqueda').hide('slow', '');">X</label>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="3" style="font-size: 15px">Busqueda. 
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" name="rdbusq" value="rdSolCli" onclick="fnChequea('#txtDistribuidor, #txtUsuAsign, #txtFecIni, #txtFecFin', '#tags');" />
+                </td>
+                <td style="width: 50%">Solicitud/Cliente:
+                </td>
+                <td style="width: 50%">
+                    <input id="tags" onmousedown="fnFocus('rdSolCli', '#txtDistribuidor, #txtUsuAsign, #txtFecIni, #txtFecFin', '#tags')" style="width: 80%;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" name="rdbusq" value="rdDist" onclick="fnChequea('#tags, #txtUsuAsign, #txtFecIni, #txtFecFin', '#txtDistribuidor');" />
+                </td>
+                <td>Distribuidor:
+                </td>
+                <td>
+                    <input id="txtDistribuidor" disabled="disabled" style="width: 80%;" onmousedown="fnFocus('rdDist', '#tags, #txtUsuAsign, #txtFecIni, #txtFecFin', '#txtDistribuidor')" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" name="rdbusq" value="rdUsuAsig" onclick="fnChequea('#tags, #txtDistribuidor, #txtFecIni, #txtFecFin', '#txtUsuAsign');" />
+                </td>
+                <td>Usuario Asignado:
+                </td>
+                <td>
+                    <input type="text" id="txtUsuAsign" disabled="disabled" style="width: 80%;" onmousedown="fnFocus('rdUsuAsig', '#tags, #txtDistribuidor, #txtFecIni, #txtFecFin', '#txtUsuAsign');" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" name="rdbusq" value="rdFech" onclick="fnChequea('#tags, #txtUsuAsign, #txtDistribuidor', '#txtFecIni, #txtFecFin');" />
+                </td>
+                <td>Fecha Inicial:
+                    <input type="text" id="txtFecIni" disabled="disabled" style="width: 80%;" onmousedown="fnFocus('rdFech', '#tags, #txtUsuAsign, #txtDistribuidor', '#txtFecIni, #txtFecFin');" />
+                </td>
+                
+                <td>Fecha Final:
+                    <input type="text" id="txtFecFin" disabled="disabled" style="width: 80%;" onmousedown="fnFocus('rdFech', '#tags, #txtUsuAsign, #txtDistribuidor', '#txtFecIni, #txtFecFin');" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: right;">
+                    <input id="btnSearch" type="button" value="Buscar" onclick="fnIgualaText()" />
+                    <%--<asp:Button ID = "btnBuscarCliente" Text = "Buscar" OnClientClick = "fnIgualaText()" />--%>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="dvAgregarSolicitud" class="dvAgregar">
+        <table width="100%">
+            <tr>
+                <th style="text-align: right">
+                    <label id="lblX" onclick="escondeAgregar()" class="cssCerrar">X</label>
+                </th>
+            </tr>
+        </table>
+        <table id="tbNvaSol" width="100%">
+            <tr>
+                <th colspan="4" style="font-size: 15px">Alta Solicitud. 
+                </th>
+            </tr>
+            <tr>
+                <td style="display: none;" colspan="4" style="text-align: right;">Usuario:                         
+                   <asp:Label ID="lblUsuarioNombre" runat="server"></asp:Label>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5%;">* Empresa:
+                </td>
+                <td>
+                    <select id="ddlEmpresa1" onchange="fillddl('Producto1', 'Empresa1');" style="width: 100%;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td class="cssLetras">* Producto:                    					
+                </td>
+                <td>
+                    <select id="ddlProducto1" style="width: 100%;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 15%">* Tipo de persona:
+                </td>
+                <td style="width: 35%">
+                    <select id="ddlPersona" style="width: 100%;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 15%">* Distribuidor:                     					
+                </td>
+                <td style="width: 35%">
+                    <select id="ddlDistribuidor" style="width: 100%;"></select>
+                </td>
+
+
+            </tr>
+            <tr>
+                <%--<td>
+                    <input type="text" id="lblUsuario" class="oculta" runat="server" />
+                </td>--%>
+                <td colspan="3" style="text-align: right;">
+                    <input type="button" id="btnAddSol" value="Agregar" onclick="fnAddSol()" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="tabla" id="dvImagenesl" style="position: absolute; top: 0%; height: 10%; left: 0px;">
+
+        <%--<table width="70%">
+            <tr>
+                <td style="text-align: center;">
+                    <asp:Image runat="server" ID="Image2" ImageUrl="~/App_Themes/Imagenes/Logo Incredit ALTA.jpg" />
+                    "~/App_Themes/Imagenes/Microsoft.gif"
+                </td>        
+                
+            </tr>            
+        </table>--%>
+
+        
+            <%--<div>Fila 1 La cabecera con el logo de la página "header" </div> --%>
+        
+                    <!--<div id="Logo" class="columna1" style="background-image: url(../img/img_cab_ConsumerFinance.jpg); background-repeat: no-repeat; min-height:95px; height:95px; background-color:#ffffff; border:1px solid; border-color: #ffffff #ffffff #094FA4 #ffffff;" />            -->
+
+                    <div class="columna1">
+                        <asp:Image runat="server" ID="Image2" ImageUrl="~/App_Themes/Imagenes/Logo Incredit ALTA.jpg" />
+                        <asp:Image runat="server" ID="imgAcura" ImageUrl="~/img/acura.png" Style="display: none" />
+                        <asp:Image runat="server" ID="imgHonda" ImageUrl="~/img/honda.png" Style="display: none" />
+                        <asp:Image runat="server" ID="imgJaguar" ImageUrl="~/img/jaguar.png" Style="display: none" />
+                        <asp:Image runat="server" ID="imgsuzuki" ImageUrl="~/img/suzuki.png" Style="display: none" />
+
+
+                    </div>
+
+
+                    <div class="columna2">
+                        <div class="fila1" style="height: 62%;">
+                              <div class="columna1">  
+                                </div>
+
+                            <div class="columna2">  
+                                </div>
+                    <div class="columna3">
+
+                        </div>
+                                                  
+                           
+                        </div>  
+                        
+
+                
+                                       
+                      <%--  <div style="height:50%; padding-bottom:5%; padding-right:10%; text-align:right;">
+                             
+                        </div>           --%>          
+                     
+                    </div>               
+          
+
+    </div>
+    <div id="dvBarraNot" style=" /*display: none position: absolute; */ top: 1%; left: 17%; width: 100%;">
+       <ul id="lista" runat="server">
+        </ul>
+    </div>
+   
+    <div class="tabla" style="position: absolute; left: 64%; width: 32%; padding-top: 0%; padding-right: 0.5%; text-align: right; float: right;">
+        <div class="columna1">
+         
+        </div>
+
+         <div class="columna2">
+            <div class="fila1">
+                            <asp:Label class="datosUsu" ID="lblNombreCom" runat="server"></asp:Label>
+                            <asp:Label ID="lblprueba" runat="server"></asp:Label>
+                            <asp:Label class="datosUsu" ID="lblNomUsuAcc" runat="server"></asp:Label>
+                     
+              </div>  
+              <div class="fila2">                         
+                          <label class="datosUsuTit" id="labeln" runat="server">ProDeskNet 3.0 </label>                                  
+              </div>                
+                                                                                 
+         </div>
+
+          <div class="columna3">
+            <div class="fila1">
+                        <asp:Label ID="lblFechaSistema" runat="server"></asp:Label>
+                        <asp:Label class="datosUsu" ID="lblAccesoDir" runat="server"></asp:Label>
+                  <div id="DivSalir_sup_der">
+                        <asp:Image runat="server" onclick="OutToProDesk();" ToolTip="Salir" ID="Image3" with="20" Height="20" ImageUrl="~/App_Themes/Imagenes/Salir.png" />
+                  </div>                       
+              </div>                                         
+             
+                         
+         
+                 <div id="DivActiva" class="fila2">
+                            <%--<asp:Label ID="Label1" runat="server">Estatus</asp:Label>--%>
+                            <label id="LabelActivo"></label>
+                            <%--<asp:RadioButton ID="RadioButton1" runat="server" Checked="true" onclick="CambiaStatus(this)"/>--%>
+                            <%--<input type="checkbox" name="checkboxName" checked="checked" class="checkbox"  /> --%>
+                          
+                            <%--<input type="checkbox" name="checkboxName" checked="checked"  onclick="CambiaStatus(this)" />  --%>   
+                            <label class="switch">  
+                                <input id="ChkEstatus" type="checkbox" value="1" onclick="CambiaStatus(this)" checked />
+                                <span class="slider"></span>
+                            </label>
+                            <label id="LabelInactivo"></label>
+                            <asp:Button ID="ButtonHideSalir" Style="visibility: hidden; width: 1px" runat="server" OnClick="ButtonHideSalir_Click"></asp:Button>
+                  </div>
+
+          </div>
+                   
+
+
+
+
+    </div>
+    <div id="dvImagenesr" style="display: none; position: absolute; top: -1%; left: 91.5%; width: 7%; background-color: ##FFFFF;">
+        <table width="70%">
+            <tr>
+                <td style="text-align: center;">
+                    <asp:Image runat="server" ID="Image1" ImageUrl="~/App_Themes/Imagenes/logodeladoTelepro.JPG" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <%--<div id="divEncabezado" style="position: absolute; top: 13%; left: 0%; width: 100%; height: 5%; background-color: #FFFFFF">
+        <table style="width: 100%; height: 100%;" cellspacing="0">
+            <tr style="background-color: #5089c3;">
+                <td class="datosUsuTit">
+                    <label id="labeln" runat="server">ProDeskNet 3.0 </label>
+                </td>
+                <td class="datosUsu">
+                    <asp:Label ID="lblNombreCom" runat="server"></asp:Label>
+                </td>
+                <td>
+                    <asp:Label ID="lblprueba" runat="server"></asp:Label>
+                </td>
+                <td class="datosUsu">
+                    <asp:Label ID="lblNomUsuAcc" runat="server"></asp:Label>
+                </td>
+                <td class="datosUsu">
+                    <asp:Label ID="lblFechaSistema" runat="server"></asp:Label>
+                </td>
+                <td class="datosUsu">
+                    <asp:Label ID="lblAccesoDir" runat="server"></asp:Label>
+                </td>
+            </tr>
+        </table>
+    </div>--%>
+
+    <div id="divPantalla" style="position: absolute; top: 13%; left: 15%; width: 85%; height: 86%;">
+        <asp:ContentPlaceHolder ID="cphPantallas" runat="server"></asp:ContentPlaceHolder>
+        <div id="popup" class="popup"></div>
+    </div>
+
+    <div id="divBlockPage" style="z-index: 1000; display: none; position:absolute;top:0%;left:0%;width:100%;height: 100%;background:rgba(0, 0, 0, 0.2);">
+        <asp:Image runat="server" ID="imgProcess"  ImageUrl="~/img/imgProcess.gif" style="width:100px; height:100px;position:absolute;top:40%;left:47% !important;" ImageAlign="Middle"/>
+        <asp:Label ID="lblProcess" Font-Bold="true" Font-Underline="true" style="width:200px; height:60px;position:absolute;top:56%;left:41% !important;font-size:45px;color:white;font-weight:bold;" >PROCESANDO</asp:Label>
+    </div>
+
+<div id="panelDerecho" style="position: absolute; top: 13%; left: 85%; width: 15%; height: 87%; background-color: #F3F3F3; display: none">
+        <div id="dvBuscaCliente" style="position: absolute; top: 13%; height: 5%; left: 5%; width: 90%; background-color: #F3F7FB; display: none;">
+            <div class="ui-widget">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <img id="imgBuscar" src="../App_Themes/Imagenes/search.png" alt="Buscar" onclick="fnBuscar()" class="link" />
+                            <label id="lblbuscarLogo">Buscar</label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="dvlblColores" style="position: absolute; top: 32%; height: 2%; left: 5%; width: 90%; background-color: #F3F7FB">
+            <label id="lblColores" class="link">
+                <%--onmouseover = "var obj = this.id; timer1=setTimeout(function(){fnMuestraEscondePD(obj, 'dvlblColores', 'dvColores', '', '')}, 250);" 
+            onmouseout="clearTimeout(timer1);">--%>
+            +</label>
+            Status
+        </div>
+        <div id="dvColores" style="position: absolute; top: 36%; height: 35%; left: 0%; width: 100%; text-align: center; overflow: auto; display: none;">
+            <asp:GridView ID="gvStatusCol" runat="server" CssClass="resulGrid"></asp:GridView>
+        </div>
+    </div>
+
+    <div id="divMenu" style="position: absolute; top: 13%; left: 0px; width: 15%; height: 89%; background-color: #F3F3F3;">
+        <table border="0" cellpadding="0" cellspacing="0" style="display: none;">
+            <tr>
+                <td class="leyenda">
+                    <span class="linkMenu" onclick="CargaPantalla('manejaPassword.aspx');" style="cursor: pointer">Cambiar Contraseña</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="leyenda">
+                    <span class="linkMenu" onclick="MuestraMenuTodo('div');" style="cursor: pointer">Mostrar |</span>
+                    <span class="linkMenu" onclick="OcultaMenuTodo('div');" style="cursor: pointer">Ocultar </span>
+                </td>
+            </tr>
+        </table>
+        <br />
+
+        <div id="divMenuPricipal" style="position: absolute; top: 1%; left: 0%; width: 100%; height: 85%; overflow: auto;">
+            <asp:Label ID="lblMenu" runat="server">
+            </asp:Label>
+
+            <table border="0" cellspacing="0" style="height: 30px">
+                <tr class="menu">
+                    <td valign="top" onclick="OutToProcotiza();">Cotizador</td>
+                </tr>
+                <tr class="menu">
+                    <td valign="top" onclick="OutToProDesk();">Salir</td>
+                </tr>
+                
+            </table>
+        </div>
+    </div>
+    <div id="divDetailsRequest" class="panel" style="z-index: 1001; display: none; top: 231px; left: 333px;">
+        <input type="hidden" id="Redirect_" />
+        <div style="position: absolute; top: 10px; left: 10px; width: 97%; height: 90px; text-align: left !important;">
+            <table style="width: 100%;">
+                <tr class="tituloConsul">
+                    <td width="100%">
+                        <table width="100%">
+                            <tr>
+                                <td colspan="2" style="width: 95%;">
+                                    <legend id="legendCarrusel"></legend>
+                                </td>
+                                <td colspan="2" style="width: 5%;">
+                                    <legend id="CloseBlockPage">Cerrar</legend>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <div class="pane">
+                <table class="fieldsetBBVA" style="width: 100%">
+                    <tr>
+                        <th class="campos" style="width: 100%">
+                            <asp:Label ID="mensaje_" Font-Bold="true" Font-Underline="true" />
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <asp:HiddenField ID="hdACNombre" runat="server" />
+    <asp:HiddenField ID="hdACDistribuidor" runat="server" />
+    <asp:HiddenField ID="hdPerfilUsuario" runat="server" />
+    <asp:Label ID="lblNomUsu" runat="server" CssClass="oculta" />
+    <asp:HiddenField ID="hdidUsuario" runat="server" />
+    <asp:HiddenField ID="fullPath" runat="server" />
+    <input type="hidden" id="Redirect" />
+    <asp:HiddenField ID="hdEstatus_Activo" runat="server" />
+    <asp:HiddenField ID="hdBalanceo" runat="server" />
+</asp:Content>
+
+

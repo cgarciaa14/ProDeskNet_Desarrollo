@@ -1,0 +1,75 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+ProdeskNet.Catalogos
+</name>
+</assembly>
+<members>
+<member name="P:ProdeskNet.Catalogos.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:ProdeskNet.Catalogos.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:ProdeskNet.Catalogos.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="M:ProdeskNet.Catalogos.clsSolictds.obtenerSolicitudes(System.Int32,System.String,System.String,System.String,System.String,System.Int32)">
+	<summary>
+ Devuelve el mismo objeto dependiendo de los parametros proporcionados
+ </summary>
+	<param name="NoSolicitud">Número de solicitud</param>
+	<param name="FechaInicio">Fecha de inicio de la solicitud, puede ser mayor a esta fecha y menor a la siguiente</param>
+	<param name="FechaFin">Fecha final de la solicitud, puede ser menor a esta fecha y mayor a la anterior</param>
+	<param name="NombreCliente">Nombre de solicitante</param>
+	<param name="RFCCliente">RFC del solicitante</param>
+	<param name="Estatus">Estado de la solicitud, siempre está en 2 para obtener sólo activas</param>
+	<returns>Regresa el mismo objeto poblado con elementos clsSolic</returns>
+	<remarks></remarks>
+</member><member name="M:ProdeskNet.Catalogos.clsVendedores.obtenerVendedor(System.Int32,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+	<summary>
+ Devuelve los vendedores de una agencia
+ </summary>
+	<param name="idAgencia">Identificador de la agencia</param>
+	<param name="idVendedor">Identificador del vendedor</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:ProdeskNet.Catalogos.clsAgencias.obtenerAgencia(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+	<summary>
+ Devuelve las agencias dependiendo de los parámetros seleccionados.
+ </summary>
+	<param name="idAgencia">Id de agencia opcional</param>
+	<param name="Estatus">Estado de la agencia opcional, si es nulo entonces obtiene todos los activos con Estatus=2</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:ProdeskNet.Catalogos.clsAgencias.obtenerTablaAgenciasVendedor(System.Nullable{System.Int32},System.String,System.String,System.String)">
+	<summary>
+ Devuelve un DataSet dependiendo de los parámetros especificados:
+ </summary>
+	<param name="NoSolicitud">Id de la solicitud</param>
+	<param name="NombreSolicitante">Nombre de la persona o razón social</param>
+	<param name="RFCSolicitante">RFC del solicitante o razón social</param>
+	<returns>un DataSet con la siguiente estructura ordenada de Columnas: [ID_SOLICITUD][NOMBRE][RFC][AGENCIA]</returns>
+	<remarks></remarks>
+</member><member name="M:ProdeskNet.Catalogos.clsAgencias.cambiarAgenciaSolicitud(System.Collections.Generic.List{System.Int32},System.Int32,System.Int32)">
+	<summary>
+ Actualiza las solicitudes para efectuar cambio de agencia y vendedor
+ </summary>
+	<param name="NoSolicitudes">Arreglo de enteros</param>
+	<returns>Boleano indicando el estado de la actualización</returns>
+	<remarks></remarks>
+</member><member name="M:ProdeskNet.Catalogos.clsAgencias.guardarCambioAgenciaSolicitud(System.Collections.Generic.List{ProdeskNet.Catalogos.clsAgencias.CambiaAgencia},System.Int32)">
+	<summary>
+ Guarda historial de agencias guardadas
+ </summary>
+	<param name="NoSolicitudes">Arreglo de enteros</param>
+	<returns>Boleano indicando el estado de la actualización</returns>
+	<remarks></remarks>
+</member>
+</members>
+</doc>

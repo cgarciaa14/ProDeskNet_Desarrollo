@@ -1,0 +1,11 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\ScannerRunnerX64.exe.config
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\ScannerRunnerX64.exe
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\ScannerRunnerX64.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\AjaxControlToolkit.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\FPScannerX64.exe
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\ProdeskNet.Criptografia.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\FPScannerX64.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\bin\Debug\ProdeskNet.Criptografia.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\obj\Debug\ScannerRunnerX64.csprojResolveAssemblyReference.cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\obj\Debug\ScannerRunnerX64.exe
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ScannerRunnerX64\obj\Debug\ScannerRunnerX64.pdb

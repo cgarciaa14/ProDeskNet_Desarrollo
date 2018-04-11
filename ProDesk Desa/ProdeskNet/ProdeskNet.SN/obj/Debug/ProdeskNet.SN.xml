@@ -1,0 +1,30 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+ProdeskNet.SN
+</name>
+</assembly>
+<members>
+<member name="M:ProdeskNet.SN.clsSEVASolicitudes.GeneraSolicitudSEVA(ProdeskNet.SN.clsSEVASolicitud@)">
+	<summary>
+ Inserta en base de datos los elementos mínimos para un solicitante en la tabla de solicitudes SEVA
+ </summary>
+	<param name="datosSolicitud">Datos de la solicitud mínimos para realizar alta en la tabla SEVA</param>
+	<remarks>Asigna un folio SEVA a la solicitud que se envía como parámetro</remarks>
+</member><member name="P:ProdeskNet.SN.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:ProdeskNet.SN.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:ProdeskNet.SN.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+</members>
+</doc>

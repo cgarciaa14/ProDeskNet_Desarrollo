@@ -1,0 +1,96 @@
+.bodyBC{
+ font-family: 'Lucida Grande', Helvetica, verdana, sans-serif;
+ background: url('watermark.jpg') repeat;
+}
+
+.tableBC {
+ font-size: 9px;
+ font-family: 'Lucida Grande', Helvetica, verdana, sans-serif;
+ background-color:#fff;
+ border-collapse: collapse;
+ width: 100%;
+ line-height: 1.2em;
+}
+.captionBC {
+ font-size: 30px;
+ font-weight: bold;
+ color: #002084;
+ text-align: left;
+ padding: 10px 0px;
+ margin-bottom: 2px;
+ text-transform: capitalize;
+}
+
+/*thead th {
+ border-right: 2px solid #fff;
+ color:#fff;
+ text-align:center;
+ padding:2px;
+ height:25px;
+ background-color: #004080;
+}*/
+
+tfootBC {
+ color:#002084;
+ padding:2px;
+ text-transform:uppercase;
+ font-size:1.2em; 
+ font-weigth: bold;
+ margin-top:6px;
+ border-top: 6px solid #004080;
+ border-bottom: 6px solid #004080;
+}
+
+/*tbody tr {
+ background-color:#fff;
+ border-bottom: 2px solid #c0c0c0;
+}
+tbody td {
+ color:#002084;
+ padding:5px;
+ text-align:left;
+}
+tbody th {
+ text-align:center;
+ padding: 2px;
+ background-color:#dddddd;
+}
+tbody td a, tbody th a {
+ color:#002084;
+ text-decoration:underline;
+ font-weight:normal; 
+}
+
+tbody td a:hover, tbody th a:hover {
+ text-decoration:none;
+}*/
+
+
+.tbodythBC {
+ text-align:center;
+ padding: 2px;
+ background-color:#dddddd;
+}
+
+.tbodyBC {
+ color:#002084;
+ padding:5px;
+ text-align:left;
+}
+
+.thTBC {
+ text-align:center;
+ border-right: 2px solid #004080;
+ color:#fff;
+ padding:2px;
+ background-color: #004080;
+}
+.tdSBC {
+ color:#002084;
+ padding:2px;
+ text-align:left;
+ font-size: 7px;
+}
+.thSBC {
+ font-size: 8px;
+}

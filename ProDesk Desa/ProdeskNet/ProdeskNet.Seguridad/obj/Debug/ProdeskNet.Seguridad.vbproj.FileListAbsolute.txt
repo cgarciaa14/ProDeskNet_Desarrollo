@@ -1,0 +1,9 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Seguridad.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Seguridad.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Seguridad.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Seguridad\obj\Debug\ProdeskNet.Seguridad.Resources.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Seguridad\obj\Debug\ProdeskNet.Seguridad.vbproj.GenerateResource.Cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Seguridad\obj\Debug\ProdeskNet.Seguridad.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Seguridad\obj\Debug\ProdeskNet.Seguridad.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Seguridad\obj\Debug\ProdeskNet.Seguridad.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Seguridad\obj\Debug\ProdeskNet.Seguridad.vbprojResolveAssemblyReference.cache

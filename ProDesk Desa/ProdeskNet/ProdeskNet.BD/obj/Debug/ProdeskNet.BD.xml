@@ -1,0 +1,48 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+ProdeskNet.BD
+</name>
+</assembly>
+<members>
+<member name="P:ProdeskNet.BD.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.BDProcotiza">
+	<summary>
+  Looks up a localized string similar to Data Source=LTELMXMH\SQL2012;Initial Catalog=Procotiza_Prod;User ID=sa;Password=telepro.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.BDProdeskNet">
+	<summary>
+  Looks up a localized string similar to Data Source=LTELMXMH\SQL2012;Initial Catalog=ProdeskNet;User ID=sa;Password=telepro.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.Otra1">
+	<summary>
+  Looks up a localized string similar to Data Source=LTELMXMH\SQL2012;Initial Catalog=ProdeskNet;User ID=sa;Password=telepro.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.Otra2">
+	<summary>
+  Looks up a localized string similar to Data Source=LTELMXMH\SQL2012;Initial Catalog=ProdeskNet;User ID=sa;Password=telepro.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.OtraPC1">
+	<summary>
+  Looks up a localized string similar to Data Source=LTELMXMH\SQL2012;Initial Catalog=Procotiza_Prod;User ID=sa;Password=telepro.
+</summary>
+</member><member name="P:ProdeskNet.BD.My.Resources.Resources.OtraPC2">
+	<summary>
+  Looks up a localized string similar to Data Source=LTELMXMH\SQL2012;Initial Catalog=Procotiza_Prod;User ID=sa;Password=telepro.
+</summary>
+</member><member name="T:ProdeskNet.BD.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+</members>
+</doc>

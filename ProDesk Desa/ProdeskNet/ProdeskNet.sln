@@ -1,0 +1,153 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.BD", "ProdeskNet.BD\ProdeskNet.BD.vbproj", "{4E35E212-C284-4CC5-AA7A-0061F43780D6}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.Seguridad", "ProdeskNet.Seguridad\ProdeskNet.Seguridad.vbproj", "{AEEE7B13-1F82-4100-A73E-CE727B09515C}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.Buro", "ProdeskNet.Buro\ProdeskNet.Buro.vbproj", "{F1142C8E-0089-4AD8-93CC-A54D381376F1}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.Catalogos", "ProdeskNet.Catalogos\ProdeskNet.Catalogos.vbproj", "{5A1E008D-FAF2-4F1C-AF2D-1E7BEB09DB70}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.Configurcion", "ProdeskNet.Configurcion\ProdeskNet.Configurcion.vbproj", "{77DBAE07-8222-4D5B-A2CC-AFA1629FCF5D}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ProdeskNet", "ProdeskNet", "{9FDC34E4-625A-40B9-BCB5-B1957279A51E}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = "SAK"
+		SccAuxPath = "SAK"
+		SccLocalPath = "SAK"
+		SccProvider = "SAK"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		ProjectReferences = "{4e35e212-c284-4cc5-aa7a-0061f43780d6}|ProdeskNet.BD.dll;{f1142c8e-0089-4ad8-93cc-a54d381376f1}|ProdeskNet.Buro.dll;{5A1E008D-FAF2-4F1C-AF2D-1E7BEB09DB70}|ProdeskNet.Catalogos.dll;{77dbae07-8222-4d5b-a2cc-afa1629fcf5d}|ProdeskNet.Configurcion.dll;{aeee7b13-1f82-4100-a73e-ce727b09515c}|ProdeskNet.Seguridad.dll;{93c22680-bc6d-4fa8-bebb-0a74fce34984}|ProdeskNet.WCF.dll;{d185d6d1-29d7-4998-bce1-1020decc6885}|ProdeskNet.SN.dll;{ce1447bb-e5a8-4365-a400-81ee5db4bcf2}|ProdeskNet.Criptografia.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/ProdeskNet"
+		Debug.AspNetCompiler.PhysicalPath = "ProdeskNet\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\ProdeskNet\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/ProdeskNet"
+		Release.AspNetCompiler.PhysicalPath = "ProdeskNet\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\ProdeskNet\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "53804"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dllconnectBuro", "dllconnectBuro\dllconnectBuro\dllconnectBuro.csproj", "{CFC86CD7-D148-45EA-8BC4-E17101E1F4BB}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.WCF", "ProdeskNet.WCF\ProdeskNet.WCF.vbproj", "{93C22680-BC6D-4FA8-BEBB-0A74FCE34984}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ProdeskNet.SN", "ProdeskNet.SN\ProdeskNet.SN.vbproj", "{D185D6D1-29D7-4998-BCE1-1020DECC6885}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdeskNet.Criptografia", "ProdeskNet.Criptografia\ProdeskNet.Criptografia.csproj", "{CE1447BB-E5A8-4365-A400-81EE5DB4BCF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScannerRunnerX64", "ScannerRunnerX64\ScannerRunnerX64.csproj", "{6EF7F215-BAE8-4D7E-8110-29A6F80938A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPScannerX64", "FPScannerX64\FPScannerX64.csproj", "{06DB8E21-5120-4FE1-899F-9513DEB2E2D1}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 13
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://teleproteam.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = dllconnectBuro\\dllconnectBuro\\dllconnectBuro.csproj
+		SccProjectName1 = dllconnectBuro/dllconnectBuro
+		SccLocalPath1 = dllconnectBuro\\dllconnectBuro
+		SccProjectUniqueName2 = FPScannerX64\\FPScannerX64.csproj
+		SccProjectName2 = FPScannerX64
+		SccLocalPath2 = FPScannerX64
+		SccProjectUniqueName3 = ProdeskNet.BD\\ProdeskNet.BD.vbproj
+		SccProjectName3 = ProdeskNet.BD
+		SccLocalPath3 = ProdeskNet.BD
+		SccProjectUniqueName4 = ProdeskNet.Buro\\ProdeskNet.Buro.vbproj
+		SccProjectName4 = ProdeskNet.Buro
+		SccLocalPath4 = ProdeskNet.Buro
+		SccProjectUniqueName5 = ProdeskNet.Catalogos\\ProdeskNet.Catalogos.vbproj
+		SccProjectName5 = ProdeskNet.Catalogos
+		SccLocalPath5 = ProdeskNet.Catalogos
+		SccProjectUniqueName6 = ProdeskNet.Configurcion\\ProdeskNet.Configurcion.vbproj
+		SccProjectName6 = ProdeskNet.Configurcion
+		SccLocalPath6 = ProdeskNet.Configurcion
+		SccProjectUniqueName7 = ProdeskNet.Criptografia\\ProdeskNet.Criptografia.csproj
+		SccProjectName7 = ProdeskNet.Criptografia
+		SccLocalPath7 = ProdeskNet.Criptografia
+		SccProjectUniqueName8 = ProdeskNet.Seguridad\\ProdeskNet.Seguridad.vbproj
+		SccProjectName8 = ProdeskNet.Seguridad
+		SccLocalPath8 = ProdeskNet.Seguridad
+		SccProjectUniqueName9 = ProdeskNet.SN\\ProdeskNet.SN.vbproj
+		SccProjectName9 = ProdeskNet.SN
+		SccLocalPath9 = ProdeskNet.SN
+		SccProjectUniqueName10 = ProdeskNet.WCF\\ProdeskNet.WCF.vbproj
+		SccProjectName10 = ProdeskNet.WCF
+		SccLocalPath10 = ProdeskNet.WCF
+		SccWebProject11 = true
+		SccProjectUniqueName11 = ProdeskNet
+		SccProjectName11 = ProdeskNet
+		SccLocalPath11 = ProdeskNet
+		SccProjectEnlistmentChoice11 = 2
+		SccProjectUniqueName12 = ScannerRunnerX64\\ScannerRunnerX64.csproj
+		SccProjectName12 = ScannerRunnerX64
+		SccLocalPath12 = ScannerRunnerX64
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E35E212-C284-4CC5-AA7A-0061F43780D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E35E212-C284-4CC5-AA7A-0061F43780D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E35E212-C284-4CC5-AA7A-0061F43780D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E35E212-C284-4CC5-AA7A-0061F43780D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEEE7B13-1F82-4100-A73E-CE727B09515C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEEE7B13-1F82-4100-A73E-CE727B09515C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEEE7B13-1F82-4100-A73E-CE727B09515C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEEE7B13-1F82-4100-A73E-CE727B09515C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1142C8E-0089-4AD8-93CC-A54D381376F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1142C8E-0089-4AD8-93CC-A54D381376F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1142C8E-0089-4AD8-93CC-A54D381376F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1142C8E-0089-4AD8-93CC-A54D381376F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A1E008D-FAF2-4F1C-AF2D-1E7BEB09DB70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A1E008D-FAF2-4F1C-AF2D-1E7BEB09DB70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A1E008D-FAF2-4F1C-AF2D-1E7BEB09DB70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A1E008D-FAF2-4F1C-AF2D-1E7BEB09DB70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77DBAE07-8222-4D5B-A2CC-AFA1629FCF5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DBAE07-8222-4D5B-A2CC-AFA1629FCF5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DBAE07-8222-4D5B-A2CC-AFA1629FCF5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DBAE07-8222-4D5B-A2CC-AFA1629FCF5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FDC34E4-625A-40B9-BCB5-B1957279A51E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FDC34E4-625A-40B9-BCB5-B1957279A51E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FDC34E4-625A-40B9-BCB5-B1957279A51E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FDC34E4-625A-40B9-BCB5-B1957279A51E}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{CFC86CD7-D148-45EA-8BC4-E17101E1F4BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC86CD7-D148-45EA-8BC4-E17101E1F4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC86CD7-D148-45EA-8BC4-E17101E1F4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC86CD7-D148-45EA-8BC4-E17101E1F4BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C22680-BC6D-4FA8-BEBB-0A74FCE34984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C22680-BC6D-4FA8-BEBB-0A74FCE34984}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C22680-BC6D-4FA8-BEBB-0A74FCE34984}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C22680-BC6D-4FA8-BEBB-0A74FCE34984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D185D6D1-29D7-4998-BCE1-1020DECC6885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D185D6D1-29D7-4998-BCE1-1020DECC6885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D185D6D1-29D7-4998-BCE1-1020DECC6885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D185D6D1-29D7-4998-BCE1-1020DECC6885}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1447BB-E5A8-4365-A400-81EE5DB4BCF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1447BB-E5A8-4365-A400-81EE5DB4BCF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1447BB-E5A8-4365-A400-81EE5DB4BCF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1447BB-E5A8-4365-A400-81EE5DB4BCF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EF7F215-BAE8-4D7E-8110-29A6F80938A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EF7F215-BAE8-4D7E-8110-29A6F80938A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EF7F215-BAE8-4D7E-8110-29A6F80938A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EF7F215-BAE8-4D7E-8110-29A6F80938A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06DB8E21-5120-4FE1-899F-9513DEB2E2D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06DB8E21-5120-4FE1-899F-9513DEB2E2D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06DB8E21-5120-4FE1-899F-9513DEB2E2D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06DB8E21-5120-4FE1-899F-9513DEB2E2D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

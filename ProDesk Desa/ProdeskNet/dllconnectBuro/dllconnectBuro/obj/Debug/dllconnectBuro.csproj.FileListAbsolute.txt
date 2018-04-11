@@ -1,0 +1,6 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\dllconnectBuro\dllconnectBuro\bin\Debug\dllconnectBuro.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\dllconnectBuro\dllconnectBuro\bin\Debug\dllconnectBuro.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\dllconnectBuro\dllconnectBuro\bin\Debug\AjaxControlToolkit.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\dllconnectBuro\dllconnectBuro\obj\Debug\dllconnectBuro.csprojResolveAssemblyReference.cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\dllconnectBuro\dllconnectBuro\obj\Debug\dllconnectBuro.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\dllconnectBuro\dllconnectBuro\obj\Debug\dllconnectBuro.pdb

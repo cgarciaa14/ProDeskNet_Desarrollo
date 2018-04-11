@@ -1,0 +1,53 @@
+﻿<%--
+Default skin template. The following skins are provided as examples only.
+
+1. Named control skin. The SkinId should be uniquely defined because
+   duplicate SkinId's per control type are not allowed in the same theme.
+
+<asp:GridView runat="server" SkinId="gridviewSkin" BackColor="White" >
+   <AlternatingRowStyle BackColor="Blue" />
+</asp:GridView>
+
+2. Default skin. The SkinId is not defined. Only one default 
+   control skin per control type is allowed in the same theme.
+
+<asp:Image runat="server" ImageUrl="~/images/image1.jpg" />
+--%>
+
+<%-- YAM-P-208 egonzalez 28/10/2015 Se modificó la resepción de la función ManejaCar para evaluar el resultado que se obtiene para con esto saber si se permite la impresión del caracter presionado o no, así mismo se envía como tal el evento para su evaluación en dicha función.
+--%>
+<%--BBV-P-423: AMR: 14/12/2016 RQSOL-01 Precalificación Brechas (31, 49, 75) --%>
+
+<asp:TextBox runat="server" Width="130px" CssClass="txt2BBVA" SkinID="txtGeneral"></asp:TextBox>
+<asp:TextBox runat="server" Width="100px" CssClass="txt2BBVA" SkinID="txtNumeros" OnKeyPress="return ManejaCar('N',0,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="100px" CssClass="txt2BBVA" SkinID="txtFechas" OnKeyPress="return false;" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="100px" CssClass="txt2BBVA" SkinID="txtMontos" OnKeyPress="return ManejaCar('D',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="130px" CssClass="txt2BBVA" SkinID="txtAlfaMay" OnKeyPress="return ManejaCar('A',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="130px" CssClass="txt2BBVA" SkinID="txtAlfaMin" OnKeyPress="return ManejaCar('a',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="130px" CssClass="txt2BBVA" SkinID="txtMail" OnKeyPress="return ManejaCar('m',0,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="130px" CssClass="txt2BBVA" SkinID="txtCustMay" OnKeyPress="return ManejaCar('T',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="130px" CssClass="txt2BBVA" SkinID="txtCustMin" OnKeyPress="return ManejaCar('t',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtGeneralGde"></asp:TextBox>
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtGeneralMulti" OnKeyPress="return ManejaCar('Z',1,this.value,this,event)" onpaste="ManejaCar('z',this,this.value)" ></asp:TextBox>
+<asp:TextBox runat="server" Width="150px" CssClass="txt2BBVA" SkinID="txtNumerosGde" OnKeyPress="return ManejaCar('N',0,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="150px" CssClass="txt2BBVA" SkinID="txtMontosGde" OnKeyPress="return ManejaCar('D',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtAlfaMayGde" OnKeyPress="return ManejaCar('C',1,this.value,this,event);" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="170px" CssClass="txt2BBVA" SkinID="txtAlfaMayGde1" OnKeyPress="return ManejaCar('A',1,this.value,this,event);" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtAlfaMinGde" OnKeyPress="return ManejaCar('a',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="170px" CssClass="txt2BBVA" SkinID="txtMailGde" OnKeyPress="return ManejaCar('m',0,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtCustMayGde" OnKeyPress="return ManejaCar('T',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtCustMinGde" OnKeyPress="return ManejaCar('t',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="170px" CssClass="txt2BBVA" SkinID="txtNumerosGden" OnKeyPress="return ManejaCar('N',0,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="170px" CssClass="txt2BBVA" SkinID="txtCustMayGden" OnKeyPress="return ManejaCar('T',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="170px" CssClass="txt2BBVA" SkinID="txtAlfaMayGden" OnKeyPress="return ManejaCar('C',1,this.value,this,event);" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="170px" CssClass="txt2BBVA" SkinID="txtMontosN" OnKeyPress="return ManejaCar('D',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="50px" CssClass="txt2BBVA" SkinID="txtscoring" OnKeyPress="return ManejaCar('p',1,this.value,this,event)" onpaste="return false;"></asp:TextBox>
+<asp:TextBox runat="server" Width="190px" CssClass="txt2BBVA" SkinID="txtGeneraliza"></asp:TextBox>
+
+<asp:Label SkinID="lblGeneral" runat="server" cssClass="campos"></asp:Label>
+<asp:Label SkinID="lblCampos" runat="server" cssClass="campos"></asp:Label>
+
+<asp:Button SkinID="btnGeneral" runat="server" cssClass="botones"></asp:Button>
+
+<asp:DropDownList SkinID="cmbGeneral" runat="server" class="Text"></asp:DropDownList>

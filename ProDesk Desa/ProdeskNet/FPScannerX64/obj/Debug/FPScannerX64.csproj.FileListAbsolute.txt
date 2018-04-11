@@ -1,0 +1,12 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\bin\Debug\FPScannerX64.exe.config
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\bin\Debug\FPScannerX64.exe
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\bin\Debug\FPScannerX64.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\bin\Debug\AjaxControlToolkit.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\bin\Debug\ProdeskNet.Criptografia.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\bin\Debug\ProdeskNet.Criptografia.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\obj\Debug\FPScannerX64.csprojResolveAssemblyReference.cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\obj\Debug\FPScannerX64.CaptureFinger.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\obj\Debug\FPScannerX64.Properties.Resources.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\obj\Debug\FPScannerX64.csproj.GenerateResource.Cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\obj\Debug\FPScannerX64.exe
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\FPScannerX64\obj\Debug\FPScannerX64.pdb

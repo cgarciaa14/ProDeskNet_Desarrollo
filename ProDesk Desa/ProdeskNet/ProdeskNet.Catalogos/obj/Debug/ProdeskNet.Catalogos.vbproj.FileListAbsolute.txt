@@ -1,0 +1,8 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Catalogos.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Catalogos.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Catalogos\obj\Debug\ProdeskNet.Catalogos.vbprojResolveAssemblyReference.cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Catalogos\obj\Debug\ProdeskNet.Catalogos.Resources.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Catalogos\obj\Debug\ProdeskNet.Catalogos.vbproj.GenerateResource.Cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Catalogos\obj\Debug\ProdeskNet.Catalogos.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Catalogos\obj\Debug\ProdeskNet.Catalogos.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Catalogos.xml

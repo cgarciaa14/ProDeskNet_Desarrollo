@@ -1,0 +1,382 @@
+﻿/*'BBV-P-412: GVARGAS: 07/11/2016 RQ F: LESS dinamico*/
+/*BBV-P-423 RQLOGIN GVARGAS 17/05/2017 Cambios CSS Danamicos*/
+/*BUG-PD-146 GVARGAS 08/07/2017 Logos*/
+
+.-(@color); 
+.-(acura)  {
+	@colorFondo: #041E42;
+	@imagenUrl: "../img/acura.png";
+	@positionImagenY: 18px;
+	@colorLinkBloque: #ffffff;
+	@colorLinks: #ffffff;
+	@fondoLinks: #084191;
+	@fondoLinksHover: #062b60;
+
+	@FieldSetTitle: #041E42;
+	@buttonBBVA: #041E42;
+	@fondoMessage: #9fc4f9;
+	@ColorMessage: #000000;
+	@CotizadotTagP: #041E42;
+
+	@content: 'ProCotiza Acura';
+	@FondoNavBar : #ffffff;
+	@bgDefault      : #041e42;
+	@bgHighlight    : #073678;
+	@colDefault     : #ffffff;
+	@colHighlight   : #87b6f8;
+	@dropDown       : true;
+
+	@fondoMinimo	: #cfe2fc;
+	@maxSize		: 54%;
+	@Padding_img	: 0%;
+
+	@a	: block;
+	@h	: none;
+	@j	: none;
+	@s	: none;
+	@b	: none;
+}
+.-(honda) {
+	@colorFondo: #CC0000; 
+	@imagenUrl: "../img/honda.png";
+	@positionImagenY: 24px;
+	@colorLinkBloque: #ffffff;
+	@colorLinks: #ffffff;
+	@fondoLinks: #ff6666;
+	@fondoLinksHover: #ff1a1a;
+	
+	@FieldSetTitle: #CC0000;
+	@buttonBBVA: #CC0000;
+	@fondoMessage: #ff9999;
+	@ColorMessage: #000000;
+	@CotizadotTagP: #CC0000;
+
+	@content: 'ProCotiza Honda';
+	@FondoNavBar : #ffffff;
+	@bgDefault      : #cc0000;
+	@bgHighlight    : #990000;
+	@colDefault     : #ffffff;
+	@colHighlight   : #ff9999;
+	@dropDown       : true;
+
+	@fondoMinimo	: #ffe6e6;
+	@maxSize		: 54%;
+	@Padding_img	: 10%;
+
+	@a	: none;
+	@h	: block;
+	@j	: none;
+	@s	: none;
+	@b	: none;
+}
+.-(jaguar) {
+	@colorFondo: #141414;
+	@imagenUrl: "../img/jaguar.png";
+	@positionImagenY: 0px;
+	@colorLinkBloque: #ffffff;
+	@colorLinks: #ffffff;
+	@fondoLinks: #A7A9AC;
+	@fondoLinksHover: #404040;
+
+	@FieldSetTitle: #141414;
+	@buttonBBVA: #141414;
+	@fondoMessage: #999999;
+	@ColorMessage: #ffffff;
+	@CotizadotTagP: #ffffff;
+
+	@content: 'ProCotiza Jaguar';
+	@FondoNavBar : #ffffff;
+	@bgDefault      : #141414;
+	@bgHighlight    : #4d4d4d;
+	@colDefault     : #ffffff;
+	@colHighlight   : #a7a9ac;
+	@dropDown       : true;
+
+	@fondoMinimo	: #e6e6e6;
+	@maxSize		: 63%;
+	@Padding_img	: 5%;
+
+	@a	: none;
+	@h	: none;
+	@j	: block;
+	@s	: none;
+	@b	: none;
+}
+.-(suzuki) {
+	@colorFondo: #003f87;
+	@imagenUrl: "../img/suzuki.png";
+	@positionImagenY: 5px;
+	@colorLinkBloque: #ffffff;
+	@colorLinks: #ffffff;
+	@fondoLinks: #1a85ff;
+	@fondoLinksHover: #0053b3;
+
+	@FieldSetTitle: #003f87;
+	@buttonBBVA: #003f87;
+	@fondoMessage: #80bbff;
+	@ColorMessage: #000000;
+	@CotizadotTagP: #000000;
+
+	@content: 'ProCotiza Suzuki';
+	@FondoNavBar : #ffffff;
+	@bgDefault      : #003f87;
+	@bgHighlight    : #003066;
+	@colDefault     : #ffffff;
+	@colHighlight   : #4da0ff;
+	@dropDown       : true;
+
+	@fondoMinimo	: #cce4ff;
+	@maxSize		: 100%;
+	@Padding_img	: 12%;
+
+	@a	: none;
+	@h	: none;
+	@j	: none;
+	@s	: block;
+	@b	: none;
+}
+
+/*Menu Antiguo*/
+	#Logo {
+		background-image: url("@{imagenUrl}") !important;
+		background-repeat: no-repeat !important;
+		background-position-y: @positionImagenY;
+	}
+
+	#ctl00_ctl00_cphCuerpo_Image2 {
+		content: url("@{imagenUrl}") !important;
+		background-repeat: no-repeat !important;
+		background-position-y: @positionImagenY;
+		max-width: @maxSize !important;
+		max-height: 100% !important;		
+		padding-left: @Padding_img !important;
+		display: @b !important;
+	}
+
+	#ctl00_ctl00_cphCuerpo_imgAcura {
+		content: url("@{imagenUrl}") !important;
+		background-repeat: no-repeat !important;
+		background-position-y: @positionImagenY;
+		max-width: @maxSize !important;
+		max-height: 100% !important;		
+		padding-left: @Padding_img !important;
+		display: @a !important;
+	}
+
+	#ctl00_ctl00_cphCuerpo_imgHonda {
+		content: url("@{imagenUrl}") !important;
+		background-repeat: no-repeat !important;
+		background-position-y: @positionImagenY;
+		max-width: @maxSize !important;
+		max-height: 100% !important;		
+		padding-left: @Padding_img !important;
+		display: @h !important;
+	}
+
+	#ctl00_ctl00_cphCuerpo_imgJaguar {
+		content: url("@{imagenUrl}") !important;
+		background-repeat: no-repeat !important;
+		background-position-y: @positionImagenY;
+		max-width: @maxSize !important;
+		max-height: 100% !important;		
+		padding-left: @Padding_img !important;
+		display: @j !important;
+	}
+
+	#ctl00_ctl00_cphCuerpo_imgsuzuki {
+		content: url("@{imagenUrl}") !important;
+		background-repeat: no-repeat !important;
+		background-position-y: @positionImagenY;
+		max-width: @maxSize !important;
+		max-height: 100% !important;		
+		padding-left: @Padding_img !important;
+		display: @s !important;
+	}
+
+
+	#divMenuAntiguo {
+		background-color: @colorFondo !important;
+	}
+
+	#accordion div {
+		background-color: @colorFondo !important;
+	}
+
+	#headerLOGO div {
+		border-color: #ffffff #ffffff @colorFondo #ffffff !important;
+	}
+
+	#accordion a {
+		color: @colorLinks !important;
+	}
+
+	#accordion ul {
+		background: @fondoLinks repeat !important;
+	}
+
+	#accordion ul li:hover {
+		background-color: @fondoLinksHover !important;
+	 }
+
+	#accordion div {
+		color: @colorLinkBloque !important;
+	}
+
+/*FieldSet, Buttons Cotizador & Consulta Cotizaciones*/
+	.fieldsetBBVA legend {
+		color: @FieldSetTitle !important;
+	}
+
+	.buttonBBVA2 {
+		background-color: @buttonBBVA !important;
+	}
+
+	.buttonSecBBVA2, #btnCambiarCliente {
+		color: @buttonBBVA !important;
+		border: 1px solid @buttonBBVA !important;
+	}
+
+	#btnCambiarCliente {
+		background-color: @buttonBBVA !important;
+		border: 1px solid @buttonBBVA !important;
+		color: white !important;
+	}
+
+	.messageCot {
+		background-color: @fondoMessage !important;
+		color: @ColorMessage !important;
+	}
+
+	.CotizadotTagP {
+		color: @CotizadotTagP !important;
+		font-weight: bold !important;
+	}
+
+	.divFiltrosConsul {
+		/*background-color: @FondoNavBar !important;*/
+		background: @fondoMinimo !important;
+		border-color: @colorFondo !important;
+	}
+
+	.tituloConsul {
+		color: @colorFondo !important;
+		padding-top: 10px;
+	}
+
+	.datosUsuTit {
+		color: @colorFondo !important;
+	}
+
+	.menu {
+		color: @colorFondo !important;
+	}
+
+	.resulGridPag tr a {
+		color: @colorFondo !important;
+	}
+
+	.inner {
+		color: @colorFondo !important;
+	}
+
+	.inner:after {
+	    border-bottom: 1px solid @colorFondo !important;
+	}
+
+	.allGv tr:hover, tr.odd:hover {
+		background-color: @colorFondo !important;
+	}
+
+	.resulGrid th {
+    	background-color: @colorFondo !important;
+	}
+
+	.divAdminCatPie div {
+    	background-color: @fondoMinimo !important;
+	}
+
+	.txt2BBVA:focus {
+		border: 1px solid @colorFondo !important;
+		color: @colorFondo !important;
+	}
+
+	.select2BBVA:hover, #ctl00_ctl00_cphCuerpo_cphPantallas_ddlVendedor:hover, #ctl00_ctl00_cphCuerpo_cphPantallas_ddlAgencia:hover {
+		/*background-color: yellow !important;*/
+		border: 1px solid @colorFondo !important;
+	}
+
+	.select2BBVA:focus, #ctl00_ctl00_cphCuerpo_cphPantallas_ddlVendedor:focus, #ctl00_ctl00_cphCuerpo_cphPantallas_ddlAgencia:focus {
+		outline-color: @colorFondo !important;
+	}
+
+	div.pager span {
+		background: @colorFondo !important;
+		color: @fondoMinimo !important;
+	}
+
+	div.pager span.active {
+	    background: @fondoMinimo !important;
+		color: @colorFondo !important;
+	}
+
+	.cssbuscar {
+		background-color: @fondoMinimo !important;
+		box-shadow: 10px 10px 5px @colorFondo !important;
+		border-color: @colorFondo !important;
+	}
+
+	.dvAgregar {
+		background-color: @fondoMinimo !important;
+		box-shadow: 10px 10px 5px @colorFondo !important;
+		border-color: @colorFondo !important;
+	}
+
+	#ddlEmpresa1:hover, #ddlProducto1:hover, #ddlPersona:hover, #ddlDistribuidor:hover, #ddlEmpresa:hover, #ddlProducto:hover, #ddlTPersona:hover {
+		border: 1px solid @colorFondo !important;
+	}
+
+	#ddlEmpresa1:focus, #ddlProducto1:focus, #ddlPersona:focus, #ddlDistribuidor:focus, #ddlEmpresa:focus, #ddlProducto:focus, #ddlTPersona:focus {
+		outline-color: @colorFondo !important;
+	}
+
+	#btnAddSol {
+		border: 1px solid @colorFondo !important;
+		background-color: @fondoMinimo !important;
+		outline-color: @colorFondo !important;
+		color: @colorFondo !important;
+	}
+
+	#btnSearch {
+		border: 1px solid @colorFondo !important;
+		background-color: @fondoMinimo !important;
+		outline-color: @colorFondo !important;
+		color: @colorFondo !important;
+	}
+
+	.cssCerrar {
+	    color: @colorFondo !important;
+	    background-color: @fondoMinimo !important;
+	}
+
+	#tags, #txtDistribuidor, #txtUsuAsign, #txtFecIni, #txtFecFin {
+		border: 1px solid @colorFondo !important;
+		color: @colorFondo !important;
+		outline-color: @colorFondo !important;
+	}
+
+	input[type=text]:focus {
+		border: 1px solid @colorFondo !important;
+		color: @colorFondo !important;
+	}
+
+	.buttonBBVA2:disabled {
+        background-color: @colorFondo !important;
+	}
+
+	.divAdminCatTitulo, #dvBuscaCliente {
+		background-color: @fondoMinimo !important;
+	}
+
+	.tabFiltrosConsul {
+		background-color: @fondoMinimo !important;
+	}

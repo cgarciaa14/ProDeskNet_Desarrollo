@@ -1,0 +1,13 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.WCF.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.WCF.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.WCF.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\AjaxControlToolkit.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.BD.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.BD.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.BD.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.vbprojResolveAssemblyReference.cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.Resources.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.vbproj.GenerateResource.Cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.pdb

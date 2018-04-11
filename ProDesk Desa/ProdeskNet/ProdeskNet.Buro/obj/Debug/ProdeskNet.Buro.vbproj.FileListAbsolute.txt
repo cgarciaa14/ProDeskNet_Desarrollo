@@ -1,0 +1,9 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Buro\obj\Debug\ProdeskNet.Buro.vbprojResolveAssemblyReference.cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Buro\obj\Debug\ProdeskNet.Buro.Resources.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Buro\obj\Debug\ProdeskNet.Buro.vbproj.GenerateResource.Cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Buro.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Buro.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.Buro.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Buro\obj\Debug\ProdeskNet.Buro.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Buro\obj\Debug\ProdeskNet.Buro.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Buro\obj\Debug\ProdeskNet.Buro.pdb

@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="../js/angular.js"></script>
+    <script src="../js/ui-bootstrap-tpls-0.13.0.js"></script>
+    <script type="text/javascript">
+        angular.module('ui.bootstrap.tooltip').controller('PopoverDemoCtrl'), function ($scope) {
+            $scope.dynamicPopover = {
+                content: 'hola, mundo'
+            };
+        };
+    </script>   
+    <style>
+        .done-true {
+          text-decoration: line-through;
+          color: grey;
+        }
+    </style>
+</head>
+<body>
+    <div ng-controller="PopoverDemoCtrl">
+
+        <h4>Triggers</h4>
+        <p>
+            <button popover="I appeared on mouse enter!" popover-trigger="mouseenter" class="btn btn-default">Mouseenter</button>
+        </p>
+        <input type="text" value="Click me!" popover="I appeared on focus! Click away and I'll vanish..." popover-trigger="focus" class="form-control">
+
+    </div>
+</body>
+</html>

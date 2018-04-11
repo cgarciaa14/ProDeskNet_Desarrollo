@@ -1,0 +1,8 @@
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.BD.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.BD.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\Referencias\ProdeskNet.BD.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.Resources.resources
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.vbproj.GenerateResource.Cache
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.xml
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.pdb
