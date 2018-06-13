@@ -1,10 +1,13 @@
 ﻿Imports ProdeskNet.BD
 Imports System.Data
 Imports ProdeskNet.Catalogos
+Imports ProdeskNet.SN
+Imports ProdeskNet.Seguridad
 
 #Region "trackers"
 'INC-B-2019:JDRA:Regresar.
 'BUG-PD-233: RHERNANDEZ: 12/10/2017: SE QUITA OPCION DE DAR DOBLE CLICK EN PANTALLA DE CONTRATOS
+'BUG-PD-417: DCORNEJO: 17/04/2018: SE AGREGA LA OPCION DE TURNAR EN ADJUNTAR DOCUMENTOS PARA DESEMBOLSO
 #End Region
 
 Public Class ImprimirContrato
@@ -16,9 +19,12 @@ Public Class ImprimirContrato
         If Not IsPostBack Then
             Dim intEnable As Integer
             Dim dataset As New DataSet
+            Dim dsresulta As New DataSet
+            Dim dsresult As New DataSet
             hdnIdFolio.Value = Request("IdFolio")
             hdnIdPantalla.Value = Request("idPantalla")
             hdnUsua.Value = Session("IdUsua")
+            hdPantalla.Value = Request("pantalla")
             dataset = BD.EjecutarQuery("SELECT NOMBRE_SOLICI FROM PDK_TAB_DATOS_SOLICITANTE WHERE PDK_ID_SECCCERO=" & hdnIdFolio.Value)
             If dataset.Tables.Count > 0 AndAlso dataset.Tables(0).Rows.Count > 0 Then
                 lblSoli.Text = hdnIdFolio.Value
@@ -49,12 +55,47 @@ Public Class ImprimirContrato
             End Try
 
             Try
+                dsresulta = BD.EjecutarQuery("get_Path_Next_Tarea  " & hdPantalla.Value)
+                If dsresult.Tables(0).Rows.Count > 0 AndAlso dsresult.Tables.Count > 0 Then
+                    Dim Mostrar As String
+                    Dim pantallas As String
+                    Mostrar = dsresulta.Tables(0).Rows(0).Item("PDK_PANT_MOSTRAR").ToString
+                    pantallas = dsresulta.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString
+                    If Mostrar = 2 Then
+
+                        hdnResultado.Value = dsresult.Tables(0).Rows(0).Item("RUTA")
+                    Else
+                        hdnResultado.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdnIdFolio.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdnUsua.Value)
+                        hdnResultado2.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdnIdFolio.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdnUsua.Value)
+                    End If
+                End If
+
+            Catch ex As Exception
+                hdnResultado.Value = Session("Regresar")
+            End Try
+
+            Try
                 intEnable = CInt(Request.QueryString("Enable"))
 
             Catch ex As Exception
                 intEnable = 0
             End Try
 
+            If (Request("Pantalla").ToString = "14") And intEnable = 0 Then
+                'divActualizaColonia.Attributes.Add("style", "display:''")
+                lblturnar.Visible = True
+                ddlTurnar.Visible = True
+                Dim clsquiz As New clsCuestionarioSolvsID()
+                Dim objCombo As New clsParametros
+                clsquiz._ID_PANT = CInt(hdPantalla.Value)
+                Dim dtsres As New DataSet
+                dtsres = clsquiz.getTurnar()
+                If dtsres.Tables.Count > 0 Then
+                    If dtsres.Tables(0).Rows.Count > 0 Then
+                        objCombo.LlenaCombos(dtsres, "TURNAR_NOMBRE", "PDK_ID_TAREAS", ddlTurnar, True, True)
+                    End If
+                End If
+            End If
 
             If intEnable = 1 Then
                 cmbguardar.Attributes.Add("style", "display:none;")
@@ -62,9 +103,6 @@ Public Class ImprimirContrato
                 btnCancelar.Attributes.Add("style", "display:none;")
 
             End If
-
-
-
         End If
     End Sub
 
@@ -79,7 +117,12 @@ Public Class ImprimirContrato
     End Sub
 
     Protected Sub btnproc_Click(sender As Object, e As EventArgs)
-        asignaTarea(0)
+        If ddlTurnar.Visible = False Then
+            asignaTarea(0)
+        Else
+            asignaTarea(ddlTurnar.SelectedValue)
+        End If
+
     End Sub
     Private Sub asignaTarea(ByVal idAsignarPantalla As Integer)
         Dim dsresult As DataSet = New DataSet()
@@ -102,7 +145,7 @@ Public Class ImprimirContrato
 
             If mensaje <> "" Then
                 Master.MensajeError(mensaje)
-                cmbGuardar.Disabled = False
+                cmbguardar.Disabled = False
             Else
                 dsresult = Solicitudes.ValNegocio(1)
                 mensaje = dsresult.Tables(0).Rows(0).Item("MENSAJE").ToString
@@ -129,9 +172,9 @@ Public Class ImprimirContrato
             End If
 
         Catch ex As Exception
-            cmbGuardar.Attributes.Remove("disabled")
+            cmbguardar.Attributes.Remove("disabled")
             btnRegresar.Attributes.Remove("disabled")
-            cmbGuardar.Disabled = False
+            cmbguardar.Disabled = False
             Master.MensajeError(mensaje)
         End Try
     End Sub
@@ -167,4 +210,7 @@ Public Class ImprimirContrato
 
 
     'End Sub
+    Protected Sub ddlTurnar_SelectedIndexChanged(sender As Object, e As EventArgs)
+
+    End Sub
 End Class

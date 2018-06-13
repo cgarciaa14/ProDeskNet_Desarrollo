@@ -42,6 +42,9 @@
     <%--BUG-PD-382: DJUAREZ: 05/03/2018 Se corrige funcion ambigua --%>
     <%--BUG-PD-392: DJUAREZ: 12/03/2018 Corrección de posición de la pantalla de bloqueo --%>
     <%--BUG-PD-397: ERODRIGUEZ: 13/03/2018: Se corrige barra de estado de actividad.--%>
+    <%--BUG-PD-398: DJUAREZ: 14/03/2018: Se evita el brinco de pantalla --%>
+	<%--BUG-PC-182: DCORNEJO: 25/04/2018: Correcion en redirect de Prodesek a Procotiza --%>
+    <%--BUG-PD-437: ERODRIGUEZ: 07/05/2018: Se quita boton oculto para salir.--%>
 
     <%--<script type="text/javascript" src="../js/ProdeskNet.js"></script>--%>
     <%--<script type="text/javascript" src="../js/rfc.js"></script>--%>
@@ -52,7 +55,7 @@
     </script>
     <link rel="stylesheet/less" type="text/css" href="../js/less.min.js" />
     <style runat="server" id="LessCSS" type="text/css"></style>
-    <script src="../js/Funciones.js"></script>
+    <script type="text/javascript" src="../js/Funciones.js"></script>
     <script language="javascript" type="text/javascript">
         function PopUpLetreroRedirectValidateRequest(mesajeRe, redirect) {
             $('#legendCarrusel').html('Notificacion');
@@ -166,7 +169,7 @@
             $.datepicker.regional['es'];
 
             $.datepicker.setDefaults();
-            
+
             //$("[id$=lista]").webTicker();
 
             Divs = $("[id$=divMenuPricipal]")
@@ -178,30 +181,34 @@
             ActualizaActividad()
             //document.getElementById("LabelActivo").innerHTML = 'Activo'
             /*  cambio para imagenes en un div  */
-           
-            $("#CloseBlockPage").on("click", function (e) {
-                $('#legendCarrusel').html('');
-                $('#ventanaContain').hide();
-                $('#divDetails').hide();
-                $("#tableFields tbody").empty();
 
-                if ($('#Redirect_') != null) {
-                    window.location.replace($('#Redirect_').val());
-                }
+            $("#CloseBlockPage").on("click", function (e) {
+                
             });
 
         })
 
+
+        function CloseBlockPage() {
+            $('#legendCarrusel').html('');
+            $('#ventanaContain').hide();
+            $('#divDetails').hide();
+            $("#tableFields tbody").empty();
+
+            if ($('#Redirect_') != null) {
+                window.location.replace($('#Redirect_').val());
+            }
+        }
        
 
         function OutToProDesk() {
 
+            debugger;
+            //var btn = document.getElementById("ctl00_ctl00_cphCuerpo_ButtonHideSalir");
+            //if (btn) {
+            //    btn.click();
+            //}
             
-            var btn = document.getElementById("ctl00_ctl00_cphCuerpo_ButtonHideSalir");
-            if (btn) {
-                btn.click();
-            }
-
             var domain = document.location.origin.toString();
             var paths = document.location.pathname.toString().split("/")
 
@@ -211,7 +218,10 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: "{ 'url' : '" + domain + "/" + paths[1] + "/" + "' }",
-                success: function OnSuccessRedirect(response) { window.location.href = response.d.toString(); }
+                success: function OnSuccessRedirect(response) {
+                   
+                    window.location.href = response.d.toString();
+                }
             };
             $.ajax(settings);
         }
@@ -225,7 +235,7 @@
                 url: "inicio.aspx/OutToProcotiza",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data: "{ 'url' : '" + domain + "/" + paths[1] + "/" + "' }",
+                data: "{ 'url' : '" + domain + "/' }",
                 success: function OnSuccessRedirect(response) { window.location.href = response.d.toString(); }
             };
             $.ajax(settings);
@@ -421,16 +431,16 @@
     }
 
         function ActualizaActividad() {
-           
+
             $("[id$=lista]").webTicker();
             var estatus = $('[id$=hdEstatus_Activo]').val();
             var id_usu = $('[id$=hdidUsuario]').val();
             if (estatus == 'True') {
-              
+
                 $(".tickercontainer").attr('style', 'display:visible');
                 $(".dvBarraNot").attr('style', 'display:visible');
                 $(".tickercontainer").attr('style', 'background-color:#B5E5F9');
-                
+
                 document.getElementById("LabelActivo").innerHTML = 'Activo';
                 document.getElementById("LabelInactivo").innerHTML = '';
                 document.getElementById("ChkEstatus").checked = true;
@@ -443,7 +453,7 @@
                 document.getElementById("LabelInactivo").innerHTML = 'Inactivo';
                 document.getElementById("ChkEstatus").checked = false;
             }
-           
+
         }
 
 
@@ -686,7 +696,7 @@
        <ul id="lista" runat="server">
         </ul>
     </div>
-   
+
     <div class="tabla" style="position: absolute; left: 64%; width: 32%; padding-top: 0%; padding-right: 0.5%; text-align: right; float: right;">
         <div class="columna1">
          
@@ -728,7 +738,7 @@
                                 <span class="slider"></span>
                             </label>
                             <label id="LabelInactivo"></label>
-                            <asp:Button ID="ButtonHideSalir" Style="visibility: hidden; width: 1px" runat="server" OnClick="ButtonHideSalir_Click"></asp:Button>
+                            <%--<asp:Button ID="ButtonHideSalir" Style="visibility: hidden; width: 1px" runat="server" OnClick="ButtonHideSalir_Click"></asp:Button>--%>
                   </div>
 
           </div>
@@ -851,7 +861,7 @@
                                     <legend id="legendCarrusel"></legend>
                                 </td>
                                 <td colspan="2" style="width: 5%;">
-                                    <legend id="CloseBlockPage">Cerrar</legend>
+                                    <legend onclick="CloseBlockPage();">Cerrar</legend>
                                 </td>
                             </tr>
                         </table>

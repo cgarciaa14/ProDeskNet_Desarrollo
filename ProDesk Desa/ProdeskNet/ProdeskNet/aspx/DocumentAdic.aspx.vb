@@ -1,5 +1,7 @@
 ﻿'-- RQ-INB203INB204INB209 JBEJAR: 18/07/2017  SPRINT 15 DOCUMENTOS ADICIONALES AGENCIA. 
 '-- BUG-PD-177 JBEJAR: 26/07/2017 MEJORAS SE AGREGAN TODOS LOS DOCUMENTOS LIGADAS  A LA SOLICITUD Y CAMBIOS ESTETICOS AL DIV DE DOCUMENTOS. 
+'-- BUG-PD-449 GVARGAS 23/05/2018 Cambios llamado solicitudes.
+
 Imports ProdeskNet.Catalogos
 Imports System.Data
 Imports ProdeskNet.SN
@@ -60,7 +62,8 @@ Partial Class aspx_DocumentAdic
                                                            FechaInicio:=_FechaInicio, _
                                                            FechaFin:=_FechaFin, _
                                                            NombreCliente:=_NombreCliente, _
-                                                           RFCCliente:=_RFCCliente)
+                                                           RFCCliente:=_RFCCliente, _
+                                                           Opcion:=3)
             repSolicitudes.DataSource = Nothing
             repSolicitudes.DataBind()
             If Not _clsSolictds Is Nothing And _clsSolictds.Count > 0 Then

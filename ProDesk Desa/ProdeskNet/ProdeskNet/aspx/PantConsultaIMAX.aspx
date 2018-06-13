@@ -9,6 +9,7 @@
 <%--BUG-PD-193: RHERNANDEZ: 21/08/17 SE MODIFICA EVALUACION DE CARGA DE ARCHIVOS PARA PANTALLAS QUE NO REQUERIRAN VER EL COMPARADOR DE ARCAIVIN--%>
 <%--BUG-PD-199: RHERNANDEZ: 24/08/17 SE MODIFICA CARGA DE ARCHIVOS PARA ABRIR VISOR TELEPRO--%>
 <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
+<%--BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.--%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPantallas" runat="server">
     <script src="../js/jquery.ui.widget.js"></script>
@@ -96,32 +97,89 @@
 
             }
         }
+
         function fnCambiaStatus(check, id) {
+            //BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.
             var docType = $(check).parent().parent().find('td:nth-child(2):first').text();
             var folio = $('[id$=hdSolicitud]').val();
+            var Check_VAL = check.name.indexOf('Val');
+            var Check_REC = check.name.indexOf('Rec');
+            var checked = check.checked
 
             fnMuestraChecks()
 
             if (check.name.indexOf('Val') != -1) {
                 if (check.checked == true) {
-                    btnEntrevista('update PDK_REL_PAN_DOC_SOL set PDK_ST_VALIDADO = 1, PDK_ST_RECHAZADO = 0, PDK_PAR_SIS_PARAMETRO_DIG = 0 where PDK_ID_DOC_SOLICITUD = ' + id + '; exec spValidaEstatusDoc ' + id + '; DELETE FROM PDK_NOTIFICACIONES WHERE PDK_ID_DOCUMENTOS IN ( SELECT PDK_ID_DOCUMENTOS FROM PDK_CAT_DOCUMENTOS WHERE PDK_DOC_NOMBRE = \'' + docType + '\' ) AND PDK_ID_SECCCERO = ' + folio + ';');
-                    $('[name=chkbxRec_' + id + ']').attr('checked', false);
-                    fnMuestraChecks()
+                    var settings = {
+                        type: "POST", url: "consultaPantallaDocumentos.aspx/getBack", async: false,
+                        data: "{'id': '" + id + "', 'docType': '" + docType + "', 'folio': '" + folio + "', 'Check_VAL': '" + Check_VAL + "', 'Check_REC': '" + Check_REC + "', 'Checked': '" + 1 + "'}",
+                        contentType: "application/json; charset=utf-8", dataType: "json",
+                        success: function OnSuccess_showDetails(response) {
+                            $('[name=chkbxRec_' + id + ']').attr('checked', false);
+                            fnMuestraChecks()
+                        }
+                    };
+                    $.ajax(settings);
                 }
                 else {
-                    btnEntrevista('update PDK_REL_PAN_DOC_SOL set PDK_ST_VALIDADO = 0 where PDK_ID_DOC_SOLICITUD = ' + id + '; exec spValidaEstatusDoc ' + id);
+                    var settings = {
+                        type: "POST", url: "consultaPantallaDocumentos.aspx/getBack", async: false,
+                        data: "{'id': '" + id + "', 'docType': '" + docType + "', 'folio': '" + folio + "', 'Check_VAL': '" + Check_VAL + "', 'Check_REC': '" + Check_REC + "', 'Checked': '" + 2 + "'}",
+                        contentType: "application/json; charset=utf-8", dataType: "json",
+                        success: function OnSuccess_showDetails(response) { }
+                    };
+                    $.ajax(settings);
                 }
             }
+
             if (check.name.indexOf('Rec') != -1) {
                 if (check.checked == false) {
-                    btnEntrevista("UPDATE PDK_REL_PAN_DOC_SOL SET PDK_ST_RECHAZADO = 0 WHERE PDK_ID_DOC_SOLICITUD = " + id + '; exec spValidaEstatusDoc ' + id);
+                    var settings = {
+                        type: "POST", url: "consultaPantallaDocumentos.aspx/getBack", async: false,
+                        data: "{'id': '" + id + "', 'docType': '" + docType + "', 'folio': '" + folio + "', 'Check_VAL': '" + Check_VAL + "', 'Check_REC': '" + Check_REC + "', 'Checked': '" + 3 + "'}",
+                        contentType: "application/json; charset=utf-8", dataType: "json",
+                        success: function OnSuccess_showDetails(response) { }
+                    };
+                    $.ajax(settings);
                 }
                 else {
-
                     $('[name=chkbxVal' + id + ']').attr('checked', false);
+                    var settings = {
+                        type: "POST", url: "consultaPantallaDocumentos.aspx/getBack", async: false,
+                        data: "{'id': '" + id + "', 'docType': '" + docType + "', 'folio': '" + folio + "', 'Check_VAL': '" + Check_VAL + "', 'Check_REC': '" + Check_REC + "', 'Checked': '" + 4 + "'}",
+                        contentType: "application/json; charset=utf-8", dataType: "json",
+                        success: function OnSuccess_showDetails(response) { }
+                    };
+                    $.ajax(settings);
                 }
             }
         }
+        //function fnCambiaStatus(check, id) {
+        //    var docType = $(check).parent().parent().find('td:nth-child(2):first').text();
+        //    var folio = $('[id$=hdSolicitud]').val();
+
+        //    fnMuestraChecks()
+
+        //    if (check.name.indexOf('Val') != -1) {
+        //        if (check.checked == true) {
+        //            btnEntrevista('update PDK_REL_PAN_DOC_SOL set PDK_ST_VALIDADO = 1, PDK_ST_RECHAZADO = 0, PDK_PAR_SIS_PARAMETRO_DIG = 0 where PDK_ID_DOC_SOLICITUD = ' + id + '; exec spValidaEstatusDoc ' + id + '; DELETE FROM PDK_NOTIFICACIONES WHERE PDK_ID_DOCUMENTOS IN ( SELECT PDK_ID_DOCUMENTOS FROM PDK_CAT_DOCUMENTOS WHERE PDK_DOC_NOMBRE = \'' + docType + '\' ) AND PDK_ID_SECCCERO = ' + folio + ';');
+        //            $('[name=chkbxRec_' + id + ']').attr('checked', false);
+        //            fnMuestraChecks()
+        //        }
+        //        else {
+        //            btnEntrevista('update PDK_REL_PAN_DOC_SOL set PDK_ST_VALIDADO = 0 where PDK_ID_DOC_SOLICITUD = ' + id + '; exec spValidaEstatusDoc ' + id);
+        //        }
+        //    }
+        //    if (check.name.indexOf('Rec') != -1) {
+        //        if (check.checked == false) {
+        //            btnEntrevista("UPDATE PDK_REL_PAN_DOC_SOL SET PDK_ST_RECHAZADO = 0 WHERE PDK_ID_DOC_SOLICITUD = " + id + '; exec spValidaEstatusDoc ' + id);
+        //        }
+        //        else {
+
+        //            $('[name=chkbxVal' + id + ']').attr('checked', false);
+        //        }
+        //    }
+        //}
         function fnInsertaRechazo(elemento, DOC_SOLICITUD) {
             var chkMR = $('[name $= chkbxRec_' + elemento.id + ']');
             var ddlMR = $('[name $= ddlMR' + elemento.id + '] option:selected');

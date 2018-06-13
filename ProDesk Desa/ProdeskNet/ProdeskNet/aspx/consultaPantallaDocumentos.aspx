@@ -34,6 +34,9 @@
     <%-- BUG-PD-321 : EGONZALEZ : 28/12/2017 : Se corrige espacio al mostrar las opciones al "turnar" a "No procesable" --%>
     <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
     <%--RQ-PD31: DJUAREZ: 08/03/2018: SE CREA POPUP PARA MODIFICAR LA COLONIA CUANDO SE GUARDE LA COLONIA "OTRO" --%>
+    <%--BUG-PD-403: RHERNANDEZ: 20/03/2018: correccion avance tarea 74--%>
+    <%--BUG-PD-417: DCORNEJO: 17/04/2018: SE AGREGA LA OPCION DE TURNAR EN ADJUNTAR DOCUMENTOS PARA DESEMBOLSO--%>
+	<%--BUG-PD-435: DCORNEJO: 07/05/2018: SE AGREGA VALIDACION DE PARAMETROS EN CHECK DE DOCUMENTOS--%>
 
 
     <script src="../js/jquery.ui.widget.js"></script>
@@ -194,7 +197,7 @@
             }
         }
         function Guardar() {
-            debugger;
+            
             inputfile = $("[id^=yourID]");
             $(inputfile).attr("disabled", true);
             var folio = $('[id$=hdSolicitud]').val();
@@ -217,7 +220,8 @@
                     }
                 }
                 else {
-                    btnManejoMensaje('exec sp_validarEntrevista ' + folio + ',2,' + idPant, 'exec spValNegocio ' + folio + ',64,' + usu + '; select dbo.fnGetMensajeTarea (' + folio + ', ' + idPant + ')')
+                    var botonp = document.getElementById('<%= btnproc.ClientID%>');
+                    botonp.click();
                 }
 
         }
@@ -228,12 +232,14 @@
             }
             else {
                 if (idPant == 105) {
-                    btnInsertDocumento('exec spValNegocio ' + folio + ',64,' + usu);
+                    //btnInsertDocumento('exec spValNegocio ' + folio + ',64,' + usu);
                     var botonp = document.getElementById('<%= btnproc.ClientID%>');
                     botonp.click();
                 }
                 else {
-                    btnInsertDocumento('exec spValNegocio ' + folio + ',64,' + usu);
+                    //btnInsertDocumento('exec spValNegocio ' + folio + ',64,' + usu);
+                    var botonp = document.getElementById('<%= btnproc.ClientID%>');
+                    botonp.click();
                 }
 
             }
@@ -243,7 +249,6 @@
 }
 
 function futGuardarPro(response) {
-    debugger;
     var folio = $('[id$=hdSolicitud]').val();
     var usu = $('[id$=hdusuario]').val();
     var cve = $('[id$=hntipoPantalla]').val();
@@ -256,7 +261,9 @@ function futGuardarPro(response) {
         $(inputfile).attr("disabled", false);
     }
     else {
-        btnManejoMensaje('exec sp_validarEntrevista ' + folio + ',2,' + idPant, 'exec spValNegocio ' + folio + ',64,' + usu + '; select dbo.fnGetMensajeTarea (' + folio + ', ' + idPant + ')')
+        //btnManejoMensaje('exec sp_validarEntrevista ' + folio + ',2,' + idPant, 'exec spValNegocio ' + folio + ',64,' + usu + '; select dbo.fnGetMensajeTarea (' + folio + ', ' + idPant + ')')
+        var botonp = document.getElementById('<%= btnproc.ClientID%>');
+        botonp.click();
     }
 }
 
@@ -269,7 +276,6 @@ function jsonValidaAgencia() {
 }
 
 function jsonBack(errorLabel, destino, successfully, datos) {
-    debugger;
     var settings = { type: "POST", url: "", data: "", contentType: "application/json; charset=utf-8", dataType: "json", success: null, failure: null };
     settings.url = destino
     settings.success = successfully
@@ -294,7 +300,6 @@ function jsonGuardaDatosSeguro() {
         jsonBack('GuardaDatSeg', destino, successfully, datos);
     }
     else {
-        debugger;
         PopUpLetrero("Error: Falta cargar datos con marca *");
         $("[id$= cmbguardar1]").prop('disabled', false);
         inputfile = $("[id^=yourID]");
@@ -302,7 +307,6 @@ function jsonGuardaDatosSeguro() {
     }
 }
 function GuardadoExitoso(response) {
-    debugger;
     var mensaje = response.d.toString()
     var ruta2 = $("[id$=hdnResultado2]").val();
     var boton = $("[id$= cmbguardar1]")
@@ -349,12 +353,13 @@ function fnInsertaRechazo(elemento, DOC_SOLICITUD) {
         ddlMR.val(0);
     }
 
-    if (txtMR.val() == "") {
-        btnEntrevista("UPDATE PDK_REL_PAN_DOC_SOL SET PDK_ST_RECHAZADO = " + valchkMR + ",	PDK_ST_VALIDADO = 0, PDK_PAR_SIS_PARAMETRO_DIG = " + ddlMR.val() + ", fcNotificacion='' WHERE PDK_ID_DOC_SOLICITUD = " + DOC_SOLICITUD + "; exec sp_InsNotDig " + sol + ", " + u + ", ''; exec spValidaEstatusDoc " + DOC_SOLICITUD + ";");
-    }
-    else {
-        btnEntrevista("UPDATE PDK_REL_PAN_DOC_SOL SET PDK_ST_RECHAZADO = " + valchkMR + ",	PDK_ST_VALIDADO = 0, PDK_PAR_SIS_PARAMETRO_DIG = " + ddlMR.val() + ",fcNotificacion='" + txtMR.val() + "' WHERE PDK_ID_DOC_SOLICITUD = " + DOC_SOLICITUD + "; exec sp_InsNotDig " + sol + ", " + u + ", '" + txtMR.val() + "'; exec spValidaEstatusDoc " + DOC_SOLICITUD + ";");
-    }
+  if (txtMR.val() == "") {
+      btnEntrevista("UPDATE PDK_REL_PAN_DOC_SOL SET PDK_ST_RECHAZADO = " + valchkMR + ",    PDK_ST_VALIDADO = 0, PDK_PAR_SIS_PARAMETRO_DIG = " + ddlMR.val() + ", fcNotificacion='' WHERE PDK_ID_DOC_SOLICITUD = " + DOC_SOLICITUD + "; exec sp_InsNotDig " + sol + ", " + u + ", '" + DOC_SOLICITUD  + "'; exec spValidaEstatusDoc " + DOC_SOLICITUD + ";");
+
+  }
+  else {
+      btnEntrevista("UPDATE PDK_REL_PAN_DOC_SOL SET PDK_ST_RECHAZADO = " + valchkMR + ",    PDK_ST_VALIDADO = 0, PDK_PAR_SIS_PARAMETRO_DIG = " + ddlMR.val() + ",fcNotificacion='" + txtMR.val() + "' WHERE PDK_ID_DOC_SOLICITUD = " + DOC_SOLICITUD + "; exec sp_InsNotDig " + sol + ", " + u + ", '" + DOC_SOLICITUD  + "'; exec spValidaEstatusDoc " + DOC_SOLICITUD + ";");
+  }
 }
 
 function ddlMRover(elemento) {
@@ -482,7 +487,7 @@ $(document).ready(function () { $.urlParam = function (name) { var results = new
                     <asp:GridView ID="gvDocumentos_opc" runat="server" AutoGenerateColumns="false" Width="310px" HeaderStyle-CssClass="GridviewScrollHeaderBBVA" RowStyle-CssClass="GridviewScrollItemBBVA"
                         Caption='<table border="1" width="100%" cellpadding="0" cellspacing="0"><tr class="GridviewScrollHeaderBBVA"><th>Solicitar Documentos</th></tr></table>' CaptionAlign="Top">
                         <Columns>
-                            <asp:TemplateField HeaderText="ID" ItemStyle-HorizontalAlign="Left"  Visible="false">
+                            <asp:TemplateField HeaderText="ID" ItemStyle-HorizontalAlign="Left" Visible="false">
                                 <ItemTemplate>
                                     <asp:Label ID="lblid_doc" runat="server" Text='<%# Eval("PDK_ID_DOCUMENTOS")%>' />
                                 </ItemTemplate>
@@ -587,48 +592,48 @@ $(document).ready(function () { $.urlParam = function (name) { var results = new
                 </table>
             </asp:Panel>
         </div>
-        <div id="divcancela" class="cajadialogo" style="display: none; z-index: 1010 !important; position: absolute; background-color: white; top:15%; left:31%; width: 220px;">
+        <div id="divcancela" class="cajadialogo" style="display: none; z-index: 1010 !important; position: absolute; background-color: white; top: 15%; left: 31%; width: 220px;">
             <%--<cc1:ModalPopupExtender ID="mpoCancela" runat="server" TargetControlID="btnCancelar" PopupControlID="popCancela" CancelControlID="btnCancelCancela" BackgroundCssClass="modalBackground"></cc1:ModalPopupExtender>--%>
             <%--<asp:Panel ID="popCancela" runat="server" CssClass="cajadialogo ">
             </asp:Panel>--%>
-                <div class="tituloConsul">
-                    <asp:Label ID="Label1" runat="server" Text="Cancelación" />
-                </div>
-                <table width="100%">
-                    <tr>
-                        <td class="campos">Usuario:</td>
-                        <td>
-                            <asp:TextBox ID="txtusua" SkinID="txtGeneral" MaxLength="12" Style="width: 120px !important;" runat="server"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="campos">Password:</td>
-                        <td>
-                            <asp:TextBox ID="txtpass" runat="server" SkinID="txtGeneral" MaxLength="12" TextMode="Password" EnableTheming="true" Style="width: 120px !important;"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="campos">Descripción:</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <textarea id="TxtmotivoCan" runat="server" onkeypress="ManejaCar('A',1,this.value,this)" class="Text" rows="5" cols="1" style="width: 95% ! important"></textarea>
-                        </td>
-                    </tr>
-                    <tr style="width: 100%">
-                        <td>
-                            <asp:HiddenField runat="server" ID="HiddenField1" />
-                        </td>
-                        <td align="left" valign="middle">
-                            <input id="btnGuardarCancelar" type="button" runat="server" value="Guardar" class="Text " onclick="btnGuardar(id)" />
-                            <asp:Button ID="btnCancelCancela" runat="server" Text="Cancelar" SkinID="btnGeneral" />
-                        </td>
-                    </tr>
+            <div class="tituloConsul">
+                <asp:Label ID="Label1" runat="server" Text="Cancelación" />
+            </div>
+            <table width="100%">
+                <tr>
+                    <td class="campos">Usuario:</td>
+                    <td>
+                        <asp:TextBox ID="txtusua" SkinID="txtGeneral" MaxLength="12" Style="width: 120px !important;" runat="server"></asp:TextBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campos">Password:</td>
+                    <td>
+                        <asp:TextBox ID="txtpass" runat="server" SkinID="txtGeneral" MaxLength="12" TextMode="Password" EnableTheming="true" Style="width: 120px !important;"></asp:TextBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="campos">Descripción:</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea id="TxtmotivoCan" runat="server" onkeypress="ManejaCar('A',1,this.value,this)" class="Text" rows="5" cols="1" style="width: 95% ! important"></textarea>
+                    </td>
+                </tr>
+                <tr style="width: 100%">
+                    <td>
+                        <asp:HiddenField runat="server" ID="HiddenField1" />
+                    </td>
+                    <td align="left" valign="middle">
+                        <input id="btnGuardarCancelar" type="button" runat="server" value="Guardar" class="Text " onclick="btnGuardar(id)" />
+                        <asp:Button ID="btnCancelCancela" runat="server" Text="Cancelar" SkinID="btnGeneral" />
+                    </td>
+                </tr>
 
-                </table>
+            </table>
         </div>
-        <div id="divActualizaColonia" runat="server" style="display:none;">
-            <ACP:ActualizaCP id="ActualizaCP" runat="server"/>
+        <div id="divActualizaColonia" runat="server" style="display: none;">
+            <ACP:ActualizaCP ID="ActualizaCP" runat="server" />
         </div>
         <div class="resulbbva divAdminCatPie">
             <table width="100%" style="height: 100%;">
@@ -640,7 +645,7 @@ $(document).ready(function () { $.urlParam = function (name) { var results = new
                         </asp:DropDownList>
                         &nbsp;
                         <%--<ACP:ActualizaCP id="ActualizaCP1" runat="server"/>--%>
-                       <asp:Button runat="server" ID="btnRegresar" Text="Regresar" CssClass="buttonSecBBVA2" />
+                        <asp:Button runat="server" ID="btnRegresar" Text="Regresar" CssClass="buttonSecBBVA2" />
                         <%-- <asp:Button runat="server" ID="btnGuardar" text="Procesar"  SkinID="btnGeneral" />--%>
                         <asp:Button runat="server" ID="btnImpAuto" Visible="false" Text="Imp. Poliza Daños" CssClass="buttonBBVA2" OnClick="btnImpAuto_Click" />
                         <asp:Button runat="server" ID="btnImpVida" Visible="false" Text="Imp. Poliza  Vida" CssClass="buttonBBVA2" OnClick="btnImpVida_Click" />

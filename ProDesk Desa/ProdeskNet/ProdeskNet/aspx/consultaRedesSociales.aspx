@@ -32,12 +32,15 @@
             var idpantalla = $("[id$=hdPantalla] ").val()
             var txtmotivoOb = $("[id$=TxtmotivoCan]").val()
 
+            $('#ventanaContain').hide();
+            $('#divcancela').hide();
+
             if (txtUsu == '') { alert('El campo usuario esta vacía'); return; }
             if (txtpsswor == '') { alert('El campo del password esta vacía'); return; }
             if (txtmotivoOb == '') { alert('El campo de motivo esta vacía'); return; }
 
             btnInserteaBoton_dos(cadena + ' ' + cadenaUp + ' ', pantalla, f, 1, u, txtUsu, txtpsswor, idpantalla, 47, 2, txtmotivoOb)
-            $('#divcancela').hide()
+            
         }
 
         function pageLoad() {
@@ -71,6 +74,8 @@
 
                 $('#feIni').attr('disabled', true);
                 $('#ctl00_ctl00_cphCuerpo_cphPantallas_cmbguardar1C').hide();
+                $('#btnCancelar').hide();
+                $('#btnCancelarNew').hide();
             } else {
 
                 $('#feIni').datepicker(settingsDate1).attr('readonly', 'true').attr('onkeydown', 'return false');
@@ -159,54 +164,51 @@
         }
     </style>
     <div class="divPantConsul">
-        <div class="fieldsetBBVA">
-            <fieldset class="fieldsetBBVA">
-                <legend>Redes Sociales</legend>
-            </fieldset>
-        </div>
-
-        <br />
-        <table class="fieldsetBBVA" style="width: 100%">
-            <tr>
-                <td class="campos" style="width: 25%">Solicitud:                    
-                </td>
-                <td class="campos" style="width: 25%">
-                    <asp:Label ID="lblSolicitud" Font-Bold="true" Font-Underline="true" runat="server">
-                    </asp:Label>
-                </td>
-                <td class="campos" style="width: 25%">Cliente:                    
-                </td>
-                <td class="campos" style="width: 25%">
-                    <asp:Label ID="lblCliente" Font-Bold="true" Font-Underline="true" runat="server">
-                    </asp:Label>
-                </td>
-            </tr>
-            <tr>
-                <td class="campos">Status Credito:                    
-                </td>
-                <td class="campos">
-                    <asp:Label ID="lblStCredito" Font-Bold="true" Font-Underline="true" runat="server">
-                    </asp:Label>
-                </td>
-                <td class="campos">Status Documentos:                    
-                </td>
-                <td class="campos">
-                    <asp:Label ID="lblStDocumento" Font-Bold="true" Font-Underline="true" runat="server">
-                    </asp:Label>
-                </td>
-            </tr>
-            <tr>
-                <td class="campos">Correo Electrónico:                    
-                </td>
-                <td class="campos">
-                    <asp:Label ID="LblSCorreo" Font-Bold="true" Font-Underline="true" runat="server">
-                    </asp:Label>
-                </td>
-            </tr>
-        </table>
-        <br />
         <fieldset class="fieldsetBBVA">
-            <legend>Encuensta Facebook</legend>
+            <legend>Redes Sociales</legend>
+
+            <table class="fieldsetBBVA" style="width: 100%">
+                <tr>
+                    <td class="campos" style="width: 25%">Solicitud:                    
+                    </td>
+                    <td class="campos" style="width: 25%">
+                        <asp:Label ID="lblSolicitud" Font-Bold="true" Font-Underline="true" runat="server">
+                        </asp:Label>
+                    </td>
+                    <td class="campos" style="width: 25%">Cliente:                    
+                    </td>
+                    <td class="campos" style="width: 25%">
+                        <asp:Label ID="lblCliente" Font-Bold="true" Font-Underline="true" runat="server">
+                        </asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campos">Status Credito:                    
+                    </td>
+                    <td class="campos">
+                        <asp:Label ID="lblStCredito" Font-Bold="true" Font-Underline="true" runat="server">
+                        </asp:Label>
+                    </td>
+                    <td class="campos">Status Documentos:                    
+                    </td>
+                    <td class="campos">
+                        <asp:Label ID="lblStDocumento" Font-Bold="true" Font-Underline="true" runat="server">
+                        </asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campos">Correo Electrónico:                    
+                    </td>
+                    <td class="campos">
+                        <asp:Label ID="LblSCorreo" Font-Bold="true" Font-Underline="true" runat="server">
+                        </asp:Label>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        
+        <fieldset class="fieldsetBBVA">
+            <legend>Encuesta Facebook</legend>
             <div>
                 <table class="resulbbvarigth">
                     <tr>
@@ -240,9 +242,9 @@
                 </table>
             </div>
         </fieldset>
-        <br />
+        
         <fieldset class="fieldsetBBVA">
-            <legend>Encuensta Linkedin</legend>
+            <legend>Encuesta Linkedin</legend>
             <div>
                 <table class="resulbbvarigth">
                     <tr>
@@ -274,77 +276,76 @@
                 </table>
             </div>
         </fieldset>
-        <br />
-        <div id="divcancela" class="cajadialogo" style="display: none; z-index: 1010 !important; position: absolute; background-color: white; top:15%; left:31%; width: 220px;">
-                <div class="tituloConsul">
-                    <asp:Label ID="Label1" runat="server" Text="Cancelación" />
-                </div>
-                <table width="100%">
-                    <tr>
-                        <td class="campos">Usuario:</td>
-                        <td>
-                            <asp:TextBox ID="txtusua" SkinID="txtGeneral" MaxLength="12" runat="server" Style="width: 120px !important;"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="campos">Password:</td>
-                        <td>
-                            <asp:TextBox ID="txtpass" runat="server" SkinID="txtGeneral" MaxLength="12" TextMode="Password" EnableTheming="true" Style="width: 120px !important;"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="campos">Descripción:</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <textarea id="TxtmotivoCan" runat="server" onkeypress="return ValCarac(this.event, 6);" onkeyup="ReemplazaAcentos(event, this.id, this.value);" class="Text" rows="5" cols="1" style="width: 95%"></textarea>
-                        </td>
-                    </tr>
-                    <tr style="width: 100%">
-                        <td>
-                            <asp:HiddenField runat="server" ID="HiddenField1" />
-                        </td>
-                        <td align="left" valign="middle">
-                            <input id="btnGuardarCancelar" type="button" runat="server" value="Guardar" class="Text " onclick="btnGuardar(id)"/>
+
+        <div id="divcancela" class="cajadialogo" style="display: none; z-index: 1010 !important; position: absolute; background-color: white; top: 15%; left: 31%; width: 220px;">
+            <div class="tituloConsul">
+                <asp:Label ID="Label1" runat="server" Text="Cancelación" />
+            </div>
+            <table width="100%">
+                <tr>
+                    <td class="campos">Usuario:</td>
+                    <td>
+                        <asp:TextBox ID="txtusua" SkinID="txtGeneral" MaxLength="12" runat="server" Style="width: 120px !important;"></asp:TextBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campos">Password:</td>
+                    <td>
+                        <asp:TextBox ID="txtpass" runat="server" SkinID="txtGeneral" MaxLength="12" TextMode="Password" EnableTheming="true" Style="width: 120px !important;"></asp:TextBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="campos">Descripción:</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea id="TxtmotivoCan" runat="server" onkeypress="return ValCarac(this.event, 6);" onkeyup="ReemplazaAcentos(event, this.id, this.value);" class="Text" rows="5" cols="1" style="width: 95%"></textarea>
+                    </td>
+                </tr>
+                <tr style="width: 100%">
+                    <td>
+                        <asp:HiddenField runat="server" ID="HiddenField1" />
+                    </td>
+                    <td align="left" valign="middle">
+                        <input id="btnGuardarCancelar" type="button" runat="server" value="Guardar" class="Text " onclick="btnGuardar(id)" />
                         <br />
                         <asp:Button ID="btnCancelCancela" runat="server" Text="Cancelar" SkinID="btnGeneral" />
-                        </td>
-                    </tr>
-                </table>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div class="tituloConsul">
-            <fieldset style="overflow: scroll; height: 120px; overflow-x: hidden">
                 <table id="tbValidarObjetos" class="resulGrid"></table>
-            </fieldset>
         </div>
-    </div>
-    <div class="resulbbvaCenter divAdminCatPie">
-        <table width="100%" style="height: 100%;">
-            <tr>
-                <td align="right" valign="middle">
-                    <asp:Button ID="btnRegresar" runat="server" Text="Regresar" CssClass="buttonSecBBVA2" OnClick="btnRegresar_Click" />
-                    <asp:Button ID="btnLimpiar" runat="server" Text="Limpiar" CssClass="buttonSecBBVA2" OnClick="btnLimpiar_Click" />
-                    <asp:Button runat="server" ID="btnVisor" Text="Visor Documental" CssClass="buttonSecBBVA2" OnClick="btnVisor_Click" />
-                    <input type="button" value="Procesar" class="buttonBBVA2" onclick="Replica()" runat="server" id="cmbguardar1C" />
-                    <asp:Button runat="server" ID="btnCancelar" Text="Cancelar" OnClientClick="mostrarCanceDiv()" CssClass="buttonSecBBVA2" />
-                    <input type="button" value="Cancelar" class="buttonSecBBVA2" onclick="mostrarCanceDiv();" id="btnCancelarNew" />
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div style="visibility: collapse">
-        <asp:Button ID="btnProcesar" runat="server" Text="Procesar" CssClass="buttonBBVA2" OnClick="btnProcesar_Click" />
-        <table>
-            <tr>
-                <td>¿Año de apertura? * </td>
-                <asp:HiddenField runat="server" ID="hfFeIni" />
-                <td>
-                    <input type="text" id="feIni" title="Año de apertura" />
+        <div class="resulbbvaCenter divAdminCatPie">
+            <table width="100%" style="height: 100%;">
+                <tr>
+                    <td align="right" valign="middle">
+                        <asp:Button ID="btnRegresar" runat="server" Text="Regresar" CssClass="buttonSecBBVA2" OnClick="btnRegresar_Click" />
+                        <asp:Button ID="btnLimpiar" runat="server" Text="Limpiar" CssClass="buttonSecBBVA2" OnClick="btnLimpiar_Click" />
+                        <asp:Button runat="server" ID="btnVisor" Text="Visor Documental" CssClass="buttonSecBBVA2" OnClick="btnVisor_Click" />
+                        <input type="button" value="Procesar" class="buttonBBVA2" onclick="Replica()" runat="server" id="cmbguardar1C" />
+                        <asp:Button runat="server" ID="btnCancelar" Text="Cancelar" OnClientClick="mostrarCanceDiv()" CssClass="buttonSecBBVA2" />
+                        <input type="button" value="Cancelar" class="buttonSecBBVA2" onclick="mostrarCanceDiv();" id="btnCancelarNew" />
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-                </td>
-            </tr>
-        </table>
+        <div style="visibility: collapse">
+            <asp:Button ID="btnProcesar" runat="server" Text="Procesar" CssClass="buttonBBVA2" OnClick="btnProcesar_Click" />
+            <table>
+                <tr>
+                    <td>¿Año de apertura? * </td>
+                    <asp:HiddenField runat="server" ID="hfFeIni" />
+                    <td>
+                        <input type="text" id="feIni" title="Año de apertura" />
 
+                    </td>
+                </tr>
+            </table>
+
+        </div>
     </div>
     <asp:HiddenField ID="hdPantalla" runat="server" />
     <asp:HiddenField ID="hdPantalla1" runat="server" />

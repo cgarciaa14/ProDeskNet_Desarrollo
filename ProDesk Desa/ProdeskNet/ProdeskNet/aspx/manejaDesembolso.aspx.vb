@@ -17,6 +17,7 @@
 'BUG-PD-264: RHERNANDEZ: 10/11/17: SE MODIFICO AVANCE DE LA TAREA DEBIDO A QUE YA NO ABRIRA LA TAREA HIBRIDA DE EMISION POLIZAS BBVA
 'BUG-PC-282: RHERNANDEZ: 01/12/17: SE MODIFICO LA PANTALLA DE DESEMBOLSO PARA ADAPTARSE DEPENDIENDO SI ES AUTOMATICA O NO Y SI YA FUE EMITIDA EXTERNAMENTE DEJAR AVANZAR NORMALMENTE
 'RQ-PC7: CGARCIA: 09/04/2018: CAMBIO DE ESTRUCTURA DE WS
+'BUG-PD-446: DCORNEJO: 17/05/18: SE MODIFICO EL METODO WS() PARA OBTENER VALORES DE objDesembolso.ObtenDatosFact(7)
 Imports ProdeskNet.SN
 Imports System.Diagnostics
 Imports System.Data
@@ -206,7 +207,7 @@ Partial Class aspx_manejaDesembolso
 
 
 
-     
+
 
 
         ' ''Else
@@ -277,6 +278,11 @@ Partial Class aspx_manejaDesembolso
             Dim createCarLoanFormalize As createCarLoanFormalize = New createCarLoanFormalize
             Dim objDesembolso As New ProdeskNet.SN.clsFacturacion
             Dim DSWS As DataSet
+            Dim objCatalogos2 As New ProdeskNet.SN.clsCatalogos
+            Dim dtsCatalogos As New DataSet()
+
+            objCatalogos2.Parametro = Request.QueryString("sol")
+            dtsCatalogos = objCatalogos2.Catalogos(25)
 
             objDesembolso.ID_SOLICITUD = Request.QueryString("sol")
             DSWS = objDesembolso.ObtenDatosFact(7)
@@ -328,10 +334,21 @@ Partial Class aspx_manejaDesembolso
                     createCarLoanFormalize.startLoanDate = DSWS.Tables(0).Rows(0).Item("startLoanDate").ToString
 
                     createCarLoanFormalize.extendedData.cbScore.referenceNumber = DSWS.Tables(0).Rows(0).Item("cbScore").ToString
+                    'RQ-PC7: CGARCIA: 09/04/2018: CAMBIO DE ESTRUCTURA DE WS
+                    'createCarLoanFormalize.renewal.renewalIndicator = IIf(dtsCatalogos.Tables(0).Rows(0).Item("renewalIndicator").ToString = String.Empty, String.Empty, dtsCatalogos.Tables(0).Rows(0).Item("renewalIndicator").ToString)
+                    'createCarLoanFormalize.renewal.previousLoanNumber = CStr(dtsCatalogos.Tables(0).Rows(0).Item("previousLoanNumber").ToString)
+                    'BUG-PD-446: DCORNEJO
+                    createCarLoanFormalize.renewal.renewalIndicator = IIf(DSWS.Tables(1).Rows(0).Item("renewalIndicator").ToString = String.Empty, String.Empty, DSWS.Tables(1).Rows(0).Item("renewalIndicator").ToString)
+                    createCarLoanFormalize.renewal.previousLoanNumber = CStr(DSWS.Tables(1).Rows(0).Item("previousLoanNumber").ToString)
 
-                    createCarLoanFormalize.renewal.renewalIndicator = ""
-                    createCarLoanFormalize.renewal.previousLoanNumber = ""
-                    createCarLoanFormalize.renewal.startDateSecondPhase = ""
+                    If DSWS.Tables(0).Rows(0).Item("startDateSecondPhase").ToString = String.Empty Then 'dtsCatalogos.Tables(0).Rows(0).Item("startDateSecondPhase").ToString = String.Empty Then
+                        createCarLoanFormalize.renewal.startDateSecondPhase = ""
+                    Else
+                        Dim strDate As DateTime = CDate(DSWS.Tables(0).Rows(0).Item("startDateSecondPhase").ToString) 'CDate(dtsCatalogos.Tables(0).Rows(0).Item("startDateSecondPhase").ToString)
+                        createCarLoanFormalize.renewal.startDateSecondPhase = strDate.ToString("yyyy-MM-dd")
+                    End If
+
+
 
                     Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer()
                     Dim jsonBODY As String = serializer.Serialize(createCarLoanFormalize)
@@ -358,7 +375,7 @@ Partial Class aspx_manejaDesembolso
                     LogicalTerm = dsTerm.Tables(0).Rows(0).Item("LogicalTerm")
                     AccountTerm = dsTerm.Tables(0).Rows(0).Item("AccountTerm")
 
-                    'Dim jsonResult As String = restGT.ConnectionPost(userID, iv_ticket1, jsonBODY, LogicalTerm, AccountTerm)
+                    Dim jsonResult As String = restGT.ConnectionPost(userID, iv_ticket1, jsonBODY, LogicalTerm, AccountTerm)
                     Dim Header As String = restGT.valorHeader
 
                     If restGT.IsError Then

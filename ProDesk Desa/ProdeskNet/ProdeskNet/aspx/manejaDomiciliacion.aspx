@@ -33,6 +33,8 @@
 <%--BUG-PD-317: DCORNEJO: 21/12/2017:SE OCULTO EL BOTON "Detalle Impagos" --%> 
 <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit---%>
 <%--BUG-PD-370: ERODRIGUEZ: 26/02/2018: Se cambio validación de RFC para que se compare sin homoclave, Se agrego validacion para no permitir procesar sin número de cliente.--%>
+<%--BUG-PD-416: RHERNANDEZ: 12/04/2018: Se ocultan los botones de cancelar cuando la tarea ya fue procesada--%>
+<%--BUG-PD-417  DCORNEJO 17/04/2018: SE AGREGO LA OPCION DE TURNAR A: COTIZACION ANALISTA--%>
 
 
 
@@ -45,9 +47,23 @@
     <script type="text/javascript" language="javascript">
 
         function pageLoad() {
+            var habilitado = getParameterByName('Enable');
+            if (habilitado == 1) {
+
+                $('#ctl00_ctl00_cphCuerpo_cphPantallas_cmbguardar1C').hide();
+                $('#btnCancelar').hide();
+                $('#btnCancelarNew').hide();
+            } else {
+
+
+                $('#ctl00_ctl00_cphCuerpo_cphPantallas_cmbguardar1C').show();
+
+
+            }
 
             var bbva = $('#ctl00_ctl00_cphCuerpo_cphPantallas_ddlBanco').val();
 
+            
             //if (bbva == "017") { $('#ctl00_ctl00_cphCuerpo_cphPantallas_ddlTipoCuenta').val(285).prop("disabled", true); }
             //else { $('#ctl00_ctl00_cphCuerpo_cphPantallas_ddlTipoCuenta').val(0).prop("disabled", false); }
 
@@ -55,6 +71,18 @@
             $("#ctl00_ctl00_cphCuerpo_cphPantallas_ddlBanco").on("change", function () {
                 var SelectedValor = this.value;
             });
+            
+        }
+        function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
         ////funcion para agregar guiones de acuerdo a formato de cfdi
 
@@ -83,7 +111,6 @@
             $("#ctl00_ctl00_cphCuerpo_cphPantallas_ddlBanco").on("change", function () {
                 var SelectedValor = this.value;
             });
-
         });
 
         function FunClave() {
@@ -475,7 +502,11 @@
         <div class="resulbbvaCenter divAdminCatPie">
             <table width="100%" style="height: 100%;">
                 <tr>
-                    <td>
+                    <td align="right" valign="middle">
+                        <label id="lblturnar" runat="server" visible="false">Turnar: </label>
+                        &nbsp;
+                        <asp:DropDownList ID="ddlTurnar" runat="server" CssClass="selectBBVA" Visible="false" OnSelectedIndexChanged="ddlTurnar_SelectedIndexChanged" AutoPostBack="true">
+                        </asp:DropDownList>
                         <%--<asp:Button runat="server" ID="btnRegresar" text="Regresar"   CssClass="buttonSecBBVA2" />--%>
                         <asp:Button runat="server" ID="btnRegresar" Text="Regresar" CssClass="buttonSecBBVA2" OnClick="btnRegresar_Click" />
                         <input type="button" runat="server" id="btnProcesarCliente" value="Procesar" onclick="btnProcesarCliente_click();" class="buttonBBVA2" />
@@ -532,6 +563,7 @@
             <%--</asp:Panel>--%>
         </div>
 
+        
 
     </div>
     <asp:HiddenField ID="hdPantalla" runat="server" />

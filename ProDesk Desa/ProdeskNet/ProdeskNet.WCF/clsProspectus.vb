@@ -1,307 +1,185 @@
-﻿'BBV-P-423: AMR: 14/12/2016 RQSOL-01 Precalificación Brechas (31, 49, 75)
+Imports System.Data.SqlClient
+Imports ProdeskNet.BD
+Imports ProdeskNet.WCF
+Imports ProdeskNet.SN
+
+'BBV-P-423: AMR: 14/12/2016 RQSOL-01 Precalificación Brechas (31, 49, 75)
 'BUG-PD-01: AMR: 22/12/2016: HTTP Error 404 - Not Found al procesar Precalificación.
 'BUG-PD-11:GAPM: 16.02.2017 modificacion de amata
 'BUG-PD-13  GVARGAS  01/03/2017 Cambio WCF Credenciales
+'AUTOMIK-TASK-428 GVARGAS 26/03/2018 Create Class Function
+'AUTOMIK-TASK-435 ERODRIGUEZ 16/04/2018 Validacion para Automik en r1, se permite guardar cuando falle servicio prospector.
 
 Public Class clsProspectus
-
-    Private _strerror As String = String.Empty
-    Private _productCode As String = String.Empty
-    Private _referenceNumber As String = String.Empty
-    Private _amount As String = String.Empty
-    Private _id As String = String.Empty
-    Private _name As String = String.Empty
-    Private _lastName As String = String.Empty
-    Private _mothersLastName As String = String.Empty
-    Private _rfc As String = String.Empty
-    Private _sex As String = String.Empty
-    Private _streetName As String = String.Empty
-    Private _neightborthood As String = String.Empty
-    Private _city As String = String.Empty
-    Private _state As String = String.Empty
-    Private _zipCode As String = String.Empty
-
-    Private _bcc As String = String.Empty
-    Private _icc As String = String.Empty
-    Private _status As String = String.Empty
-
-
-    Public ReadOnly Property Strerror As String
-        Get
-            Return _strerror
-        End Get
-    End Property
-
-    Public Property ProductCode As String
-        Get
-            Return _productCode
-        End Get
-        Set(value As String)
-            _productCode = value
-        End Set
-    End Property
-
-    Public Property ReferenceNumber As String
-        Get
-            Return _referenceNumber
-        End Get
-        Set(value As String)
-            _referenceNumber = value
-        End Set
-    End Property
-
-    Public Property Amount As String
-        Get
-            Return _amount
-        End Get
-        Set(value As String)
-            _amount = value
-        End Set
-    End Property
-
-    Public Property Id As String
-        Get
-            Return _id
-        End Get
-        Set(value As String)
-            _id = value
-        End Set
-    End Property
-
-    Public Property Name As String
-        Get
-            Return _name
-        End Get
-        Set(value As String)
-            _name = value
-        End Set
-    End Property
-
-    Public Property LastName As String
-        Get
-            Return _lastName
-        End Get
-        Set(value As String)
-            _lastName = value
-        End Set
-    End Property
-
-    Public Property MothersLastName As String
-        Get
-            Return _mothersLastName
-        End Get
-        Set(value As String)
-            _mothersLastName = value
-        End Set
-    End Property
-
-    Public Property Rfc As String
-        Get
-            Return _rfc
-        End Get
-        Set(value As String)
-            _rfc = value
-        End Set
-    End Property
-
-    Public Property Sex As String
-        Get
-            Return _sex
-        End Get
-        Set(value As String)
-            _sex = value
-        End Set
-    End Property
-
-    Public Property StreetName As String
-        Get
-            Return _streetName
-        End Get
-        Set(value As String)
-            _streetName = value
-        End Set
-    End Property
-
-    Public Property Neightborthood As String
-        Get
-            Return _neightborthood
-        End Get
-        Set(value As String)
-            _neightborthood = value
-        End Set
-    End Property
-
-    Public Property City As String
-        Get
-            Return _city
-        End Get
-        Set(value As String)
-            _city = value
-        End Set
-    End Property
-
-    Public Property State As String
-        Get
-            Return _state
-        End Get
-        Set(value As String)
-            _state = value
-        End Set
-    End Property
-
-    Public Property ZipCode As String
-        Get
-            Return _zipCode
-        End Get
-        Set(value As String)
-            _zipCode = value
-        End Set
-    End Property
-
-    Public Property Bcc As String
-        Get
-            Return _bcc
-        End Get
-        Set(value As String)
-            _bcc = value
-        End Set
-    End Property
-
-    Public Property Icc As String
-        Get
-            Return _icc
-        End Get
-        Set(value As String)
-            _icc = value
-        End Set
-    End Property
-
-    Public Property Status As String
-        Get
-            Return _status
-        End Get
-        Set(value As String)
-            _status = value
-        End Set
-    End Property
-
-    Public Class cbScore
-        Public productCode As String = String.Empty
-        Public referenceNumber As String = String.Empty
-        Public loanToValue As loanToValue = New loanToValue
-        Public person As person = New person
-    End Class
-
-    Public Class loanToValue
-        Public amount As String = String.Empty
-    End Class
-
-    Public Class person
-        Public id As String = String.Empty
-        Public name As String = String.Empty
-        Public lastName As String = String.Empty
-        Public mothersLastName As String = String.Empty
-        Public extendedData As extendedData = New extendedData
-        Public addresses As List(Of addresses) = New List(Of addresses)
-    End Class
-
-    Public Class extendedData
-        Public rfc As String = String.Empty
-        Public sex As String = String.Empty
-    End Class
-
-    Public Class addresses
-        Public streetName As String = String.Empty
-        Public neightborthood As String = String.Empty
-        Public city As String = String.Empty
-        Public state As String = String.Empty
-        Public zipCode As String = String.Empty
-    End Class
-
-    Public Class msjerr
-        Public message As String
-        Public status As String
-    End Class
-
-    ''Respuesta
-    Public Class jResult
+    Private Class jResult
         Public creditCapacityIndex As creditCapacityIndex = New creditCapacityIndex()
         Public status As String = String.Empty
         Public value As String = String.Empty
     End Class
-    Public Class creditCapacityIndex
+
+    Private Class creditCapacityIndex
         Public value As String
     End Class
 
-    Sub New()
-    End Sub
+    Public Function GetProspector(ByVal Folio As String, ByVal userID As String, ByVal iv_ticket1 As String, ByVal Uri As String, Optional ByVal usu As String = "-1") As String 'ResponseProspector
+        Dim automik As Integer = 0
+        If usu = "-1" Then
+            usu = "1"
+            automik = 1
+        End If
 
-    Public Function GetProspector() As Boolean
+        Dim Response As ResponseProspector = New ResponseProspector()
+        Dim srrSerialer As New System.Web.Script.Serialization.JavaScriptSerializer()
+
         Try
-            GetProspector = False
-            Dim objpros As New cbScore()
-            Dim resp As jResult
+            Dim Params As List(Of Params_BD) = New List(Of Params_BD)()
+            Dim Param As Params_BD = New Params_BD()
 
-            objpros.productCode = _productCode
-            objpros.referenceNumber = _referenceNumber
-            objpros.loanToValue.amount = _amount
+            Param.Name = "PDK_ID_SECCCERO"
+            Param.Value = Folio
+            Params.Add(Param)
 
-            objpros.person.id = _id
-            objpros.person.name = _name
-            objpros.person.lastName = _lastName
-            objpros.person.mothersLastName = _mothersLastName
+            Param = New Params_BD()
+            Param.Name = "AUTOMIK"
+            Param.Value = Folio
+            Params.Add(Param)
 
-            objpros.person.extendedData.rfc = _rfc
-            objpros.person.extendedData.sex = _sex
+            Dim VALIDA_PROSPECTOR As Boolean = Int32.Parse(get_JSON_BySP("getAgenciaBySol", Params))
 
-            Dim lsAddress As addresses = New addresses()
-            lsAddress.streetName = _streetName
-            lsAddress.neightborthood = _neightborthood
-            lsAddress.city = _city
-            lsAddress.state = _state
-            lsAddress.zipCode = _zipCode
-            objpros.person.addresses.Add(lsAddress)
+            Params = New List(Of Params_BD)()
+            Param = New Params_BD()
+            Param.Name = "PDK_ID_SECCCERO"
+            Param.Value = Folio
+            Params.Add(Param)
 
-            Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer()
-            Dim jsonBODY As String = serializer.Serialize(objpros)
+            Dim jsonBODY As String = get_JSON_BySP("get_Info_Prospector_sp", Params)
 
-            Dim userID As String = CType(System.Web.HttpContext.Current.Session.Item("userID"), String)
-            Dim iv_ticket1 As String = CType(System.Web.HttpContext.Current.Session.Item("iv_ticket"), String)
             Dim restGT As RESTful = New RESTful()
-            restGT.Uri = System.Configuration.ConfigurationManager.AppSettings.Item("url") & System.Configuration.ConfigurationManager.AppSettings.Item("Prospectus")
-            'restGT.consumerID = "10000004" '"10000024"
+            restGT.Uri = Uri
 
-            restGT.buscarHeader("ResponseWarningDescription")
+            If automik = 1 Then
+                restGT.automikRequest = True
+            End If
 
             Dim jsonResult As String = restGT.ConnectionPost(userID, iv_ticket1, jsonBODY)
 
-            Dim str As String = restGT.valorHeader
 
-            Dim srrSerialer As New System.Web.Script.Serialization.JavaScriptSerializer()
+            Params = New List(Of Params_BD)()
+            Param = New Params_BD()
+            Param.Name = "PDK_ID_SECCCERO"
+            Param.Value = Folio
+            Params.Add(Param)
 
+            Param = New Params_BD()
+            Param.Name = "PAYLOAD_ENVIO"
+            Param.Value = jsonBODY
+            Params.Add(Param)
 
             If restGT.IsError Then
-                _strerror = IIf(restGT.StatusHTTP = 500, "Error al consultar Servicio Web: ", "Mensaje del Servicio Web: ") & restGT.MensajeError & ". Estatus:" & restGT.StatusHTTP
-                Exit Function
-            Else
-                resp = srrSerialer.Deserialize(Of jResult)(jsonResult)
-                If resp.status = "APROBADO" Then
-                    _icc = resp.creditCapacityIndex.value
-                    _bcc = resp.value
-                    _state = resp.status
-                    _status = resp.status
-                Else
-                    _icc = resp.creditCapacityIndex.value
-                    _bcc = resp.value
-                    _state = resp.status
-                    _status = resp.status
-                End If
-                GetProspector = True
-            End If
+                Response.Message = IIf(restGT.StatusHTTP = 500, "Error al consultar Servicio Web: ", "Mensaje del Servicio Web: ") & restGT.MensajeError & ". Estatus:" & restGT.StatusHTTP
+                Response.Code = "ERROR"
+                Response.Path = 0
 
+                Param = New Params_BD()
+                Param.Name = "PAYLOAD_RESPUESTA"
+                Param.Value = restGT.MensajeError + "; " + jsonResult
+                Params.Add(Param)
+
+                Dim saved As String = get_JSON_BySP("get_Info_Prospector_sp", Params)
+            Else
+                Dim resp As jResult = srrSerialer.Deserialize(Of jResult)(jsonResult)
+
+                Dim icc_ As String = resp.creditCapacityIndex.value
+                Dim bcc_ As String = resp.value
+                Dim state_ As String = resp.status
+
+                If ((bcc_ Is Nothing) Or (bcc_ = "")) Then
+                    bcc_ = "-9.00"
+                End If
+
+                If ((icc_ Is Nothing) Or (icc_ = "")) Then
+                    icc_ = "-3.00"
+                End If
+
+                Dim objupd As New ProdeskNet.SN.clsActualizaBuro()
+
+                Dim r1 As Integer = objupd.actREPORTE_SCORE(Folio, icc_, bcc_, usu)
+                Dim r2 As Integer = objupd.actDICTAMEN_FINAL(Folio, icc_, bcc_, usu)
+                If automik Then 'checar esta validacion que se hizo para automik por no haber registro en la tabla PDK_BURO_REPORTE_SCORE
+                    If r1 <= 0 Then
+                        r1 = 1
+                    End If
+                End If
+
+                If r1 > 0 And r2 > 0 Then
+                    If state_ = "APROBADO" Or VALIDA_PROSPECTOR = False Then
+                        Response.Message = state_
+                        Response.Code = "OK"
+                        Response.Path = 2
+                    Else
+                        Response.Message = "No viable"
+                        Response.Code = "ERROR"
+                        Response.Path = 1
+                    End If
+                Else
+                    Response.Message = "Error al actualizar información."
+                    Response.Code = "ERROR"
+                    Response.Path = 0
+                End If
+
+                Param = New Params_BD()
+                Param.Name = "PAYLOAD_RESPUESTA"
+                Param.Value = jsonResult
+                Params.Add(Param)
+
+                Dim saved As String = get_JSON_BySP("get_Info_Prospector_sp", Params)
+            End If
         Catch ex As Exception
-            Return _strerror = ex.Message
+            Response.Message = ex.Message.ToString().Replace(vbCr, "").Replace(vbLf, "").Replace("'", "")
+            Response.Code = "ERROR"
+            Response.Path = 0
         End Try
+
+        Return srrSerialer.Serialize(Response)
     End Function
 
+    Private Function get_JSON_BySP(ByVal SP_Name As String, ByVal Params As List(Of Params_BD)) As String
+        Dim JSON_Result_Str As String = String.Empty
+
+        Dim sqlConnection1 As New SqlConnection(System.Configuration.ConfigurationManager.AppSettings("Conexion").ToString())
+        Dim cmd As New SqlCommand
+        Dim reader As SqlDataReader
+
+        Try
+            cmd.CommandText = SP_Name.ToString()
+            cmd.CommandType = CommandType.StoredProcedure
+
+            For Each Param As Params_BD In Params
+                cmd.Parameters.AddWithValue("@" + Param.Name, Param.Value.ToString())
+            Next
+
+            cmd.Connection = sqlConnection1
+            sqlConnection1.Open()
+            reader = cmd.ExecuteReader()
+
+            Do While reader.Read()
+                JSON_Result_Str = reader(0).ToString()
+            Loop
+        Catch ex As Exception
+            JSON_Result_Str = ex.ToString().Replace(vbCr, "").Replace(vbLf, "").Replace("'", "")
+        End Try
+
+        Return JSON_Result_Str
+    End Function
+
+    Private Class Params_BD
+        Public Name As String
+        Public Value As String
+    End Class
+
+    Public Class ResponseProspector
+        Public Code As String
+        Public Message As String
+        Public Path As Integer
+    End Class
 End Class

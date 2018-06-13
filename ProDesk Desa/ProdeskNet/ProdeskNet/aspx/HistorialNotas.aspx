@@ -6,7 +6,7 @@
 <%--BUG-PD-268: RIGLESIAS: 10/11/2017: Se agrego el filtro de buscar solicitud  y boton de limpiar.--%>
 <%--BUG-PD-303: DCORNEJO: 13/12/2017: Se movio de seccion la parte del filtro que constan de la caja de texto y los botones Buscar y Limpiar--%>
 <%--RQ-PI7-PD13-3: ERODRIGUEZ: 21/12/2017: Se oculto Estatus de actividad--%>
-
+<%--BUG-PD-438 : egonzalez : 08/05/2018 Se agrega el botón de "Limpiar"--%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPantallas" runat="Server">
     <script type="text/javascript" src="../js/Funciones.js"></script>
@@ -85,7 +85,7 @@
                             OnClick="btnBuscaNota_Click" />        
                         </td>
                         <td style="width: 20%;" align="left" valign="middle">
-                        <asp:Button runat="server" ID="Button1" Text="Limpiar" CssClass="buttonBBVA2" OnClick=Button2_Click />  
+                        <input id="btnCleanClient" class="buttonBBVA2" onclick="location.reload(true);" value="Limpiar" type="button">
                      </td>
                     </tr>
                 </thead>

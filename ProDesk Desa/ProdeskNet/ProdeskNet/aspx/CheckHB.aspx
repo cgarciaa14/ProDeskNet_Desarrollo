@@ -215,7 +215,7 @@
             });
             //'BUG-PD-: CGARCIA: 31/10/2017: LINK DE REPORTES EN LA CONSULTA DE DETALLES DE CELULAR, TELEFONO Y RFC
             function showDetails(id_label, sol) {
-                
+                debugger;
                 var idPantalla = $.urlParam("idPantalla").toString();
                 var settings = {
                     type: "POST", url: "CheckHB.aspx/getDetails", async: false, data: "{'id': '" + id_label + "', 'sol': '" + sol + "', 'Pantalla': '" + idPantalla + "'}",

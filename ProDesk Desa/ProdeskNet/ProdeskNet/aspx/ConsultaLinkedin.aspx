@@ -14,6 +14,7 @@
 <%--BUG-PD-199: RHERNANDEZ: 24/08/17 SE MODIFICA CARGA DE ARCHIVOS PARA ABRIR VISOR TELEPRO--%>
 <%--BUG-PD-247 JBEJAR 27/10/2017 SE AGREGA CORREO ELECTRONICO Y VISOR DOCUMENTAL.--%>
 <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
+<%--BUG-PD-416: RHERNANDEZ: 12/04/2018: Se ocultan los botones de cancelar cuando la tarea ya fue procesada--%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPantallas" runat="Server">
     <script src="../js/jquery.ui.widget.js"></script>
@@ -62,6 +63,8 @@
             if (habilitado == 1) {
 
                 $('#ctl00_ctl00_cphCuerpo_cphPantallas_cmbguardar1C').hide();
+                $('#btnCancelar').hide();
+                $('#btnCancelarNew').hide();
             } else {
 
 

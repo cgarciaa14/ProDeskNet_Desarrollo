@@ -6,19 +6,48 @@
 ' BUG-PD-249 GVARGAS 26/10/2017 Cierre de session cambio general
 ' RQ-PD28: DJUAREZ: 27/02/2018 Se modifica el visor para mostrar varios documentos en una pantalla
 ' RQ-PD31: DJUAREZ: 08/03/2018: SE CREA POPUP PARA MODIFICAR LA COLONIA CUANDO SE GUARDE LA COLONIA "OTRO"
-
+' RQ-PD34: JMENDIETA: 03/05/2018: Se agrega un token de acceso para la visualizacion de documentos. 
+' BUG-PD-437: ERODRIGUEZ: 07/05/2018: Se realiza el cambio de estatus del usuario y la desasignacion de folios segun el perfil.
 Imports System.Data.SqlClient
 Imports System.Data
+Imports ProdeskNet.WCF
 
 Public Class inicio
     Inherits System.Web.UI.Page
 
     <System.Web.Services.WebMethod()> _
     Public Shared Function getDocument_1(ByVal id_document As String, ByVal folio As String) As String
-        Dim uri As String = System.Configuration.ConfigurationManager.AppSettings("Archiving").ToString()
-        
-        uri = uri + id_document
-        Return uri
+     'RQ-PD34 INI
+        Dim uri As String = String.Empty
+        Dim mensajeError As String = String.Empty
+        Dim clsGenerarToken As New clsGenerarToken
+        Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer()
+        serializer.MaxJsonLength = Int32.MaxValue
+
+
+        Try
+            uri = System.Configuration.ConfigurationManager.AppSettings("Archiving").ToString()
+            uri = uri.Replace("FOLIOS", id_document)
+            uri = uri.Replace("VALUE_TOKEN", clsGenerarToken.ObtenerToken())
+
+            If Not String.IsNullOrEmpty(clsGenerarToken.StrError) Then
+                mensajeError = clsGenerarToken.StrError
+            End If
+
+        Catch ex As Exception
+            uri = uri.Replace("VALUE_TOKEN", String.Empty)
+            mensajeError = ex.Message
+        End Try
+
+
+        Dim objectResult = New With
+            {
+                Key .mensajeError = mensajeError,
+                Key .uri = uri
+            }
+
+        Return serializer.Serialize(objectResult)
+        'RQ-PD34 FIN
     End Function
 
     <System.Web.Services.WebMethod()> _
@@ -325,6 +354,17 @@ Public Class inicio
             Link = "salir.aspx"
             vars = ""
         End If
+
+        Dim userID As String = CType(System.Web.HttpContext.Current.Session.Item("cveUsuAcc"), String)
+        Dim datauser As DataSet = ProdeskNet.Seguridad.clsUsuario.obtenerValidadUsuario(userID, 1, 0)
+        If Not IsNothing(datauser) AndAlso datauser.Tables.Count > 0 AndAlso datauser.Tables(0).Rows.Count() > 0 Then
+         
+            If Not IsNothing(datauser.Tables(0).Rows(0).Item("PDK_ID_USUARIO")) Then
+                Dim datacierre As DataSet = ProdeskNet.Seguridad.clsUsuario.CierraSesionEstatus(datauser.Tables(0).Rows(0).Item("PDK_ID_USUARIO"))
+            End If
+    
+        End If
+       
         Return url + Link + vars
     End Function
 

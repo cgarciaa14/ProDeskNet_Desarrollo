@@ -1,6 +1,10 @@
 ﻿'RQ-PD21: JMENDIETA: 13/02/2018: Se crea el aspx con la fusión de Consulta Imax y Antifraude Basico Riesgo
 'RQ-PD21-2: JMENDIETA: 27/02/2018: Se agrega funcionalidad para impagos.
 'BUG-PD-384 DCORNEJO 07/03/2018: Modificacion de los objetos para obtener una respuesta mas acertada en Impago y Riesgo-->08/03/18 Se agrega Monto Financiero
+'BUG-PD-422 :JMENDDIETA 17/04/2018: Se cambia la estructura de la url para tareas automaticas.
+'BUG-PD-387 GVARGAS 21/05/2018 Save Homoclave from WS.
+
+'BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.
 Imports ProdeskNet.Catalogos
 Imports System.Data
 Imports ProdeskNet.SN
@@ -475,6 +479,7 @@ Partial Class aspx_ImaxAntifraude
                     Dim evaluacionRiesgo = Riesgo(person_.person.id)
                     client.Riesgo = evaluacionRiesgo.Riesgo
                     client.Impago = evaluacionRiesgo.Impago
+                    client.Homoclave = RFC_byWS.Replace(solicitante_info(3).ToUpper(), "")
 
                     listBBVANumClient.Add(client)
                 End If
@@ -730,7 +735,7 @@ Partial Class aspx_ImaxAntifraude
 
     Private Sub insertIntoAntiRiesgo(ByVal folio_id As String, ByVal Cliente As Cliente)
         Dim query As StringBuilder = New StringBuilder()
-        query.Append("INSERT INTO PDK_TAB_ANTIFRAUDE_RIESGO ( PDK_ID_SECCCERO, Cta_BBVA , Riesgo, Domicilio, Fecha_Open_Count, PreAprovado, Monto_Pre, Impago ) VALUES (")
+        query.Append("INSERT INTO PDK_TAB_ANTIFRAUDE_RIESGO ( PDK_ID_SECCCERO, Cta_BBVA , Riesgo, Domicilio, Fecha_Open_Count, PreAprovado, Monto_Pre, Impago, Homoclave ) VALUES (")
         query.Append(folio_id + ", ")
         query.Append("'" + Cliente.Cta_BBVA + "', ")
         query.Append("'" + Cliente.Riesgo + "', ")
@@ -738,7 +743,8 @@ Partial Class aspx_ImaxAntifraude
         query.Append("'" + Cliente.Fecha_Open_Count + "', ")
         query.Append("'" + Cliente.PreAprovado + "', ")
         query.Append("'" + Cliente.Monto_Pre + "', ")
-        query.Append("'" + Cliente.Impago + "' )")
+        query.Append("'" + Cliente.Impago + "', ")
+        query.Append("'" + Cliente.Homoclave + "' )")
 
         Dim sqlConnection1 As New SqlConnection(System.Configuration.ConfigurationManager.AppSettings("Conexion").ToString())
         Dim cmd As New SqlCommand
@@ -847,8 +853,14 @@ Partial Class aspx_ImaxAntifraude
             dc.idSolicitud = Request("sol")
             dc.getDatosSol()
 
+
+            Dim strLocation As String = String.Empty '
+
             If muestrapant = 0 Then
-                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "AbreError", "PopUpLetreroRedirect('" & mensaje & "', '" & "../aspx/" & dslink.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString & "?idPantalla=" & dslink.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString & "&sol=" & Val(Request("Sol")).ToString & "&usu=" & Val(Request("usu")).ToString & "');", True)
+                'ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "AbreError", "PopUpLetreroRedirect('" & mensaje & "', '" & "../aspx/" & dslink.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString & "?idPantalla=" & dslink.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString & "&sol=" & Val(Request("Sol")).ToString & "&usu=" & Val(Request("usu")).ToString & "');", True) BUG-PD-422
+                strLocation = ("../aspx/" & dslink.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString & "?idPantalla=" & dslink.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString & "&sol=" & Val(Request("Sol")).ToString & "&usuario=" & Val(Request("usuario")).ToString) ''BUG-PD-422
+                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True) 'BUG-PD-422
+
             ElseIf muestrapant = 2 Then
                 If (intRechazo = 0) Then
                     Dim dcc As New ProdeskNet.Catalogos.clsDatosCliente
@@ -897,6 +909,29 @@ Partial Class aspx_ImaxAntifraude
         End Try
     End Sub
 
+    <System.Web.Services.WebMethod()> _
+    Public Shared Function getBack(ByVal id As String, ByVal docType As String, ByVal folio As String, ByVal Check_VAL As String, ByVal Check_REC As String, ByVal Checked As String) As String
+        Dim respuesta As String = String.Empty
+        Dim clsDoc As clsDocumentos = New clsDocumentos
+        Dim dsDatos As DataSet
+
+        clsDoc.id = id
+        clsDoc.docType = docType
+        clsDoc.folio = folio
+        clsDoc.Check_VAL = Check_VAL
+        clsDoc.Check_REC = Check_REC
+        clsDoc.Checked = Checked
+
+        dsDatos = clsDoc.getActualizaDatosDocumentos(1)
+
+        If (dsDatos.Tables.Count > 1 AndAlso dsDatos.Tables(0).Rows.Count > 0 AndAlso dsDatos.Tables(1).Rows.Count > 0 AndAlso dsDatos.Tables(1).Rows(0).Item("RESULTADO").ToString <> String.Empty) Then
+            respuesta = CStr(dsDatos.Tables(1).Rows(0).Item("RESULTADO").ToString)
+
+        End If
+
+        Return respuesta
+    End Function
+
 #Region "Internal Class"
     Public Class ClienteBBVA_
         Public cliente As Boolean
@@ -921,6 +956,7 @@ Partial Class aspx_ImaxAntifraude
         Public PreAprovado As String
         Public Monto_Pre As String
         Public Impago As String
+        Public Homoclave As String
     End Class
 
     Public Class listCostumerClass_sinEnie

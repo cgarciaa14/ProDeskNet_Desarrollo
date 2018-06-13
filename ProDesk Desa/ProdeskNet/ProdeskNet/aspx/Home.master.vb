@@ -12,6 +12,7 @@ Imports System.Data
 ' RQ-PI7-PD13-3: ERODRIGUEZ: 21/12/2017: Se oculto Estatus de actividad
 ' RQ-PI7-PD13-4: ERODRIGUEZ: 10/01/2017: se verifica si el parametro del balanceador esta activo
 ' BUG-PD-351: ERODRIGUEZ: 31/01/2018: Se valida cuando sea nulo el estatus de activo del usuario.
+' BUG-PD-437: ERODRIGUEZ: 07/05/2018: Se quita funcion para cerrar sesion.
 #End Region
 
 Public Class aspx_Home
@@ -356,9 +357,9 @@ Public Class aspx_Home
     End Sub
     'MsjErrorRedirect
 
-    Protected Sub ButtonHideSalir_Click(sender As Object, e As EventArgs)
-        If (hdidUsuario.Value > 0) Then
-            Dim datacierre As DataSet = ProdeskNet.Seguridad.clsUsuario.CierraSesionEstatus(hdidUsuario.Value)
-        End If
-    End Sub
+    'Protected Sub ButtonHideSalir_Click(sender As Object, e As EventArgs)
+    '    If (hdidUsuario.Value > 0) Then
+    '        Dim datacierre As DataSet = ProdeskNet.Seguridad.clsUsuario.CierraSesionEstatus(hdidUsuario.Value)
+    '    End If
+    'End Sub
 End Class

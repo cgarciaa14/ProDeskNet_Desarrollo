@@ -1,7 +1,11 @@
 ﻿Imports System.Text
+Imports System.Data
 
 Public Class clsDocumentos
     '-------------------------- INICIO PDK_CAT_DOCUMENTOS-------------------------- 
+#Region "Trakers"
+    'BUG-PD-423: CGARCIA: 23/04/2018: SE AGREGA METODO PARA ACTUALIZAR INFO DE DOCUMENTOS 
+#End Region
 #Region "Variables"
     Private intPDK_ID_DOCUMENTOS As Integer = 0
     Private strPDK_DOC_NOMBRE As String = String.Empty
@@ -12,8 +16,77 @@ Public Class clsDocumentos
     Private intPDK_ID_REL_DOC_PER_JUR As Integer = 0
     Private intPDK_CAT_DOCPRODOC As Integer = 0
 
+    Private _id As Integer = 0
+    Private _doctType As String = String.Empty
+    Private _folio As Integer = 0
+    Private _Check_VAL As Integer = 0
+    Private _Check_REC As Integer = 0
+    Private _Checked As Boolean = False
+
+    Private strErrCatalogos As String
+             
+
 #End Region
 #Region "Propiedades"
+
+    Sub New()
+        ' TODO: Complete member initialization 
+    End Sub
+
+    Public Property id() As Integer
+        Get
+            Return _id
+        End Get
+        Set(value As Integer)
+            _id = value
+        End Set
+    End Property
+
+    Public Property docType() As String
+        Get
+            Return _doctType
+        End Get
+        Set(value As String)
+            _doctType = value
+        End Set
+    End Property
+
+    Public Property folio() As Integer
+        Get
+            Return _folio
+        End Get
+        Set(value As Integer)
+            _folio = value
+        End Set
+    End Property
+
+    Public Property Check_VAL() As Integer
+        Get
+            Return _Check_VAL
+        End Get
+        Set(value As Integer)
+            _Check_VAL = value
+        End Set
+    End Property
+
+    Public Property Check_REC() As Integer
+        Get
+            Return _Check_REC
+        End Get
+        Set(value As Integer)
+            _Check_REC = value
+        End Set
+    End Property
+
+    Public Property Checked() As Boolean
+        Get
+            Return _Checked
+        End Get
+        Set(value As Boolean)
+            _Checked = value
+        End Set
+    End Property
+
 
     Public Property PDK_CAT_DOCPRODOC() As Integer
         Get
@@ -83,7 +156,6 @@ Public Class clsDocumentos
             intPDK_ID_REL_DOC_PER_JUR = value
         End Set
     End Property
-
 
 #End Region
 #Region "Metodos"
@@ -238,6 +310,35 @@ Public Class clsDocumentos
             Throw New Exception("Error al actualizar PDK_CAT_DOCUMENTOS")
         End Try
     End Sub
+
+    'BUG-PD-423: CGARCIA: 23/04/2018: SE AGREGA METODO PARA ACTUALIZAR INFO DE DOCUMENTOS 
+    Public Function getActualizaDatosDocumentos(ByVal opcion As Integer) As DataSet
+        Dim BD As New ProdeskNet.BD.clsManejaBD
+        Dim ManejaDatosDoc As New DataSet
+        Try
+            BD.AgregaParametro("@opcion", ProdeskNet.BD.TipoDato.Entero, opcion)
+            Select Case opcion
+                Case 1
+                    BD.AgregaParametro("@id", ProdeskNet.BD.TipoDato.Entero, id)
+                    BD.AgregaParametro("@docType", ProdeskNet.BD.TipoDato.Cadena, docType)
+                    BD.AgregaParametro("@folio", ProdeskNet.BD.TipoDato.Entero, folio)
+                    BD.AgregaParametro("@Check_VAL", ProdeskNet.BD.TipoDato.Entero, Check_VAL)
+                    BD.AgregaParametro("@Check_REC", ProdeskNet.BD.TipoDato.Entero, Check_REC)
+                    BD.AgregaParametro("@Checked", ProdeskNet.BD.TipoDato.Booleano, Checked)
+
+            End Select
+            ManejaDatosDoc = BD.EjecutaStoredProcedure("SPD_PROCESO_DOCUMENTOS")
+
+            If (BD.ErrorBD) <> "" Then
+                strErrCatalogos = BD.ErrorBD            
+            End If
+            Return ManejaDatosDoc
+        Catch ex As Exception
+            strErrCatalogos = ex.Message
+            Throw New Exception(strErrCatalogos)
+        End Try
+    End Function
+
 #End Region
     '-------------------------- FIN PDK_CAT_DOCUMENTOS-------------------------- 
 

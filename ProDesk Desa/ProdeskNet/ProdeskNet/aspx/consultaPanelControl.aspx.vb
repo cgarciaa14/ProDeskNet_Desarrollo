@@ -9,6 +9,8 @@ Imports ProdeskNet.Seguridad
 'BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit
 'BUG-PD-369 GVARGAS 23/02/2018 Correccion panel avoid Ajax Tool Kit Paginar
 'BUG-PD-375:MPUESTO:28/02/2018:Omisión de Stored Procedure que revive las solicitudes en tareas automaticas, este proceso se pasa al SP.
+'BUG-PD-403: RHERNANDEZ: 20/03/2018: Se agrega evento de javascript para ocultar ventana de task en el panel de control
+'BUG-PD-429: ERODRIGUEZ: 25/04/2018: Se agrego funcion para verificar la asignacion de solicitudes a usuarios.
 Partial Class aspx_consultaPanelSeguimiento
     Inherits System.Web.UI.Page
     Dim _dtsResult As DataSet
@@ -43,6 +45,7 @@ Partial Class aspx_consultaPanelSeguimiento
             LoadOptions()
             LoadParams()
         End If
+        UpdateSolByUser()
         LoadPanel()
     End Sub
 
@@ -199,7 +202,7 @@ Partial Class aspx_consultaPanelSeguimiento
 
     Public Function GetImageEvent(ByVal taskNumber As Object, ByVal taskLink As Object, ByVal taskStatus As Object, screenNumber As Object) As String
         Dim imgEvent As String
-        imgEvent = "window.location.href = ""./" & taskLink.ToString().Replace("PANT_", "")
+        imgEvent = "HideTasks(); window.location.href = ""./" & taskLink.ToString().Replace("PANT_", "")
         imgEvent += "?idPantalla=" & screenNumber.ToString()
         imgEvent += "&pantalla=" & screenNumber.ToString()
         imgEvent += "&idFolio=" & taskNumber.ToString()
@@ -208,7 +211,7 @@ Partial Class aspx_consultaPanelSeguimiento
         imgEvent += "&solicitud=" & taskNumber.ToString()
         imgEvent += "&Enable=" & IIf(Convert.ToInt32(taskStatus) = 40, "0", "1")
         imgEvent += "&usuario=" & idUsuario
-        imgEvent += "&usu=" & idUsuario & """"
+        imgEvent += "&usu=" & idUsuario & """;"
         Return imgEvent
     End Function
 
@@ -223,7 +226,7 @@ Partial Class aspx_consultaPanelSeguimiento
         _dtsResult = New DataSet()
         _clsManejaBD = New ProdeskNet.BD.clsManejaBD()
         _clsManejaBD.AgregaParametro("@PDK_ID_SOLICITUD", ProdeskNet.BD.TipoDato.Entero, taskValue, False)
-        '_dtsResult = _clsManejaBD.EjecutaStoredProcedure("update_Task_Blocked_SP")
+        _dtsResult = _clsManejaBD.EjecutaStoredProcedure("update_Task_Blocked_SP")
 
         _dtsResult = New DataSet()
         _clsManejaBD = New ProdeskNet.BD.clsManejaBD()
@@ -317,4 +320,17 @@ Partial Class aspx_consultaPanelSeguimiento
         System.Web.HttpContext.Current.Session.Item("Paginator") = id_Paginador
         Return id_Paginador
     End Function
+
+    Private Sub UpdateSolByUser()
+        _clsManejaBD = New ProdeskNet.BD.clsManejaBD()
+        _dtsResult = New DataSet()
+
+        _clsManejaBD.AgregaParametro("@IDSOLICITUD", ProdeskNet.BD.TipoDato.Entero, vbNull, False)
+        _clsManejaBD.AgregaParametro("@usuario", ProdeskNet.BD.TipoDato.Entero, idUsuario, False)
+        _clsManejaBD.AgregaParametro("@OPCION", ProdeskNet.BD.TipoDato.Entero, 8, False)
+        _clsManejaBD.AgregaParametro("@IDPERFILSIGUITAR", ProdeskNet.BD.TipoDato.Entero, vbNull, False)
+        _clsManejaBD.AgregaParametro("@usrAsignado", ProdeskNet.BD.TipoDato.Entero, 0, False)
+        _dtsResult = _clsManejaBD.EjecutaStoredProcedure("spManejaTareaUsuario")
+
+    End Sub
 End Class

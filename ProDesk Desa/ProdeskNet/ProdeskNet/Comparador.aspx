@@ -2,6 +2,7 @@
 <!--BUG-PD-24  GVARGAS  29/03/2017 Bugs Campos Desabilitados en Pre si la SOL se regresa-->
 <!--BUG-PD-29 JRHM 10/04/17 Se modifica generacion de urls del visor-->
 <!--RQ-PD28: DJUAREZ: 27/02/2018 Se modifica el visor para mostrar varios documentos en una pantalla-->
+<!--RQ-PD34: JMENDIETA: 03/05/2018: Se crea nuevo metodo para visualizar los documentos con la obtencion de token de autenticacion.-->
 
 <%@ Page Language="VB" AutoEventWireup="false" CodeFile="Comparador.aspx.vb" Inherits="Comparadoraspx" %>
 
@@ -69,7 +70,7 @@
 		        //var destino = "../ProdeskNet/aspx/inicio.aspx/getDocument_1";
 		        //var destino = "../aspx/inicio.aspx/getDocument_1";
 		        var destino = window.location.origin.toString() + window.location.pathname.toString().replace("Comparador.aspx", "aspx/inicio.aspx/getDocument_1");
-		        var successfully = OnSuccessGetDocumento_1;
+		        var successfully = OnSuccessGetDocumentoConToken;//OnSuccessGetDocumento_1; //RQ-PD34
 		        var datos = '{ "id_document": "' + id_document.toString() + '", "folio" : "' + folio.toString() + '" }';
 		        jsonBack('No fue posible cargar el documento.', destino, successfully, datos);
 		    }
@@ -81,6 +82,22 @@
 		        $("#viewer_1").html(frame_1.toString() + response.d.toString() + frame_1_1.toString());
 		        $('iframe #frame1').contents().find("head").append($("<style type='text/css'> GERARDO my-class {display:none;}  </style>"));
 		    }
+
+		    //RQ-PD34 INI
+		    function OnSuccessGetDocumentoConToken(response) {
+		        var resObj = JSON.parse(response.d.toString())
+
+		        if (resObj.mensajeError) {
+		            alert(resObj.mensajeError)
+		        }
+		        var frame_1 = "<iframe style='width: 100%; height: 550px;' src='";
+		        var frame_1_1 = "' name='frame1' id='frame1' frameborder='0' marginwidth='0' marginheight='0' scrolling='auto' allowtransparency='false'></iframe>";
+		        $("#viewer_1").html("");
+		        $("#viewer_1").html(frame_1.toString() + resObj.uri + frame_1_1.toString());
+		        $('iframe #frame1').contents().find("head").append($("<style type='text/css'> GERARDO my-class {display:none;}  </style>"));
+		    }
+		    //RQ-PD34 FIN
+
 
 		    function getdocumento_2(id_document) {
 		        //var destino = "../ProdeskNet/aspx/inicio.aspx/getDocument_2";

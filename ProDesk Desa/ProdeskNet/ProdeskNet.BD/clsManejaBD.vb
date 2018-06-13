@@ -294,7 +294,7 @@ Public Enum TipoDato
     Flotante = 3
     Fecha = 4
     FechaHora = 5
-    Booleano = 6    
+    Booleano = 6
 End Enum
 
 

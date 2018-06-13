@@ -8,6 +8,7 @@
 'BUG-PD-195 GVARGAS 22/08/2017 Modiify message when Cliente Indeseable
 'BUG-PD-313: DJUAREZ: 27/12/2017: Se evita el avanzar tareas cuando se presiona F5 cuando esta cargando una pagina.
 'BUG-PD-373 GVARGAS 01/03/2018 Cancelar tareas Create Costumer Status Credito rechazo por politicas
+'BUG-PD-414 GVARGAS 24/04/2018 New Fields Update
 
 Imports System.Data
 Imports System.Data.SqlClient
@@ -625,10 +626,18 @@ Partial Class aspx_CreateCustomer
         Public identityDocument As List(Of identityDocument1) = New List(Of identityDocument1)()
         Public legalAddress As legalAddress1 = New legalAddress1()
         Public economicData As economicData1 = New economicData1()
+        Public country As genericID = New genericID()
     End Class
 
     Public Class extendedData1
         Public legalGroup As String
+        Public maritalStatus As genericID = New genericID()
+        Public birthPlace As birthPlaceInfo = New birthPlaceInfo()
+    End Class
+
+    Public Class birthPlaceInfo
+        Public state As genericID = New genericID()
+        Public country As genericID = New genericID()
     End Class
 
     Public Class identityDocument1
@@ -679,6 +688,7 @@ Partial Class aspx_CreateCustomer
         Public domiciledPaymentIndicator As String
         Public domiciledReceiptsIndicator As String
         Public economicSpin As economicSpin1 = New economicSpin1()
+        Public schoolingLevel As String
     End Class
 
     Public Class iOwnerShip1
@@ -931,6 +941,8 @@ Partial Class aspx_CreateCustomer
     End Class
 
     Private Function MixInfoCliente(ByVal createCustomer As createCustomer, ByVal createCustomer_By_REST As ClienteBBVAInfo) As updateCustomer
+        Dim createCustomerNewField As createCustomerNewField = getInfoClienteNewFields(Request("Sol").ToString())
+
         Dim sit_lab_R As String = createCustomer_By_REST.person.economicData.extendedData.employmentSituation
         Dim sit_lab_P As String = createCustomer.situlab.ToString()
 
@@ -995,13 +1007,26 @@ Partial Class aspx_CreateCustomer
         Dim updateCustomer As updateCustomer = New updateCustomer()
 
         updateCustomer.id = createCustomer_By_REST.person.id
+        updateCustomer.person.country.id = createCustomerNewField.PAIS_NACIMIENTO
         updateCustomer.person.extendedData.legalGroup = createCustomer_By_REST.person.extendedData.legalGroup 'createCustomer.perjuri
+
+        updateCustomer.person.extendedData.birthPlace.state.id = createCustomer.entnaci
+        updateCustomer.person.extendedData.birthPlace.country.id = createCustomer.pecnaci
+        updateCustomer.person.extendedData.maritalStatus.id = createCustomer.edocivi
 
         Dim identityDocument As identityDocument1 = New identityDocument1()
         identityDocument.id = createCustomer.cveiden
         identityDocument.number = createCustomer.numiden
         identityDocument.expiryDate = createCustomer.fvenide
         updateCustomer.person.identityDocument.Add(identityDocument)
+
+        'HERE
+        identityDocument = New identityDocument1()
+        identityDocument.id = createCustomerNewField.ID_DOCUMENTO
+        identityDocument.number = createCustomer.curp
+        identityDocument.expiryDate = createCustomerNewField.VENCIMIENTO_DOCUMENTO
+        updateCustomer.person.identityDocument.Add(identityDocument)
+
 
         updateCustomer.person.legalAddress.streetName = createCustomer_By_REST.person.legalAddress.streetName 'createCustomer.calle
         updateCustomer.person.legalAddress.streetNumber = createCustomer_By_REST.person.legalAddress.streetNumber 'createCustomer.numexte
@@ -1010,13 +1035,13 @@ Partial Class aspx_CreateCustomer
         updateCustomer.person.legalAddress.city = createCustomer_By_REST.person.legalAddress.city 'createCustomer.delmuni
         updateCustomer.person.legalAddress.state.id = createCustomer_By_REST.person.legalAddress.state.id 'createCustomer.estado
 
-        Dim fecha As String = String.Empty
+        Dim fecha = getInfoCliente_Extra_Anios(Request("Sol").ToString())
 
-        If (createCustomer_By_REST.person.legalAddress.startingResidenceDate.Substring(0, 10) = "0001-01-01") Then
-            fecha = getInfoCliente_Extra_Anios(Request("Sol").ToString())
-        Else
-            fecha = createCustomer_By_REST.person.legalAddress.startingResidenceDate.Substring(0, 10)
-        End If
+        'If (createCustomer_By_REST.person.legalAddress.startingResidenceDate.Substring(0, 10) = "0001-01-01") Then
+        '    fecha = getInfoCliente_Extra_Anios(Request("Sol").ToString())
+        'Else
+        '    fecha = createCustomer_By_REST.person.legalAddress.startingResidenceDate.Substring(0, 10)
+        'End If
 
         updateCustomer.person.legalAddress.startingResidenceDate = fecha
 
@@ -1033,6 +1058,8 @@ Partial Class aspx_CreateCustomer
         updateCustomer.person.economicData.extendedData.employmentSituation = createCustomer_By_REST.person.economicData.extendedData.employmentSituation 'createCustomer.situlab
         updateCustomer.person.economicData.extendedData.economicDependants = createCustomer.depecon
         updateCustomer.person.economicData.extendedData.jobSeniority = ant_lab 'createCustomer_By_REST.person.economicData.extendedData.jobSeniority 'ant_lab 'VERIFICAR POR QUE NO SE ENVIA
+
+        updateCustomer.person.economicData.extendedData.schoolingLevel = createCustomer.escolar
 
         updateCustomer.person.economicData.extendedData.averageIncome.amount = createCustomer_By_REST.person.economicData.extendedData.averageIncome.amount
         updateCustomer.person.economicData.extendedData.payrollPensionIncome.amount = createCustomer_By_REST.person.economicData.extendedData.payrollPensionIncome.amount 'createCustomer.ingrcta 'fijos 'VERIFICAR POR QUE NO SE ENVIA 
@@ -1139,4 +1166,38 @@ Partial Class aspx_CreateCustomer
 
         Return path
     End Function
+
+    Private Function getInfoClienteNewFields(ByVal folio As String) As createCustomerNewField
+        Dim alta As createCustomerNewField = New createCustomerNewField()
+
+        Dim sqlConnection1 As New SqlConnection(System.Configuration.ConfigurationManager.AppSettings("Conexion").ToString())
+        Dim cmd As New SqlCommand
+        Dim reader As SqlDataReader
+
+        Try
+            cmd.CommandText = "get_Info_AltaBBVA_SP"
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@idsolicitud", folio)
+            cmd.Parameters.AddWithValue("@EXTENDED", 1)
+            cmd.Connection = sqlConnection1
+            sqlConnection1.Open()
+            reader = cmd.ExecuteReader()
+
+            Do While reader.Read()
+                alta.ID_DOCUMENTO = reader("ID_DOCUMENTO")
+                alta.VENCIMIENTO_DOCUMENTO = reader("VENCIMIENTO_DOCUMENTO")
+                alta.PAIS_NACIMIENTO = reader("PAIS_NACIMIENTO")
+            Loop
+        Catch ex As Exception
+        End Try
+
+        sqlConnection1.Close()
+        Return alta
+    End Function
+
+    Public Class createCustomerNewField
+        Public ID_DOCUMENTO As String
+        Public VENCIMIENTO_DOCUMENTO As String
+        Public PAIS_NACIMIENTO As String
+    End Class
 End Class

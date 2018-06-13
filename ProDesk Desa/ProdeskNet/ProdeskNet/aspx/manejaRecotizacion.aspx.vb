@@ -1,4 +1,5 @@
 ﻿'RQ-PI7-PD9: CGARCIA: 15/11/2017: CREACION DE LA RECOTIZACION
+'BUG-PD-462: CGARCIA: 08/06/2018: SE MODIFICA CONSULTA 
 Imports ProdeskNet.WCF
 Imports System.Data
 Imports System.Data.SqlClient
@@ -37,7 +38,7 @@ Partial Class aspx_manejaRecotizacion
         dsDatos = clsRec.getRecotiza(1)
 
         If (Not IsNothing(dsDatos) AndAlso dsDatos.Tables.Count > 0 AndAlso dsDatos.Tables(0).Rows.Count() > 0 AndAlso
-            dsDatos.Tables(1).Rows.Count > 0) Then
+            dsDatos.Tables(0).Rows(0).Item("RESULTADO").ToString = 1) Then
             ds_siguienteTarea = clsRec.ConsultaTarea
             If (Not IsNothing(ds_siguienteTarea) AndAlso ds_siguienteTarea.Tables.Count > 0 AndAlso ds_siguienteTarea.Tables(0).Rows.Count() > 0) Then
                 asignaTarea(ds_siguienteTarea.Tables(0).Rows(0).Item("PDK_ID_TAREAS_NORECHAZO"))

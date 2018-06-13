@@ -3,6 +3,7 @@
 'BUG-PD-117:MPUESTO:26/06/2017:CORRECCIONES DE TAREA AUTOMÁTICA.
 'BUG-PD-159 JBEJAR 24/07/2017 SE CAMBIA RESPONSE.
 'BUG-PD-247 JBEJAR 27/10/2017 SE CAMBIA RESPONSE.
+'BUG-PD-396 GVARGAS 13/03/2018 URL add IdUsua
 #End Region
 
 Imports System.Data
@@ -77,13 +78,15 @@ Partial Class aspx_validaComprobantesIngresos
         Dim strLocation As String = String.Empty
 
         If _mostrarPantalla = 0 Then
-            strLocation = ("../aspx/" & _dtsResult.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString() & "?idPantalla=" & _dtsResult.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString() & "&sol=" & _idSolicitud.ToString())
+            strLocation = ("../aspx/" & _dtsResult.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString() & "?idPantalla=" & _dtsResult.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString() & "&sol=" & _idSolicitud.ToString() & "&usuario=" & Session("IdUsua").ToString())
+            ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "PopUpLetreroRedirect('', '" + strLocation + "');", True)
             'ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-            Response.Redirect(strLocation, False)
+            'Response.Redirect(strLocation, False)
         ElseIf _mostrarPantalla = 2 Then
-            strLocation = ("../aspx/consultaPanelControl.aspx")
+            strLocation = "../aspx/consultaPanelControl.aspx"
+            ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "PopUpLetreroRedirect('', '" + strLocation + "');", True)
             'ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-            Response.Redirect(strLocation, False)
+            'Response.Redirect(strLocation, False)
         End If
 
     End Sub

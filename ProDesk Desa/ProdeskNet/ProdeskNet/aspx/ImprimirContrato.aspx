@@ -13,8 +13,30 @@
     <%--BUG-PD-123: ERODRIGUEZ 29/06/2017 Se cambio el llamado a función para cancelar / autorizar--%>
     <%--BUG-PD-233: RHERNANDEZ: 12/10/2017: SE QUITA OPCION DE DAR DOBLE CLICK EN PANTALLA DE CONTRATOS--%>
     <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
+    <%-- BUG-PD-417: DCORNEJO: 17/04/2018: SE AGREGA LA OPCION DE TURNAR EN ADJUNTAR DOCUMENTOS PARA DESEMBOLSO--%>
 
     <script language="javascript" type="text/javascript">
+
+         //Tabla pedir documentos 
+        $(document).on('change', '#ctl00_ctl00_cphCuerpo_cphPantallas_ddlTurnar', function () {
+            var Procesable = $("#ctl00_ctl00_cphCuerpo_cphPantallas_ddlTurnar option:selected").val();
+
+
+            if (Procesable == -3) {
+                $("#Tabla_Documentos").show();
+            }
+
+            else {
+                $("#Tabla_Documentos").hide();
+
+            }
+        });
+
+        function pageLoad() {
+            fillgv('gvformato', 'hdnIdFolio');
+            fillUpload('tbValidarObjetos', 'hdnIdPantalla, hdnIdFolio, hdnUsua', 'per1', '');
+            var idpantalla = $("[id$=hdPantalla] ").val()
+        }
 
         function fnImprimeContrato() {
             var count = 0;
@@ -267,6 +289,12 @@
             <table width="100%" style="height: 100%;">
                 <tr>
                     <td align="right" valign="middle">
+
+                         <label id="lblturnar" runat="server" visible="false">Turnar: </label>
+                        &nbsp;
+                        <asp:DropDownList ID="ddlTurnar" runat="server" CssClass="selectBBVA" Visible="false" OnSelectedIndexChanged="ddlTurnar_SelectedIndexChanged" AutoPostBack="true">
+                        </asp:DropDownList>
+                        &nbsp;
                         <asp:Button runat="server" ID="btnRegresar" Text="Regresar" CssClass="buttonSecBBVA2" />
                         <%--<input type="button" class="Text" value="Regresar" onclick="fnRegresar();"  />--%>
                         <input id="cmbguardar" runat="server" type="button" value="Procesar" onclick="$(this).prop('disabled', true); AvanzarTarea();" class="buttonBBVA" />
@@ -287,6 +315,7 @@
 
 
     </div>
+    <asp:HiddenField ID="hdPantalla" runat="server" />
     <asp:HiddenField ID="hdnIdFolio" runat="server" />
     <asp:HiddenField ID="hdnIdPantalla" runat="server" />
     <asp:HiddenField ID="hdnUsua" runat="server" />

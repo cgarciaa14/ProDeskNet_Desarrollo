@@ -4,6 +4,7 @@ Imports ProdeskNet.Seguridad
 Imports ProdeskNet.Configurcion
 Imports ProdeskNet.SN
 Imports System.Globalization
+Imports ProdeskNet.WCF
 
 'Tracker:INC-B-2019:JDRA:Regresar
 'BBV-P-423 RQCONYFOR-01: AVH: 02/01/2017 Se llenan combos
@@ -26,7 +27,9 @@ Imports System.Globalization
 'RQ-PI7-PD9: CGARCIA: 05/12/2017: Cambio de fecha de contrato a la fecha actual del servidor.
 'BUG-PD-294: DJUAREZ: 14/12/2017: Se agrega validacion para validar que siempre se obtenga contrato.
 'BUG-PD-341: JMENDIETA: 16/01/2018: En la consulta de solicitud con estatus terminada se oculta la fecha de Firma de Contrato y al dar clic en procesar se actualiza y mostrar un mensaje de que la fecha se actualizara a la actual si es el caso.
+'BUG-PD-398: DJUAREZ: 14/03/2018: Se evita el brinco de pantalla
 'RQ-PC7: CGARCIA: 06/04/2018: CAMBIO DE PAYLOAD DE PREFORMALIZACION
+'BUG-PD-443: JMENDIETA: 16/05/2018: Se cambian los datos de refinancing para el paylodad de PREFORMALIZACION.
 Public Class altaFacturacion
     Inherits System.Web.UI.Page
     Dim BD As New ProdeskNet.BD.clsManejaBD
@@ -49,7 +52,7 @@ Public Class altaFacturacion
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Dim mensaje As String = "Error al procesar la Tarea"
 
-        ' WS(mensaje)
+        'WS(mensaje)
         If Not IsPostBack Then
             Dim dsNom As DataSet
             Dim intEnable As Integer = 0
@@ -192,7 +195,7 @@ Public Class altaFacturacion
             Dim dsPais As DataSet
             Dim dsTrans As DataSet
             Dim dsCarroc As DataSet
-            
+
             dsPais = objCatalogos.Catalogos(1)
             dsTrans = objCatalogos.Catalogos(2)
             objCatalogos.Parametro = 286
@@ -211,7 +214,7 @@ Public Class altaFacturacion
             End If
 
             'RQ-PI7-PD9: CGARCIA: 05/12/2017: Cambio de fecha de contrato a la fecha actual del servidor.
-            feFirma.Value = strHoraServidor 'Convert.ToDateTime(dsFechaCot.Tables(0).Rows(0).Item("RESUL")).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+            feFirma.Value = strHoraServidor.ToString("dd/MM/yyyy")  'Convert.ToDateTime(dsFechaCot.Tables(0).Rows(0).Item("RESUL")).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
 
         Catch ex As Exception
             Master.MensajeError(ex.Message)
@@ -225,6 +228,12 @@ Public Class altaFacturacion
         Dim objFactDETALLE As New ProdeskNet.SN.clsFacturacion
         Dim DSWS As DataSet
 
+        Dim objCatlogos As New ProdeskNet.SN.clsCatalogos
+        'Dim dstCatalogos As New DataSet()
+
+        objCatlogos.Parametro = Request.QueryString("sol")
+        'dstCatalogos = objCatlogos.Catalogos(24)
+
         objFactDETALLE.ID_SOLICITUD = Request.QueryString("sol")
         DSWS = objFactDETALLE.ObtenDatosFact(4)
 
@@ -235,7 +244,7 @@ Public Class altaFacturacion
                 PreFormalizacion.extendedData.accountIndicator = DSWS.Tables(1).Rows(0).Item("accountIndicator")
                 PreFormalizacion.loan.commercialValueAmount.amount = DSWS.Tables(1).Rows(0).Item("commercialValueAmount.amount")
                 PreFormalizacion.loan.requestDate = DSWS.Tables(1).Rows(0).Item("requestDate")
-                PreFormalizacion.customer.extendedData.regularCustomer = DSWS.Tables(1).Rows(0).Item("regularCustomer")
+                PreFormalizacion.customer.extendedData.regularCustomer = CBool(DSWS.Tables(1).Rows(0).Item("regularCustomer"))
 
                 If DSWS.Tables(0).Rows.Count > 0 Then
                     For x = 0 To DSWS.Tables(0).Rows.Count - 1
@@ -252,14 +261,14 @@ Public Class altaFacturacion
                 'PreFormalizacion.creditNumber = DSWS.Tables(1).Rows(0).Item("creditNumber")
                 PreFormalizacion.subProductCode = DSWS.Tables(1).Rows(0).Item("subProductCode")
                 PreFormalizacion.iLoanDetail.loanCar.agency.intermediateCode = DSWS.Tables(1).Rows(0).Item("intermediateCode")
-                PreFormalizacion.iLoanDetail.loanCar.agency.id = DSWS.Tables(1).Rows(0).Item("agency.id")
+                PreFormalizacion.iLoanDetail.loanCar.agency.id = CStr(DSWS.Tables(1).Rows(0).Item("agency.id").ToString)
 
                 PreFormalizacion.iLoanDetail.loanCar.car.brand = DSWS.Tables(1).Rows(0).Item("brand")
                 PreFormalizacion.iLoanDetail.loanCar.car.model = DSWS.Tables(1).Rows(0).Item("model")
                 PreFormalizacion.iLoanDetail.loanCar.car.descriptionCar = DSWS.Tables(1).Rows(0).Item("descriptionCar")
                 PreFormalizacion.iLoanDetail.loanCar.car.engineNumber = DSWS.Tables(1).Rows(0).Item("engineNumber")
                 PreFormalizacion.iLoanDetail.loanCar.car.serialNumber = DSWS.Tables(1).Rows(0).Item("serialNumber")
-                PreFormalizacion.iLoanDetail.loanCar.car.isUsed = DSWS.Tables(1).Rows(0).Item("isUsed")
+                PreFormalizacion.iLoanDetail.loanCar.car.isUsed = IIf(DSWS.Tables(1).Rows(0).Item("isUsed").ToString = 0, False, True)
                 PreFormalizacion.iLoanDetail.loanCar.car.subBrand = DSWS.Tables(1).Rows(0).Item("subBrand")
                 PreFormalizacion.iLoanDetail.loanCar.requestAmount.amount = DSWS.Tables(1).Rows(0).Item("requestAmount")
 
@@ -286,7 +295,7 @@ Public Class altaFacturacion
                 PreFormalizacion.iLoanDetail.loanCar.insurance.listInsurance.Add(lisVida)
 
                 Dim lisDaño As New listInsurance
-                lisDaño.policyType.id = DSWS.Tables(1).Rows(0).Item("policyType.id.Daño")
+                lisDaño.policyType.id = CStr(DSWS.Tables(1).Rows(0).Item("policyType.id.Daño").ToString)
                 lisDaño.insuranceType.id = DSWS.Tables(1).Rows(0).Item("insuranceType.id.Daño")
                 lisDaño.initialDate = DSWS.Tables(1).Rows(0).Item("initialDate.Daño")
                 lisDaño.finalDate = DSWS.Tables(1).Rows(0).Item("finalDate.Daño")
@@ -305,46 +314,67 @@ Public Class altaFacturacion
 
 
                 Dim listrowVenta As New listDtoRate
+                listrowVenta.type.name = DSWS.Tables(1).Rows(0).Item("name.Venta")
                 listrowVenta.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Venta")
                 'listrow.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount")
-                listrowVenta.type.name = DSWS.Tables(1).Rows(0).Item("name.Venta")
                 'listrow.type.id = DSWS.Tables( 1).Rows(0).Item("type.id")
                 PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowVenta)
 
                 Dim listrowSubsidio As New listDtoRate
-                listrowSubsidio.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Subsidio")
-                listrowSubsidio.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Subsidio")
                 listrowSubsidio.type.name = DSWS.Tables(1).Rows(0).Item("name.Subsidio")
+                listrowSubsidio.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Subsidio")
+                'listrowSubsidio.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Subsidio")
                 'listrow.type.id = DSWS.Tables(1).Rows(0).Item("type.id")
                 PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowSubsidio)
 
+                Dim listrowSubsidio2 As New listDtoRate
+                listrowSubsidio2.type.name = DSWS.Tables(1).Rows(0).Item("name.Subsidio")
+                listrowSubsidio2.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Subsidio")
+                PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowSubsidio2)
+
                 Dim listrowDescuento As New listDtoRate
-                listrowDescuento.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Descuento")
-                listrowDescuento.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Descuento")
                 listrowDescuento.type.name = DSWS.Tables(1).Rows(0).Item("name.Descuento")
+                listrowDescuento.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Descuento")
+                'listrowDescuento.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Descuento")
                 'listrow.type.id = DSWS.Tables(1).Rows(0).Item("type.id")
                 PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowDescuento)
 
+                Dim listrowDescuento2 As New listDtoRate
+                listrowDescuento2.type.name = DSWS.Tables(1).Rows(0).Item("name.Descuento")
+                listrowDescuento2.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Descuento")
+                PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowDescuento2)
+
                 Dim listrowComision As New listDtoRate
-                listrowComision.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Comision")
-                listrowComision.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Comision")
                 listrowComision.type.name = DSWS.Tables(1).Rows(0).Item("name.Comision")
+                listrowComision.percentage = DSWS.Tables(1).Rows(0).Item("percentage.Comision")
+                'listrowComision.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Comision")
                 'listrow.type.id = DSWS.Tables(1).Rows(0).Item("type.id")
                 PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowComision)
 
+                Dim listrowComision2 As New listDtoRate
+                listrowComision2.type.name = DSWS.Tables(1).Rows(0).Item("name.Comision")
+                listrowComision2.amount.amount = DSWS.Tables(1).Rows(0).Item("percentage.amount.Comision")
+                PreFormalizacion.iLoanDetail.loanCar.listDtoRate.Add(listrowComision2)
 
 
 
-
-                PreFormalizacion.iLoanDetail.loanCar.termNumber = DSWS.Tables(1).Rows(0).Item("termNumber")
+                PreFormalizacion.iLoanDetail.loanCar.termNumber = CInt(DSWS.Tables(1).Rows(0).Item("termNumber").ToString)
                 PreFormalizacion.productCode = DSWS.Tables(1).Rows(0).Item("productCode")
 
-                PreFormalizacion.refinancing.termNumber = 0
+                'BUG-PD-443 INI
+                'PreFormalizacion.refinancing.termNumber = IIf(dstCatalogos.Tables(1).Rows(0).Item("VALOR").ToString = String.Empty, 0, CInt(dstCatalogos.Tables(1).Rows(0).Item("VALOR").ToString))
+                PreFormalizacion.refinancing.termNumber = IIf(DSWS.Tables(1).Rows(0).Item("refinancing.termNumber").ToString = String.Empty, 0, CInt(DSWS.Tables(1).Rows(0).Item("refinancing.termNumber").ToString))
+
                 Dim rate As New rate()
-                rate.percentage = 0
+                'rate.percentage = IIf(dstCatalogos.Tables(0).Rows(0).Item("TASA_NOMINAL_DOS").ToString = String.Empty, 0, CDbl(dstCatalogos.Tables(0).Rows(0).Item("TASA_NOMINAL_DOS").ToString))
+                rate.percentage = IIf(DSWS.Tables(1).Rows(0).Item("refinancing.rate.TASA_NOMINAL_DOS").ToString = String.Empty, 0, CDbl(DSWS.Tables(1).Rows(0).Item("refinancing.rate.TASA_NOMINAL_DOS").ToString))
                 PreFormalizacion.refinancing.rate.Add(rate)
+
                 rate = New rate()
-                rate.percentage = 0
+                'rate.percentage = IIf(dstCatalogos.Tables(0).Rows(0).Item("PTJ_SERV_FINAN_DOS").ToString = String.Empty, 0, CDbl(dstCatalogos.Tables(0).Rows(0).Item("PTJ_SERV_FINAN_DOS").ToString))
+                rate.percentage = IIf(DSWS.Tables(1).Rows(0).Item("refinancing.rate.PTJ_SERV_FINAN_DOS").ToString = String.Empty, 0, CDbl(DSWS.Tables(1).Rows(0).Item("refinancing.rate.PTJ_SERV_FINAN_DOS").ToString))
+                'BUG-PD-443 FIN
+
                 PreFormalizacion.refinancing.rate.Add(rate)
 
 
@@ -383,7 +413,7 @@ Public Class altaFacturacion
                     Return result
                     Exit Function
                 End If
-                Dim CONTRATO As String = res.loan.contract.id
+                Dim CONTRATO As String = res.creditNumber
 
                 If CONTRATO = String.Empty Then
                     Master.MensajeError("WS: Contrato incorrecto intentarlo nuevamente.")
@@ -403,7 +433,7 @@ Public Class altaFacturacion
                     End If
                 End If
 
-                
+
             Else
                 outputMessage = "Error en Base de Datos"
                 result = False
@@ -418,6 +448,21 @@ Public Class altaFacturacion
     'BUG-PD-78:MPUESTO:07/06/2017:ADICION DE DROPDOWNLIST PARA PROCESO DE TURNAR
     'Este método era el original, se ha reemplazado por btnProcesar_Click que realiza la acción del combo turnar
     Protected Sub btnProcesar_Click_(sender As Object, e As EventArgs)
+
+        'Validacion de Request
+        Try
+            Dim Validate As New clsValidateData
+            Dim Url As String = Validate.ValidateRequest(Request)
+
+            If Url <> String.Empty Then
+                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", Url, True)
+                Exit Sub
+            End If
+        Catch
+
+        End Try
+        'Fin validacion de Request
+
         Dim objFlujos As New clsSolicitudes(0)
         Dim boton As Integer = 64
         Dim ds As DataSet
@@ -519,6 +564,7 @@ Public Class altaFacturacion
         If dsFechaCot.Tables.Count > 0 And dsFechaCot.Tables(0).Rows.Count > 0 Then
             If Not dsFechaCot.Tables(0).Rows(0).Item("RESUL") Is DBNull.Value Then
                 strFec_Cot = Convert.ToDateTime(dsFechaCot.Tables(0).Rows(0).Item("RESUL")).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+                strHoraServidor = Convert.ToDateTime(strHoraServidor).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
                 intDias = (strHoraServidor - strFec_Cot).TotalDays
                 If dsDiasCot.Tables.Count > 0 AndAlso dsDiasCot.Tables(0).Rows.Count > 0 Then
                     intDiasVigencia = CInt(dsDiasCot.Tables(0).Rows(0).Item("VALOR"))
@@ -548,7 +594,7 @@ Public Class altaFacturacion
     'BUG-PD-78:MPUESTO:07/06/2017:ADICION DE DROPDOWNLIST PARA PROCESO DE TURNAR
     Protected Sub btnProcesar_Click(sender As Object, e As EventArgs)
         Dim _strMessage As String = String.Empty
-        
+
 
         _dtsResult = New DataSet()
         _dtsResult = BD.EjecutarQuery("SELECT PDK_ID_TAREAS,PDK_TAR_NOMBRE,PDK_ID_TAREAS_RECHAZO,PDK_ID_TAREAS_NORECHAZO FROM PDK_CAT_TAREAS WHERE PDK_ID_TAREAS=" & Request("idPantalla").ToString)
@@ -640,26 +686,28 @@ Public Class altaFacturacion
         Public packageId As String
         Public requestAmount As requestAmount = New requestAmount
         Public invoice As invoice = New invoice
-        Public termNumber As String
+        Public termNumber As Integer
         Public subsidy As subsidy = New subsidy
         Public listDtoRate As New List(Of listDtoRate)
         Public insurance As insurance = New insurance
-        Public percentageAmount As String
         Public customerNumberGuarantee As String = String.Empty
+        Public percentageAmount As String
+
 
     End Class
     Public Class agency
+        Public id As String
         Public intermediateCode As String
-        Public id As Integer
     End Class
     Public Class car
         Public brand As String
+        Public subBrand As Integer
         Public model As String
-        Public descriptionCar As String
         Public engineNumber As String
         Public serialNumber As String
-        Public isUsed As Integer
-        Public subBrand As Integer
+
+        Public isUsed As Boolean
+        Public descriptionCar As String
     End Class
     Public Class requestAmount
         Public amount As String
@@ -704,7 +752,7 @@ Public Class altaFacturacion
         Public annualAmount As annualAmount = New annualAmount
     End Class
     Public Class policyType
-        Public id As Integer
+        Public id As String
     End Class
     Public Class insuranceType
         Public id As String
@@ -730,14 +778,14 @@ Public Class altaFacturacion
         Public amount As String
     End Class
     Public Class customer
-        Public person As Person = New Person
+        Public person As person = New person
         Public extendedData As extendedData2 = New extendedData2
     End Class
     Public Class person
         Public id As String
     End Class
     Public Class extendedData2
-        Public regularCustomer As String
+        Public regularCustomer As Boolean
         Public referenceCustomer As New List(Of String)
     End Class
     Public Class paymentAnnuity
@@ -748,9 +796,9 @@ Public Class altaFacturacion
         Public rate As List(Of rate) = New List(Of rate)
     End Class
     Public Class rate
-        Public percentage As Integer
+        Public percentage As Double
     End Class
- 
+
     Public Class loanRes
         Public contract As contract = New contract
     End Class
@@ -762,7 +810,8 @@ Public Class altaFacturacion
         Public id As String
     End Class
     Public Class Respuesta
-        Public loan As loanRes = New loanRes
+        'Public loan As loanRes = New loanRes
+        Public creditNumber As String
     End Class
     Public Class contract
         Public id As String

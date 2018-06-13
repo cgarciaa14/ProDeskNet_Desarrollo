@@ -11,3 +11,6 @@ C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.dll
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.xml
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\obj\Debug\ProdeskNet.WCF.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.SN.dll
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.SN.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.WCF\bin\Debug\ProdeskNet.SN.xml

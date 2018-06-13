@@ -9,7 +9,7 @@
 <%--BUG-PD-322:ERODRIGUEZ: 29/12/2017: Se agrego boton para actualizar el panel--%>
 <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
 <%--BUG-PD-369 GVARGAS 23/02/2018 Correccion panel avoid Ajax Tool Kit Paginar--%>
-
+<%--BUG-PD-403: RHERNANDEZ: 20/03/2018: Se oculta div de tareas para evitar doble click de creacion de tareas --%>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPantallas" runat="Server">
 
     <script type="text/javascript" language="javascript">
@@ -101,6 +101,11 @@
             $('#ctl00_ctl00_cphCuerpo_cphPantallas_divTasks').show();
             $('#ventanaContain').show();
             $('#divDetails').show();
+        }
+        function HideTasks() {
+            $('#<%= divTasks.ClientID%>').hide();
+            var idPantalla = getUrlValue("idPantalla");
+            blockScreen(idPantalla);
         }
 
         function btnHideModalsClient_click() {
@@ -344,7 +349,7 @@
                                 <td <%# GetStyle(Eval("PRE"))%> <%# GetEvent(Eval("PRE"), Eval("SOLICITUD"), "1")%>></td>
                                 <td <%# GetStyle(Eval("CAL"))%> <%# GetEvent(Eval("CAL"), Eval("SOLICITUD"), "2")%>></td>
                                 <td <%# GetStyle(Eval("VAL"))%> <%# GetEvent(Eval("VAL"), Eval("SOLICITUD"), "3")%>></td>
-                                <td <%# GetStyle(Eval("FORM"))%> <%# GetEvent(Eval("FORM"), Eval("SOLICITUD"), "4")%>></td>
+                                <td <%# GetStyle(Eval("FOR"))%> <%# GetEvent(Eval("FOR"), Eval("SOLICITUD"), "4")%>></td>
                             </tr>
                         </ItemTemplate>
                     </asp:Repeater>

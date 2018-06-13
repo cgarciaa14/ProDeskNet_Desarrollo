@@ -1,6 +1,7 @@
 ﻿
 'BUG-PD-199: RHERNANDEZ: 24/08/17 SE CREA PANTALLA PARA DE VISOR TELEPRO PARA VER LOS DOCUMENTOS DE PDK_REL_PAN_DOC_SOL 
 'BUG-PD-299: RHERNANDEZ: 13/12/17: SE CAMBIA LA FORMA EN QUE SE ALMACENA EL ARCHIVO EN DE BASE64 A UN ARCHIVO GZ EN VARBINARY 
+'BUG-PD-418: RHERNANDEZ: 12/04/18: SE ELIMINA FUNCIONALIDAD DE CERRAR LA PESTANIA AL ABRIR DOCUMENTOS SIN DATOS BINARIOS
 Imports ProdeskNet.SN
 Imports System.Data
 Imports System.IO
@@ -25,7 +26,7 @@ Partial Class aspx_VisorTele
                 If clsseguros.StrError <> "" Then
                     Throw New Exception(clsseguros.StrError)
                 End If
-                If dat.Tables(0).Rows(0).Item("ARCHIVO_BINARIO").ToString = "" Then
+                If dat.Tables(0).Rows(0).Item("ARCHIVO_BINARIO").ToString() = "" Then
                     Throw New Exception("No existe informacion del archivo")
                 End If
                 bytes = DirectCast(dat.Tables(0).Rows(0).Item("ARCHIVO_BINARIO"), Byte()).ToArray()
@@ -75,9 +76,7 @@ Partial Class aspx_VisorTele
                 Context.Response.BinaryWrite(files)
                 Context.Response.Flush()
             Catch ex As Exception
-                If MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Error") = MsgBoxResult.Ok Then
-                    Response.Write("<script>window.close()</script>")
-                End If
+                Response.Write("<script>alert('" + ex.Message + "');</script>")
             End Try
         End If
     End Sub

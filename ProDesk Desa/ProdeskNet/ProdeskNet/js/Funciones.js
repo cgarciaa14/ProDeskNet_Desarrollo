@@ -12,6 +12,7 @@
 //BBV-P-423 RQADM-30 MAPH 17/04/2017 Pantalla Referenciados SEVA 60 - Adición a valCarac de opción 23 para aceptar caracteres de correo electronico
 //                        26/04/2017 Pantalla Referenciados SEVA 60 - Adición a valCarac de opción 24 para aceptar Letras sin caracteres especiales ni espacios
 // BUG-PD-261 : Egonzalez : 06/11/2017 Se crea un arreglo para permitir copy/paste por ID de pantalla
+//BUG-PD-438 : EGONZALEZ : 08/05/2018 : Se agrega la opción 26 para validar caracteres y se crea la función para decodificar html entities
 
 /*Variables globales*/
 var idPantalla;
@@ -1235,6 +1236,35 @@ function ValCarac(evt, opc) {
                 return false;
                 break;
             }
+        case 26: //Letras Mayúsculas y Minúsculas + Espacios
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if ((charCode >= 65 && charCode <= 90) // A - Z
+                || (charCode == 13) //retorno de carro
+                || (charCode == 209) //Ñ
+                || (charCode >= 97 && charCode <= 122) // a - z
+                || (charCode == 241) //ñ
+                || (charCode == 32) //Espacio
+                || (charCode == 46) // .
+                || (charCode == 193) // Á
+                || (charCode == 201) // É
+                || (charCode == 205) // Í
+                || (charCode == 211) // Ó
+                || (charCode == 218) // Ú
+                || (charCode == 225) // á
+                || (charCode == 233) // é
+                || (charCode == 237) // í
+                || (charCode == 243) // ó
+                || (charCode == 250) // ú
+                || (charCode == 08) //BackSpace //BUG-PC-41:PVARGAS:27/01/2017:SE AGREGA EL BACKSPACE PARA QUE PERMITA BORRAR.
+                || (charCode >= 48 && charCode <= 57) // 0-9
+                ) {
+                return true;
+                break;
+            }
+            else {
+                return false;
+                break;
+            }
     }
 }
 
@@ -1391,3 +1421,49 @@ $.urlParam = function (name) {
         return decodeURI(results[1]) || 0;
     }
 }
+
+function decodeEntities(str) {
+    var parser = new DOMParser;
+    var dom = parser.parseFromString(
+        '<!doctype html><body>' + str,
+        'text/html');
+    return dom.body.textContent;
+}
+
+function domHtmlEntities() {
+    $('*').filter(function()
+    {
+        let regexp = /&#[0-9]{2,3};/g;
+        if($(this).text().match(regexp) != null && $(this).html().match(/</) == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }).each(function()
+    {
+        var tmp = $(this);
+
+        let regexp = /&#[0-9]{2,3};/g;
+        var matches_array = $(this).text().match(regexp);
+
+        console.log(matches_array);
+
+        $(matches_array).each(function(i,val){
+            console.log(val)
+            console.log(decodeEntities(val));
+            $(tmp).text($(tmp).text().replace(val,decodeEntities(val)));
+        });
+    });
+};
+
+$(window).bind("load", function () {
+    domHtmlEntities();
+}); // Función que espera la carga completa del documento incluyendo imágenes y Ajax*
+
+var prm = Sys.WebForms.PageRequestManager.getInstance();
+prm.add_endRequest(function (s, e) {
+    domHtmlEntities();
+});

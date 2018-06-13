@@ -39,16 +39,23 @@
 'BUG-PD-312: RHERNANDEZ: 18/12/17: sE CONFIGURA LA OPCION NO PROCESABLE PARA LA PANTALLA DE INS CHECK DOCUMENTAL
 'BUG-PD-322: ERODRIGUEZ: 03/01/2017: Se cambio el redireccionamiento al panel de control		   
 'BUG-PD-320: REHERNANDEZ: 26/12/17: Se valida si la poliza de seguros de danios marsh ya ha sido emitida.
+'BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit
+'BUG-PD-388: DJUAREZ: Modificar URL de respuesta para corregir F5 en tarea manual  
 'BUG-PD-360: RHERNANDEZ: 19/02/18: SE AGREGA LA LECTURA DE IDQUOTE DE SEGURO DE VIDA PARA EMITIR SEGUROS INDEPENDIENTEMENTE
 'BUG-PD-363: JMENDIETA: 20/02/18: Campo adicional servicio re-cotización BBVA en particular data se agrega el Numero de Crédito
 'BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit
 'BUG-PD-371: JMENDIETA: 26/02/18: Campo adicional servicio re-cotización BBVA en particular data se agrega el Tipo de Unidad
 'RQ-PD30: JMENDIETA: 05/03/2018: Para el tipo de producto 1(AUTO) la alianza sera VINCF003 y el plan 046, para producto 2(Moto) alianza sera VINCF004 y el plan 047
-'RQ-PD31: DJUAREZ: 08/03/2018: SE CREA POPUP PARA MODIFICAR LA COLONIA CUANDO SE GUARDE LA COLONIA "OTRO"
 'BUG-PD-374: RHERNANDEZ: 27/02/17: SE CORRIGE CONTROL DE EXCEPCIONES AL NO ENCONTRAR COLONIA VALIDA EN EMISION DE SEGUROS BBVA
 'BUG-PD-385 RHERNANDEZ: 07/03/2018: SE QUITA VALIDACION CORRECTA DE MENSAJE 03062 EN EMISION MARSH
-'BUG-PD-388: DJUAREZ: Modificar URL de respuesta para corregir F5 en tarea manual
-
+'BUG-PD-403: RHERNANDEZ: 20/03/2018: Se modifica proceso de emision de marsh encuanto a fecha fin que es la fecha inicial mas el plazo y mas 16 dias
+'RQ-PD31: DJUAREZ: 08/03/2018: SE CREA POPUP PARA MODIFICAR LA COLONIA CUANDO SE GUARDE LA COLONIA "OTRO"
+'BUG-PD-417: DCORNEJO: 17/04/2018: SE AGREGA LA OPCION DE TURNAR EN ADJUNTAR DOCUMENTOS PARA DESEMBOLSO
+'BUG-PD-432: JMENDIETA 02/05/2018: Al recotizar vida se envian la fecha inicio y fin de la tabla de amortizacion.
+'BUG-PD-435: DCORNEJO 08/05/2018: Modificacion en validaciones en tnproc_Click (ROBERTO HERNANDEZ)
+'BUG-PD-448: JMENDIETA: 18/05/2018: Cuando el broker sea Marsh se omite validacion de que la fecha de vencimiento del seguro de daños no sea menor a la fecha de termino del contrato.
+'BUG-PD-447: JMENDIETA: 23/05/2018: Se agrega validación para el parametro SERVICIO INGESTA DOCUMENTOS que indica si se consume el servicio de ingesta o no. Para impresion Marsh de envia el id agencia.
+'RQ-PD35-2: 29/05/2018: CGARCIA: SE AGREGA OPCION PARA PANTALLA 88
 Imports ProdeskNet.BD
 Imports ProdeskNet.Catalogos
 Imports System.Data
@@ -76,6 +83,7 @@ Public Class consultaPantallaDocumentos
     Dim sol As New clsStatusSolicitud
     Dim clsCat As New clsCatalogos
     Dim usu As String
+    Private Const Marsh As Short = 4 'BUG-PD-448
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -100,7 +108,7 @@ Public Class consultaPantallaDocumentos
 
         Dim intEnable As Integer
         Dim dsresult As New DataSet
-        Dim dsresulta As New DataSet
+
         hdPantalla.Value = Request("pantalla")
         hdSolicitud.Value = Request("solicitud")
         hdusuario.Value = Request("usu")
@@ -120,6 +128,7 @@ Public Class consultaPantallaDocumentos
             Me.btnImprimir.Visible = True
         Else
             Me.btnImprimir.Visible = False
+
         End If
 
         Session.Add("idSol", hdSolicitud.Value)
@@ -142,18 +151,18 @@ Public Class consultaPantallaDocumentos
         End Try
 
         Try
-            dsresulta = BD.EjecutarQuery("get_Path_Next_Tarea  " & hdPantalla.Value)
+            dsresult = BD.EjecutarQuery("get_Path_Next_Tarea  " & hdPantalla.Value)
             If dsresult.Tables(0).Rows.Count > 0 AndAlso dsresult.Tables.Count > 0 Then
                 Dim Mostrar As String
                 Dim pantallas As String
-                Mostrar = dsresulta.Tables(0).Rows(0).Item("PDK_PANT_MOSTRAR").ToString
-                pantallas = dsresulta.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString
+                Mostrar = dsresult.Tables(0).Rows(0).Item("PDK_PANT_MOSTRAR").ToString
+                pantallas = dsresult.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString
                 If Mostrar = 2 Then
 
                     hdnResultado.Value = dsresult.Tables(0).Rows(0).Item("RUTA")
                 Else
-                    hdnResultado.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
-                    hdnResultado2.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
+                    hdnResultado.Value = (dsresult.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
+                    hdnResultado2.Value = (dsresult.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
                 End If
             End If
 
@@ -252,8 +261,21 @@ Public Class consultaPantallaDocumentos
                         txtVigSegVida.Enabled = False
                     End If
                 End If
-            ElseIf (Request("pantalla").ToString = "74" Or Request("pantalla").ToString = "89" Or Request("pantalla").ToString = "9") And intEnable = 0 Then
+            ElseIf (Request("pantalla").ToString = "74" Or Request("pantalla").ToString = "89" Or Request("pantalla").ToString = "9" Or Request("pantalla").ToString = "8") And intEnable = 0 Then
                 divActualizaColonia.Attributes.Add("style", "display:''")
+                lblturnar.Visible = True
+                ddlTurnar.Visible = True
+                Dim clsquiz As New clsCuestionarioSolvsID()
+                Dim objCombo As New clsParametros
+                clsquiz._ID_PANT = CInt(hdPantalla.Value)
+                Dim dtsres As New DataSet
+                dtsres = clsquiz.getTurnar()
+                If dtsres.Tables.Count > 0 Then
+                    If dtsres.Tables(0).Rows.Count > 0 Then
+                        objCombo.LlenaCombos(dtsres, "TURNAR_NOMBRE", "PDK_ID_TAREAS", ddlTurnar, True, True)
+                    End If
+                End If
+            ElseIf Request("pantalla").ToString = "88" And intEnable = 0 Then 'RQ-PD35-2: 29/05/2018: CGARCIA: SE AGREGA OPCION PARA PANTALLA 88
                 lblturnar.Visible = True
                 ddlTurnar.Visible = True
                 Dim clsquiz As New clsCuestionarioSolvsID()
@@ -381,13 +403,13 @@ Public Class consultaPantallaDocumentos
                     Exit Function
                 End If
             Case 3 'EIKOS
-                If ImprimirEIKOS("3793", id_poliza) Then 'CAMBIOS URGENTES RHERNANDES 
+                If ImprimirEIKOS(id_agencia, id_poliza) Then 'CAMBIOS URGENTES RHERNANDES 
                     ImprimirSeguros = True
                 Else
                     Exit Function
                 End If
             Case 4 'MARSH
-                If ImprimirMARSH("3458", id_poliza) Then 'CAMBIOS URGENTES RHERNANDES 
+                If ImprimirMARSH(id_agencia, id_poliza) Then 'CAMBIOS URGENTES RHERNANDES 
                     ImprimirSeguros = True
                 Else
                     Exit Function
@@ -672,6 +694,22 @@ Public Class consultaPantallaDocumentos
     End Function
     Public Function GuardaringestaBBVA(ByVal Ruta As String, ByVal filename As String, ByVal id_doc As Integer) As Boolean
         Try
+
+            'BUG-PD-447 INI
+            Dim ds As DataSet
+            Dim objCatalogos As New ProdeskNet.SN.clsCatalogos
+            Dim almacenaEnIngesta As Boolean = True
+            Dim foliodocservice As String = "0"
+
+            objCatalogos.Parametro = Me.lblSolicitud.Text
+            objCatalogos.Parametro = 228
+            ds = objCatalogos.Catalogos(5)
+
+            If String.IsNullOrEmpty(objCatalogos.ErrorCatalogos) AndAlso (Not IsNothing(ds)) AndAlso ds.Tables.Count > 0 AndAlso ds.Tables(0).Rows.Count > 0 Then
+                almacenaEnIngesta = IIf(CInt(ds.Tables(0).Rows(0).Item("PDK_PAR_SIS_STATUS").ToString()) = 2, True, False)
+            End If
+            'BUG-PD-447 FIN
+
             Dim idsol As String = Context.Session("idsol")
 
             Dim savepath As String = ""
@@ -692,7 +730,7 @@ Public Class consultaPantallaDocumentos
                 End If
             Next
 
-            Dim ds As DataSet
+
             ds = BD.EjecutarQuery("select PDK_VERSION from PDK_REL_VER_DOC_SOL where PDK_ID_SECCERO = " & idsol & " AND PDK_ID_DOCUMENTOS =" & id_doc & ";")
             Dim version As Integer
             If (ds.Tables(0).Rows.Count = 0) Then
@@ -731,74 +769,78 @@ Public Class consultaPantallaDocumentos
                 File.Delete(savepathzip)
             End If
 
-            Using binaryfile As FileStream = New FileStream(Ruta, FileMode.Open)
-                Using sha1 As New System.Security.Cryptography.SHA1CryptoServiceProvider()
-                    sha1.ComputeHash(binaryfile)
-                    encodefile = BitConverter.ToString(sha1.Hash).Replace("-", "").ToLower()
+            'BUG-PD-447
+            If almacenaEnIngesta Then
+                Using binaryfile As FileStream = New FileStream(Ruta, FileMode.Open)
+                    Using sha1 As New System.Security.Cryptography.SHA1CryptoServiceProvider()
+                        sha1.ComputeHash(binaryfile)
+                        encodefile = BitConverter.ToString(sha1.Hash).Replace("-", "").ToLower()
+                    End Using
+                    binaryfile.Close()
                 End Using
-                binaryfile.Close()
-            End Using
 
-            Dim information As System.IO.FileInfo
-            information = My.Computer.FileSystem.GetFileInfo(Ruta)
-            Dim extension As String = information.Extension.ToString().Replace(".", "")
-            Dim ingestaarchivos As IngestaDocumentos = New IngestaDocumentos()
-            ingestaarchivos.repositoryName = "finauto"
-            Dim documentfilelist As documentFiles = New documentFiles()
-            documentfilelist.name = nombre.ToString()
-            documentfilelist.size = 1
-            documentfilelist.extension = extension.ToString()
-            documentfilelist.encodeData = returnvalue
-            documentfilelist.extendedData.mapMetadata.f = DateTime.Now().Date.ToString("dd/MM/yyyy")
-            documentfilelist.extendedData.mapMetadata.fo = CInt(idsol)
-            documentfilelist.extendedData.mapMetadata.no = CInt(id_doc)
-            documentfilelist.extendedData.mapMetadata.v = CInt(version)
-            documentfilelist.extendedData.sha1N = encodefile
-            ingestaarchivos.documentFiles.Add(documentfilelist)
+                Dim information As System.IO.FileInfo
+                information = My.Computer.FileSystem.GetFileInfo(Ruta)
+                Dim extension As String = information.Extension.ToString().Replace(".", "")
+                Dim ingestaarchivos As IngestaDocumentos = New IngestaDocumentos()
+                ingestaarchivos.repositoryName = "finauto"
+                Dim documentfilelist As documentFiles = New documentFiles()
+                documentfilelist.name = nombre.ToString()
+                documentfilelist.size = 1
+                documentfilelist.extension = extension.ToString()
+                documentfilelist.encodeData = returnvalue
+                documentfilelist.extendedData.mapMetadata.f = DateTime.Now().Date.ToString("dd/MM/yyyy")
+                documentfilelist.extendedData.mapMetadata.fo = CInt(idsol)
+                documentfilelist.extendedData.mapMetadata.no = CInt(id_doc)
+                documentfilelist.extendedData.mapMetadata.v = CInt(version)
+                documentfilelist.extendedData.sha1N = encodefile
+                ingestaarchivos.documentFiles.Add(documentfilelist)
 
 
-            Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer()
-            serializer.MaxJsonLength = Int32.MaxValue
-            Dim jsonBODY As String = serializer.Serialize(ingestaarchivos)
+                Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer()
+                serializer.MaxJsonLength = Int32.MaxValue
+                Dim jsonBODY As String = serializer.Serialize(ingestaarchivos)
 
-            Dim userid As String = CType(System.Web.HttpContext.Current.Session.Item("userID"), String)
-            Dim idticket As String = CType(System.Web.HttpContext.Current.Session.Item("iv_ticket"), String)
+                Dim userid As String = CType(System.Web.HttpContext.Current.Session.Item("userID"), String)
+                Dim idticket As String = CType(System.Web.HttpContext.Current.Session.Item("iv_ticket"), String)
 
-            Dim restful As RESTful = New RESTful()
-            restful.Uri = System.Configuration.ConfigurationManager.AppSettings("uriIngestadocu").ToString()
-            'restful.consumerID = "10000004"
-            Dim respuesta As String = restful.ConnectionPost(userid, idticket, jsonBODY)
-            Dim errormessage As String
-            If (restful.IsError) Then
-                errormessage = restful.MensajeError
-                Throw New Exception(errormessage)
-            Else
+                Dim restful As RESTful = New RESTful()
+                restful.Uri = System.Configuration.ConfigurationManager.AppSettings("uriIngestadocu").ToString()
+                'restful.consumerID = "10000004"
+                Dim respuesta As String = restful.ConnectionPost(userid, idticket, jsonBODY)
+                If (restful.IsError) Then
+                    Throw New Exception(restful.MensajeError)
+                End If
+
                 Dim res As Respuesta = serializer.Deserialize(Of Respuesta)(respuesta)
-                Dim foliodocservice As String = res.documentFiles(0).extendedData.mapMetadata._s3_key
-                Dim dsrelpandoc As DataSet
-                Dim relpandoc As String = String.Empty
-                dsrelpandoc = BD.EjecutarQuery("select PDK_ID_REL_PAN_DOC from PDK_REL_PAN_DOC where PDK_ID_DOCUMENTOS=" + id_doc.ToString + "and PDK_ID_PANTALLAS=" + Request("pantalla").ToString + ";")
-                If (dsrelpandoc.Tables.Count > 0 And dsrelpandoc.Tables(0).Rows.Count >= 0) Then
-                    relpandoc = dsrelpandoc.Tables(0).Rows(0).Item("PDK_ID_REL_PAN_DOC").ToString()
-                End If
-                'If System.IO.File.Exists(Ruta) = True Then
-                '    System.IO.File.Delete(Ruta)
-                'End If
-                Dim clsseg As New clsSeguros
-                clsseg._ID_SOLICITUD = idsol
-                clsseg._ID_DOC = id_doc
-                clsseg._ID_RELPANDOC = relpandoc
-                clsseg._NOMDOC = foliodocservice
-                clsseg._VER = version
-                clsseg._NOMBRE_ARCHIVO = filename
-                clsseg._DATOS_ARCHIVO = files
-                If clsseg.InsertaDoc() Then
-                    GuardaringestaBBVA = True
-                    'ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "CheckDoc", "fillUpload('tbValidarObjetos', 'hdPantalla, hdSolicitud, hdusuario', 'per1', '');", True)
-                Else
-                    Throw New Exception(clsseg.StrError)
-                End If
+                foliodocservice = res.documentFiles(0).extendedData.mapMetadata._s3_key
+
             End If
+
+            Dim dsrelpandoc As DataSet
+            Dim relpandoc As String = String.Empty
+            dsrelpandoc = BD.EjecutarQuery("select PDK_ID_REL_PAN_DOC from PDK_REL_PAN_DOC where PDK_ID_DOCUMENTOS=" + id_doc.ToString + "and PDK_ID_PANTALLAS=" + Request("pantalla").ToString + ";")
+            If (dsrelpandoc.Tables.Count > 0 And dsrelpandoc.Tables(0).Rows.Count >= 0) Then
+                relpandoc = dsrelpandoc.Tables(0).Rows(0).Item("PDK_ID_REL_PAN_DOC").ToString()
+            End If
+            'If System.IO.File.Exists(Ruta) = True Then
+            '    System.IO.File.Delete(Ruta)
+            'End If
+            Dim clsseg As New clsSeguros
+            clsseg._ID_SOLICITUD = idsol
+            clsseg._ID_DOC = id_doc
+            clsseg._ID_RELPANDOC = relpandoc
+            clsseg._NOMDOC = foliodocservice
+            clsseg._VER = version
+            clsseg._NOMBRE_ARCHIVO = filename
+            clsseg._DATOS_ARCHIVO = files
+            If clsseg.InsertaDoc() Then
+                GuardaringestaBBVA = True
+                'ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "CheckDoc", "fillUpload('tbValidarObjetos', 'hdPantalla, hdSolicitud, hdusuario', 'per1', '');", True)
+            Else
+                Throw New Exception(clsseg.StrError)
+            End If
+
         Catch ex As Exception
             Master.MensajeError(ex.Message)
             GuardaringestaBBVA = False
@@ -834,15 +876,24 @@ Public Class consultaPantallaDocumentos
                 End If
                 vigsegdanios = FormatoDate(vigsegdanios)
                 Dim fechadanios As Date = vigsegdanios
-                If isMulti = 1 Then
-                    If DateDiff("d", fechadanios, datefincredito) <= 2 Then
-                        seguros._VIGSEGDANIOS = fechadanios.ToString("yyyy/MM/dd")
-                    Else
+
+                'BUG-PD-448
+                Dim dsDatosSeguro As DataSet = seguros.getDatosSeguro()
+                Dim idBroker As Short = 0
+
+                If (Not IsNothing(dsDatosSeguro)) AndAlso dsDatosSeguro.Tables.Count > 0 AndAlso dsDatosSeguro.Tables(0).Rows.Count > 0 Then
+                    idBroker = CShort(dsDatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString())
+                End If
+
+                If idBroker <> Marsh Then
+                    If isMulti = 1 AndAlso (DateDiff("d", fechadanios, datefincredito) > 2) Then
                         Throw New Exception("Fecha vigencia de seguro de daños vence antes de la fecha fin del credito")
                     End If
-                Else
-                    seguros._VIGSEGDANIOS = fechadanios.ToString("yyyy/MM/dd")
                 End If
+
+                seguros._VIGSEGDANIOS = fechadanios.ToString("yyyy/MM/dd")
+                'BUG-PD-448
+
                 If seguros.InsertDatosSeguroSolicitud() Then
                     Return "OK"
                 Else
@@ -880,7 +931,7 @@ Public Class consultaPantallaDocumentos
                     Dim tienevida As Integer = IIf(DatosSeguro.Tables(0).Rows(0).Item("TIPO_SEG_VIDA").ToString() <> "172", 1, 0)
                     Select Case opcion
                         Case 0
-                            If EmitirSeguros(CInt(DatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString()), DatosSeguro.Tables(0).Rows(0).Item("NO_COTSEG").ToString, "") Then
+                            If EmitirSeguros(CInt(DatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString()), DatosSeguro.Tables(0).Rows(0).Item("NO_COTSEG").ToString, DatosSeguro.Tables(0).Rows(0).Item("ID_AGENCIA").ToString) Then
                             Else
                                 btnEmisionDanRetry.Visible = True
                                 btnImpresionDanRetry.Visible = False
@@ -888,7 +939,7 @@ Public Class consultaPantallaDocumentos
                                 btnImpresionVidRetry.Visible = False
                                 Exit Sub
                             End If
-                            If ImprimirSeguros(CInt(DatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString()), DatosSeguro.Tables(0).Rows(0).Item("NO_COTSEG").ToString, "") Then
+                            If ImprimirSeguros(CInt(DatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString()), DatosSeguro.Tables(0).Rows(0).Item("NO_COTSEG").ToString, DatosSeguro.Tables(0).Rows(0).Item("ID_AGENCIA").ToString) Then
                             Else
                                 btnEmisionDanRetry.Visible = False
                                 btnImpresionDanRetry.Visible = True
@@ -897,7 +948,7 @@ Public Class consultaPantallaDocumentos
                                 Exit Sub
                             End If
                         Case 1
-                            If ImprimirSeguros(CInt(DatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString()), DatosSeguro.Tables(0).Rows(0).Item("NO_COTSEG").ToString, "") Then
+                            If ImprimirSeguros(CInt(DatosSeguro.Tables(0).Rows(0).Item("ID_BROKER").ToString()), DatosSeguro.Tables(0).Rows(0).Item("NO_COTSEG").ToString, DatosSeguro.Tables(0).Rows(0).Item("ID_AGENCIA").ToString) Then
                             Else
                                 btnEmisionDanRetry.Visible = False
                                 btnImpresionDanRetry.Visible = True
@@ -1087,7 +1138,7 @@ Public Class consultaPantallaDocumentos
                     clsORDAS.policy.idPack = dsres.Tables(0).Rows(0).Item("idPack").ToString()
                     clsORDAS.policy.idProduct = dsres.Tables(0).Rows(0).Item("idProduct").ToString()
                     clsORDAS.policy.idTerm = dsres.Tables(0).Rows(0).Item("idTerm").ToString()
-                    clsORDAS.policy.agencyNumber = "19"
+                    clsORDAS.policy.agencyNumber = dsres.Tables(0).Rows(0).Item("agencyid").ToString()
                     clsORDAS.policy.insurerId = dsres.Tables(0).Rows(0).Item("insurerId").ToString()
                     clsORDAS.policy.insuredAmount.amount = dsres.Tables(0).Rows(0).Item("amount").ToString()
                     clsORDAS.policy.idAdditionalPaymentWay = "-1"
@@ -1220,7 +1271,7 @@ Public Class consultaPantallaDocumentos
                     clsemiEIKOS.policy.complement.user.id = System.Configuration.ConfigurationManager.AppSettings("useridEikos").ToString()
                     clsemiEIKOS.policy.complement.user.credentials.accessPassword = System.Configuration.ConfigurationManager.AppSettings("accessPasswordEikos").ToString()
 
-                    clsemiEIKOS.policy.agencyNumber = "3793"  'CAMBIOS URGENTES RHERNANDES 
+                    clsemiEIKOS.policy.agencyNumber = dsres.Tables(0).Rows(0).Item("agencyid").ToString
                     clsemiEIKOS.policy.fee.amount = dsres.Tables(0).Rows(0).Item("amount").ToString
                     clsemiEIKOS.policy.contractor.name = dsres.Tables(0).Rows(0).Item("name").ToString
                     clsemiEIKOS.policy.contractor.middleName = dsres.Tables(0).Rows(0).Item("middleName").ToString
@@ -1311,7 +1362,12 @@ Public Class consultaPantallaDocumentos
                     clsemiMARSH.policy.iPolicy.vehiclePolicy.idQuote = policyid.ToString
                     clsemiMARSH.policy.iPolicy.vehiclePolicy.credit.idFinancingTerm = dsres.Tables(0).Rows(0).Item("idFinancingTerm").ToString
                     clsemiMARSH.policy.iPolicy.vehiclePolicy.credit.validityPeriod.startDate = dsres.Tables(0).Rows(0).Item("startDate").ToString
-                    clsemiMARSH.policy.iPolicy.vehiclePolicy.credit.validityPeriod.endDate = dsres.Tables(0).Rows(0).Item("endDate").ToString
+                    Dim FechafinMarsh As Date = dsres.Tables(0).Rows(0).Item("startDate").ToString()
+                    Dim val_plazo As Integer = IIf(dsres.Tables(0).Rows(0).Item("idFinancingTerm").ToString() = "", 0, CInt(dsres.Tables(0).Rows(0).Item("idFinancingTerm").ToString()))
+                    FechafinMarsh = DateAdd(DateInterval.Month, val_plazo, FechafinMarsh)
+                    'FechafinMarsh = DateAdd(DateInterval.Day, 16, FechafinMarsh)
+                    clsemiMARSH.policy.iPolicy.vehiclePolicy.credit.validityPeriod.endDate = FechafinMarsh.Date.ToString("yyyy-MM-dd")
+
                     clsemiMARSH.policy.iPolicy.vehiclePolicy.invoiceNumber = dsres.Tables(0).Rows(0).Item("invoiceNumber").ToString
 
                     clsemiMARSH.policy.iComplement.EmissionComplementMarsh.contractNumber = dsres.Tables(0).Rows(0).Item("contractNumber").ToString
@@ -1895,7 +1951,6 @@ Public Class consultaPantallaDocumentos
                 Else
                     Throw New Exception("No se cuenta con datos para emitir")
                 End If
-
             Else
                 Throw New Exception("No se cuenta con datos para emitir")
             End If
@@ -1968,57 +2023,65 @@ Public Class consultaPantallaDocumentos
         dsConsulta = clsCat.Catalogos(18)
 
         If ddlTurnar.Visible = False Then
-            If (Not IsNothing(dsConsulta) AndAlso dsConsulta.Tables.Count > 0 AndAlso dsConsulta.Tables(0).Rows.Count > 0) Then
-                Dim doc1 As Boolean
-                Dim doc2 As Boolean
-                Dim doc3 As Boolean
+            'If (Not IsNothing(dsConsulta) AndAlso dsConsulta.Tables.Count > 0 AndAlso dsConsulta.Tables(0).Rows.Count > 0) Then
+            '    If hdPantalla.Value = 74 Or hdPantalla.Value = 89 Or hdPantalla.Value = 105 Then
+            '        Dim doc1 As Boolean = False
+            '        Dim doc2 As Boolean = False
+            '        Dim doc3 As Boolean = False
 
-                doc1 = dsConsulta.Tables(0).Rows(0).Item("VALIDADO")
-                doc2 = dsConsulta.Tables(0).Rows(1).Item("VALIDADO")
-                doc3 = dsConsulta.Tables(0).Rows(2).Item("VALIDADO")
-                If (doc1 = False Or doc2 = False Or doc3 = False) Then
+            '        doc1 = dsConsulta.Tables(0).Rows(0).Item("VALIDADO")
+            '        If dsConsulta.Tables(0).Rows.Count > 1 Then
+            '            doc2 = dsConsulta.Tables(0).Rows(1).Item("VALIDADO")
+            '        End If
+            '        If dsConsulta.Tables(0).Rows.Count > 2 Then
+            '            doc3 = dsConsulta.Tables(0).Rows(2).Item("VALIDADO")
+            '        End If
 
+            '        If (doc1 = False Or doc2 = False Or doc3 = False) Then
 
-                    ClsEmail.OPCION = 17
-                    ClsEmail.TAREA_ACTUAL = Val(Request("idPantalla").ToString)
+            '            ClsEmail.OPCION = 17
+            '            ClsEmail.TAREA_ACTUAL = Val(Request("idPantalla").ToString)
 
-                    Dim dtConsulta = New DataSet()
-                    dtConsulta = ClsEmail.ConsultaStatusNotificacion
-                    If (Not IsNothing(dtConsulta) AndAlso dtConsulta.Tables.Count > 0 AndAlso dtConsulta.Tables(0).Rows.Count() > 0) Then
-                        If (CInt(dtConsulta.Tables(0).Rows(0).Item("RESULTADO").ToString) = 1) Then
-                            If (CInt(dtConsulta.Tables(1).Rows(0).Item("PDK_STATUS").ToString) = 2) Then
-                                If (CInt(dtConsulta.Tables(1).Rows(0).Item("PDK_STATUS_EMAIL").ToString) = 2 Or CInt(CInt(dtConsulta.Tables(1).Rows(0).Item("PDK_STATUS_SMS").ToString) = 2)) Then
-                                    Dim strLocation As String = String.Empty
-                                    strLocation = ("../aspx/ValidaEmails.aspx?idPantalla=" & Val(Request("pantalla")) & "&Sol=" & Val(Request("Sol")).ToString & "&mostrarPant=2" & "&usuario=" & usu & "&usu=" & usu)
-                                    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-                                Else
-                                    Dim strLocation As String
-                                    strLocation = ("../aspx/consultaPanelControl.aspx")
-                                    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-                                End If
-                            Else
-                                Dim strLocation As String
-                                strLocation = ("../aspx/consultaPanelControl.aspx")
-                                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-                            End If
-                        Else
-                            Dim strLocation As String
-                            strLocation = ("../aspx/consultaPanelControl.aspx")
-                            ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-                        End If
-                    Else
+            '            Dim dtConsulta = New DataSet()
+            '            dtConsulta = ClsEmail.ConsultaStatusNotificacion
+            '            If (Not IsNothing(dtConsulta) AndAlso dtConsulta.Tables.Count > 0 AndAlso dtConsulta.Tables(0).Rows.Count() > 0) Then
+            '                If (CInt(dtConsulta.Tables(0).Rows(0).Item("RESULTADO").ToString) = 1) Then
+            '                    If (CInt(dtConsulta.Tables(1).Rows(0).Item("PDK_STATUS").ToString) = 2) Then
+            '                        If (CInt(dtConsulta.Tables(1).Rows(0).Item("PDK_STATUS_EMAIL").ToString) = 2 Or CInt(CInt(dtConsulta.Tables(1).Rows(0).Item("PDK_STATUS_SMS").ToString) = 2)) Then
+            '                            Dim strLocation As String = String.Empty
+            '                            strLocation = ("../aspx/ValidaEmails.aspx?idPantalla=" & Val(Request("pantalla")) & "&Sol=" & Val(Request("Sol")).ToString & "&mostrarPant=2" & "&usuario=" & usu & "&usu=" & usu)
+            '                            ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
+            '                        Else
+            '                            Dim strLocation As String
+            '                            strLocation = ("../aspx/consultaPanelControl.aspx")
+            '                            ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
+            '                        End If
+            '                    Else
+            '                        Dim strLocation As String
+            '                        strLocation = ("../aspx/consultaPanelControl.aspx")
+            '                        ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
+            '                    End If
+            '                Else
+            '                    Dim strLocation As String
+            '                    strLocation = ("../aspx/consultaPanelControl.aspx")
+            '                    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
+            '                End If
+            '            Else
 
-                    End If
-                Else
-                    Dim strLocation As String
-                    strLocation = ("../aspx/consultaPanelControl.aspx")
-                    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-                End If
-            Else
-                Dim strLocation As String
-                strLocation = ("../aspx/consultaPanelControl.aspx")
-                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
-            End If
+            '            End If
+            '        Else
+            '            Dim strLocation As String
+            '            strLocation = ("../aspx/consultaPanelControl.aspx")
+            '            ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
+            '        End If
+            '    Else
+            asignaTarea(0)
+            '    End If
+            'Else
+            '    Dim strLocation As String
+            '    strLocation = ("../aspx/consultaPanelControl.aspx")
+            '    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLocation & "';", True)
+            'End If
         Else
             If ddlTurnar.SelectedValue = 0 Then
                 If hdPantalla.Value = "63" Then
@@ -2079,8 +2142,16 @@ Public Class consultaPantallaDocumentos
             If idAsignarPantalla <> 0 Then
                 Solicitudes.PDK_ID_CAT_RESULTADO = idAsignarPantalla
             End If
-
-            If ddlTurnar.SelectedValue = -1 Then
+            If ddlTurnar.Visible = True Then
+                If ddlTurnar.SelectedValue = -1 Or (Request("pantalla") = "8" AndAlso ddlTurnar.SelectedValue = 0) Then
+                    BD.AgregaParametro("@FOLIO", TipoDato.Entero, hdSolicitud.Value)
+                    BD.AgregaParametro("@BANDERA", TipoDato.Entero, 2)
+                    BD.AgregaParametro("@PANTALLA", TipoDato.Entero, Request("pantalla"))
+                    Dim ds_validardocumento As New DataSet
+                    ds_validardocumento = BD.EjecutaStoredProcedure("sp_validarEntrevista")
+                    mensaje = ds_validardocumento.Tables(0).Rows(0).Item("MENSAJE")
+                End If
+            Else
                 BD.AgregaParametro("@FOLIO", TipoDato.Entero, hdSolicitud.Value)
                 BD.AgregaParametro("@BANDERA", TipoDato.Entero, 2)
                 BD.AgregaParametro("@PANTALLA", TipoDato.Entero, Request("pantalla"))
@@ -2088,6 +2159,7 @@ Public Class consultaPantallaDocumentos
                 ds_validardocumento = BD.EjecutaStoredProcedure("sp_validarEntrevista")
                 mensaje = ds_validardocumento.Tables(0).Rows(0).Item("MENSAJE")
             End If
+
             If mensaje <> "" Then
                 Master.MensajeError(mensaje)
                 cmbguardar1.Disabled = False
@@ -2284,10 +2356,12 @@ Public Class consultaPantallaDocumentos
                         End If
                     Next
                     If GetIdCol = "" Then
-                        Throw New Exception("Direccion del cliente no valida")
+                        'Throw New Exception("Direccion del cliente no valida")
+                        GetIdCol = "99999"
                     End If
                 Else
-                    Throw New Exception("Problema al guardar datos del cliente")
+                    'Throw New Exception("Problema al guardar datos del cliente")
+                    GetIdCol = "99999"
                 End If
             End If
         Catch ex As Exception
@@ -2418,7 +2492,7 @@ Public Class consultaPantallaDocumentos
             json.technicalInformation.technicalChannel = "8"
             json.technicalInformation.technicalSubChannel = "8"
             json.technicalInformation.branchOffice = "CONSUMER FINANCE"
-            json.technicalInformation.managementUnit = IIf(dsres.Tables(0).Rows(0).Item("vehicletype").ToString().Trim() = "2", "VINCF004", "VINCF003")  'RQ-PD30: 2->MOTOCICLETAS:VINCF004 autos-> VINCF003 "VINCF002"
+            json.technicalInformation.managementUnit = IIf(dsres.Tables(0).Rows(0).Item("vehicletype").ToString().Trim() = "2", "VINCF006", "VINCF005")  'RQ-PD30: 2->MOTOCICLETAS:VINCF004 autos-> VINCF003 "VINCF002"
             json.technicalInformation.user = "CARLOS"
             json.technicalInformation.technicalIdSession = "3232-3232"
             json.technicalInformation.idRequest = "1212-121212-12121-212"
@@ -2426,12 +2500,12 @@ Public Class consultaPantallaDocumentos
 
             json.productPlan.productCode = "4044"
             json.productPlan.planReview = "001"
-            json.productPlan.planCode.id = IIf(dsres.Tables(0).Rows(0).Item("vehicletype").ToString().Trim() = "2", "047", "046") 'RQ-PD30: 2->MOTOCICLETAS:047 autos-> 046 "041"
+            json.productPlan.planCode.id = IIf(dsres.Tables(0).Rows(0).Item("vehicletype").ToString().Trim() = "2", "044", "041") 'RQ-PD30: 2->MOTOCICLETAS:047 autos-> 046 "041"
 
             json.productPlan.bouquetCode = "VGPU"
 
-            json.validityPeriod.startDate = DateTime.Now.ToString("yyyy-MM-dd")
-            json.validityPeriod.endDate = DateTime.Now.AddMonths(plazo).ToString("yyyy-MM-dd")
+            json.validityPeriod.startDate = dsres.Tables(0).Rows(0).Item("startDate") 'BUG-PD-432 DateTime.Now.ToString("yyyy-MM-dd") '
+            json.validityPeriod.endDate = dsres.Tables(0).Rows(0).Item("endDate") 'BUG-PD-432 DateTime.Now.AddMonths(plazo).ToString("yyyy-MM-dd")
             json.validityPeriod.type.id = "L"
             json.validityPeriod.type.name = "LIBRE"
 
@@ -2589,7 +2663,7 @@ Public Class consultaPantallaDocumentos
             Cuestionario.header.dateRequest = Date.Now.ToString("dd-MM-yyyy hh:mm:ss")
             Cuestionario.header.channel = System.Configuration.ConfigurationManager.AppSettings("channelBBVA").ToString()
             Cuestionario.header.subChannel = System.Configuration.ConfigurationManager.AppSettings("subChannelBBVA").ToString()
-            Cuestionario.header.managementUnit = "VINCF002"
+            Cuestionario.header.managementUnit = System.Configuration.ConfigurationManager.AppSettings("managementUnitBBVA").ToString()
             Cuestionario.header.branchOffice = System.Configuration.ConfigurationManager.AppSettings("branchOfficeBBVA").ToString()
             Cuestionario.header.user = System.Configuration.ConfigurationManager.AppSettings("userBBVA").ToString()
             Cuestionario.header.idSession = "3232-3232"
@@ -2676,7 +2750,7 @@ Public Class consultaPantallaDocumentos
         Cuestionario.header.channel = System.Configuration.ConfigurationManager.AppSettings("channelBBVA").ToString()
         Cuestionario.header.subChannel = System.Configuration.ConfigurationManager.AppSettings("subChannelBBVA").ToString()
         Cuestionario.header.managementUnit = System.Configuration.ConfigurationManager.AppSettings("managementUnitBBVA").ToString()
-        Cuestionario.header.branchOffice = "VINCF002"
+        Cuestionario.header.branchOffice = System.Configuration.ConfigurationManager.AppSettings("branchOfficeBBVA").ToString()
         Cuestionario.header.user = System.Configuration.ConfigurationManager.AppSettings("userBBVA").ToString()
         Cuestionario.header.idSession = "3232-3232"
         Cuestionario.header.idRequest = "1212-121212-12121-212"
@@ -2785,7 +2859,11 @@ Public Class consultaPantallaDocumentos
         crReportDocument.Close()
         crReportDocument.Dispose()
 
-        Response.Redirect("./Descargapdf.aspx?fname=" & Fname)
+        Dim strLinl_1 As String = "./Descargapdf.aspx?fname="
+        Dim strLink As String = HttpUtility.UrlEncode(Fname)
+        ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "window.location = '" & strLinl_1 & strLink & "';", True)
+
+        'Response.Redirect("./Descargapdf.aspx?fname=" & Fname)
 
 
     End Sub

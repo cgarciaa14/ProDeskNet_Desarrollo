@@ -64,6 +64,8 @@
 * BUG-PD-274 GVARGAS 23/11/2017 Cambio "globalValidate" no valide inputs deshabilitados.
 * BUG-PD-290: MGARCIA: 05/12/2017: Detalle Impagos en Menu
 * BUG-PD-336: DJUAREZ: 15/01/2018: Se bloquea la pantalla cuando se esta ejecutando una pantalla automatica.
+* BUG-PD-435: DCORNEJO: 07/05/2018: Se agrega Lineas en function btnEntrevista-->Roberto Hernandez.
+* BUG-PD-441: DCORNEJO: 09/05/2018: SE CAMBIA MENSAJE DE ERROR EN btnManejoMensaje
  */
 
 var options = {};
@@ -893,16 +895,30 @@ function btnInsUpdRapido(cadena) {
 
 
 function btnEntrevista(cadena) {
+    $("[id$=lblMensaje]").text('Espere un momento...');
+    centraVentana($('#ventanaconfirm'));
+
+    $('#ventanaContain').show();
+    $('#ventanaconfirm').show();
     cadena = cadena.replace(/'/g, "\\'");
     data = "{cadena: '" + cadena + "' }";
     var request = $.ajax({
         type: "POST",
         url: "../fillobjetos.asmx/btnInsUpd",
         data: data,
+        async: false,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function (msg) { if (msg.d.indexOf("error") != -1) { PopUpLetreroRapido(msg.d); } },
-        error: function (msg) { if (msg.d.length > 0) { PopUpLetrero(msg.d); } else { PopUpLetrero("Se excedio el tiempo de respuesta") } }
+        success: function (msg) {
+            if (msg.d.indexOf("error") != -1) { PopUpLetreroRapido(msg.d); }
+            $('#ventanaContain').hide();
+            $('#ventanaconfirm').hide();
+        },
+        error: function (msg) {
+            if (msg.d.length > 0) { PopUpLetrero(msg.d); } else { PopUpLetrero("Se excedio el tiempo de respuesta") }
+            $('#ventanaContain').hide();
+            $('#ventanaconfirm').hide();
+        }
     })
     fnlimpiar(request);
 }
@@ -938,8 +954,26 @@ function btnManejoMensaje(cadena, cadena2) {
         data: data,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function (msg) { if ((msg.d.indexOf("pregunta") === -1) && (msg.d.indexOf("Falta") === -1) && (msg.d.indexOf("error") === -1)) { PopUpLetreroRedirect(msg.d, ruta) } else { PopUpLetrero(msg.d); boton.removeAttr('disabled', ''); inputfile = $("[id^=yourID]"); $(inputfile).attr("disabled", false);  } },
-        error: function (msg) { if (msg.d == null) { PopUpLetrero("Existe un error en 'btnManejoMensaje' verificarlo con tu proveedor"); return; } if (msg.d.length > 0) { PopUpLetrero(msg.d); } else { PopUpLetrero("Se excedio el tiempo de respuesta") } }
+        success: function (msg) {
+            if ((msg.d.indexOf("pregunta") === -1) && (msg.d.indexOf("Falta") === -1) && (msg.d.indexOf("error") === -1))
+            {
+                PopUpLetreroRedirect(msg.d, ruta)
+            } else {
+                PopUpLetrero(msg.d); boton.removeAttr('disabled', ''); inputfile = $("[id^=yourID]"); $(inputfile).attr("disabled", false);
+            }
+        },
+        error: function (msg) {
+            if (msg.d == null)
+            {
+                PopUpLetrero("Error En Conexion Intentar Nuevamente"); return;
+            }
+            if (msg.d.length > 0)
+            {
+                PopUpLetrero(msg.d);
+            } else {
+                PopUpLetrero("Se excedio el tiempo de respuesta")
+            }
+        }
     })
     fnlimpiar(request);
 }

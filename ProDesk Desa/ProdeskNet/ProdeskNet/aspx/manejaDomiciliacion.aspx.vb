@@ -24,17 +24,20 @@
 'BUG-PD-328: CGARCIA: 05/01/2017: SE AGREGA COLUMNA PARA GUARDAR EL NUMERO DE CLIENTE QUE AROJA EL WS DE LIGUE DE CUENTA
 'BUG-PD-370: ERODRIGUEZ: 26/02/2018: Se cambio validación de RFC para que se compare sin homoclave, Se agrego validacion para no permitir procesar sin número de cliente.
 'BUG-PD-386  GVARGAS 14/03/2018  Correccion flujo 
+'BUG-PD-417  DCORNEJO 17/04/2018: SE AGREGO LA OPCION DE TURNAR A: COTIZACION ANALISTA
 
 Imports System.Data
 Imports ProdeskNet.Catalogos
 Imports ProdeskNet.Seguridad
 Imports ProdeskNet.Configurcion
 Imports ProdeskNet.SN
+Imports ProdeskNet.BD
 
 Partial Class aspx_manejaDomiciliacion
     Inherits System.Web.UI.Page
     Dim es As New ProdeskNet.Catalogos.clsStatusSolicitud
     Dim dc As New ProdeskNet.Catalogos.clsDatosCliente
+    Dim BD As New clsManejaBD
     Public ClsEmail As New clsEmailAuto()
     Dim usu As String
 
@@ -43,7 +46,7 @@ Partial Class aspx_manejaDomiciliacion
 
         Me.lblSolicitud.Text = Request.QueryString("sol")
 
-        Dim intNumCliente As Integer = CInt(Request.QueryString("sol"))      
+        Dim intNumCliente As Integer = CInt(Request.QueryString("sol"))
 
         es.getStatusSol(Request.QueryString("sol"))
         Me.lblStCredito.Text = es.PStCredito
@@ -54,7 +57,9 @@ Partial Class aspx_manejaDomiciliacion
         'RQ-PD18: CGARCIA: 13/12/2017: SE AGREGA NUMERO DE CLIENTE DESDE WS Y BD EN ENCABEZADO DE INFO 
         dc.getNumCliente(7, intNumCliente)
         lblNumCliente.Text = dc.PropNumCliente
-      
+
+        Dim dsresult As New DataSet
+        Dim dsresulta As New DataSet
         hdPantalla.Value = Request("idPantalla")
         hdSolicitud.Value = Request("sol")
         hdusuario.Value = Request("usu")
@@ -71,6 +76,7 @@ Partial Class aspx_manejaDomiciliacion
 
             btnProcesarCliente.Attributes.Add("style", "display:none;")
             btnCancelar.Attributes.Add("style", "display:none;")
+
         End If
         If Session("Regresar") Is Nothing Then
             Session("Regresar") = Request.UrlReferrer.LocalPath
@@ -79,14 +85,49 @@ Partial Class aspx_manejaDomiciliacion
         'btnProcesarCliente.Disabled = True
         hdRutaEntrada.Value = Session("Regresar")
 
+        Try
+            dsresulta = BD.EjecutarQuery("get_Path_Next_Tarea  " & hdPantalla.Value)
+            If dsresult.Tables(0).Rows.Count > 0 AndAlso dsresult.Tables.Count > 0 Then
+                Dim Mostrar As String
+                Dim pantallas As String
+                Mostrar = dsresulta.Tables(0).Rows(0).Item("PDK_PANT_MOSTRAR").ToString
+                pantallas = dsresulta.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString
+                If Mostrar = 2 Then
+
+                    hdnResultado.Value = dsresult.Tables(0).Rows(0).Item("RUTA")
+                Else
+                    hdnResultado.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
+                    hdnResultado2.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
+                End If
+            End If
+
+        Catch ex As Exception
+            hdnResultado.Value = Session("Regresar")
+        End Try
+
         If Not IsPostBack Then
-            CargaCombos(0)
-            ddlTipoCuenta_SelectedIndexChanged(sender, e)
-            hdnResultado1.Value = 0
-            hdnResultado2.Value = 0
-            hdnResultado3.Value = 0
-            CargaDatos()
-           
+            If (Request("pantalla").ToString = "92") And intEnable = 0 Then
+                'divActualizaColonia.Attributes.Add("style", "display:''")
+                lblturnar.Visible = True
+                ddlTurnar.Visible = True
+                Dim clsquiz As New clsCuestionarioSolvsID()
+                Dim objCombo As New clsParametros
+                clsquiz._ID_PANT = CInt(hdPantalla.Value)
+                Dim dtsres As New DataSet
+                dtsres = clsquiz.getTurnar()
+                If dtsres.Tables.Count > 0 Then
+                    If dtsres.Tables(0).Rows.Count > 0 Then
+                        objCombo.LlenaCombos(dtsres, "TURNAR_NOMBRE", "PDK_ID_TAREAS", ddlTurnar, True, True)
+                    End If
+                End If
+                CargaCombos(0)
+                ddlTipoCuenta_SelectedIndexChanged(sender, e)
+                hdnResultado1.Value = 0
+                hdnResultado2.Value = 0
+                hdnResultado3.Value = 0
+                CargaDatos()
+
+            End If
         End If
         ValidaDigitosBancarios()
         'lblNumCliente.Text = ""
@@ -117,66 +158,66 @@ Partial Class aspx_manejaDomiciliacion
         Dim intValueBanco_4 = "0" + Format(32, "0#")
 
         If ddlBanco.SelectedValue = intValueBanco_3 Or ddlBanco.SelectedValue = intValueBanco_4 Then
-            hdnResultado1.Value = 1
-            ValidaDigitosBancarios()
-        End If
-
-        If ddlBanco.SelectedValue = intValueBanco_1 Or ddlBanco.SelectedValue = intValueBanco_2 Then
-            If (ddlTipoCuenta.SelectedValue = 284) Then
-                If (txtNumeroTarjeta.Text <> "") Then
-                    hdnResultado2.Value = 1
-                Else
-                    hdnResultado2.Value = 0
-                End If
-
+                hdnResultado1.Value = 1
+                ValidaDigitosBancarios()
             End If
-            If (ddlTipoCuenta.SelectedValue = 283) Then
-                If (LblRFC.Text <> "") Then
-                    If (HiddenRFCCompleto.Value = "") Then
-                        HiddenRFCCompleto.Value = ObtenRFCcte(1)
+
+            If ddlBanco.SelectedValue = intValueBanco_1 Or ddlBanco.SelectedValue = intValueBanco_2 Then
+                If (ddlTipoCuenta.SelectedValue = 284) Then
+                    If (txtNumeroTarjeta.Text <> "") Then
+                        hdnResultado2.Value = 1
+                    Else
+                        hdnResultado2.Value = 0
                     End If
 
-                    Dim rfcg_len As Integer = Len(HiddenRFCCompleto.Value)
-                    Dim rfcs_len As Integer = Len(LblRFC.Text)
+                End If
+                If (ddlTipoCuenta.SelectedValue = 283) Then
+                    If (LblRFC.Text <> "") Then
+                        If (HiddenRFCCompleto.Value = "") Then
+                            HiddenRFCCompleto.Value = ObtenRFCcte(1)
+                        End If
 
-                    'If rfcs_len = 10 Then  'BUG-PD-304: ERORIGUEZ: 13/12/2017: Cuando el RFC del servicio no trae homoclave se compara sin homoclave con el rfc registrado.
-                    '    If rfcg_len >= 10 Then
-                    '        HiddenRFCCompleto.Value = HiddenRFCCompleto.Value.ToString().Substring(0, 10)
-                    '        rfcg_len = Len(HiddenRFCCompleto.Value)
-                    '    End If
-                    'End If
+                        Dim rfcg_len As Integer = Len(HiddenRFCCompleto.Value)
+                        Dim rfcs_len As Integer = Len(LblRFC.Text)
+
+                        'If rfcs_len = 10 Then  'BUG-PD-304: ERORIGUEZ: 13/12/2017: Cuando el RFC del servicio no trae homoclave se compara sin homoclave con el rfc registrado.
+                        '    If rfcg_len >= 10 Then
+                        '        HiddenRFCCompleto.Value = HiddenRFCCompleto.Value.ToString().Substring(0, 10)
+                        '        rfcg_len = Len(HiddenRFCCompleto.Value)
+                        '    End If
+                        'End If
 
 
 
-                    If (rfcg_len >= 10 And rfcs_len >= 10) Then
-                        LblRFC.Text = LblRFC.Text.Substring(0, 10)
-                        HiddenRFCCompleto.Value = HiddenRFCCompleto.Value.Substring(0, 10)
-                        If (rfcg_len = rfcs_len) Then
-                            If (LblRFC.Text = HiddenRFCCompleto.Value.ToString()) Then
-                                hdnResultado2.Value = 1
-                            Else
-                                msj = ", no coincide RFC"
-                            End If
-                        Else
-                            If (rfcs_len > rfcg_len) Then
-                                Dim new_rfcgs As String = Left(LblRFC.Text, rfcs_len - 3)
-                                If (HiddenRFCCompleto.Value = new_rfcgs) Then
+                        If (rfcg_len >= 10 And rfcs_len >= 10) Then
+                            LblRFC.Text = LblRFC.Text.Substring(0, 10)
+                            HiddenRFCCompleto.Value = HiddenRFCCompleto.Value.Substring(0, 10)
+                            If (rfcg_len = rfcs_len) Then
+                                If (LblRFC.Text = HiddenRFCCompleto.Value.ToString()) Then
                                     hdnResultado2.Value = 1
                                 Else
                                     msj = ", no coincide RFC"
                                 End If
+                            Else
+                                If (rfcs_len > rfcg_len) Then
+                                    Dim new_rfcgs As String = Left(LblRFC.Text, rfcs_len - 3)
+                                    If (HiddenRFCCompleto.Value = new_rfcgs) Then
+                                        hdnResultado2.Value = 1
+                                    Else
+                                        msj = ", no coincide RFC"
+                                    End If
 
+                                End If
                             End If
+
                         End If
 
                     End If
-
                 End If
             End If
-        End If
 
-        'Modificacion temporal para permitir que ninguna banco requiera CFDI, favor de borrar cuando esto, ya no sea requerido.
-        hdnResultado1.Value = 1
+            'Modificacion temporal para permitir que ninguna banco requiera CFDI, favor de borrar cuando esto, ya no sea requerido.
+            hdnResultado1.Value = 1
         'Fin de validacion temporal
         If (hdnResultado3.Value = 1) Then
             If (hdnResultado1.Value = 1 And hdnResultado2.Value = 1) Then
@@ -213,18 +254,72 @@ Partial Class aspx_manejaDomiciliacion
             ElseIf (hdnResultado1.Value = 0) Then
                 Master.MensajeError("Debe de llenar y validar los datos de CFDI")
                 btnProcesarCliente.Disabled = False
-            ElseIf (hdnResultado2.Value = 0) Then
+            ElseIf (hdnResultado2.Value = 0 AndAlso ddlTurnar.SelectedValue = 0) Then 'BUG-PD - 417
                 Master.MensajeError("Debe de verificar los datos bancarios" + msj)
                 btnProcesarCliente.Disabled = False
-
+            ElseIf (ddlTurnar.SelectedValue = 88) Then 'BUG-PD - 417
+                asignaTarea(ddlTurnar.SelectedValue)
             End If
         ElseIf (hdnResultado3.Value = 0) Then
             Master.MensajeError("Número de cliente no encontrado" + msj)
             btnProcesarCliente.Disabled = False
         End If
 
-       
+    End Sub
 
+    Private Sub asignaTarea(ByVal idAsignarPantalla As Integer)
+        Dim dsresult As DataSet = New DataSet()
+        Dim dslink As DataSet = New DataSet()
+        Dim muestrapant As Integer = Nothing
+        Dim objtarea As New ProdeskNet.SN.clsCatTareas()
+        Dim objpantalla As New ProdeskNet.SN.clsPantallas()
+        Dim Solicitudes As New ProdeskNet.Configurcion.clsSolicitudes(Val(Request("sol")))
+        Dim mensaje As String = String.Empty
+        Try
+
+            Solicitudes.BOTON = 64
+            Solicitudes.PDK_ID_SOLICITUD = Val(Request("sol"))
+            Solicitudes.PDK_CLAVE_USUARIO = Request("usu")
+            Solicitudes.PDK_ID_PANTALLA = Request("idPantalla")
+
+            If idAsignarPantalla <> 0 Then
+                Solicitudes.PDK_ID_CAT_RESULTADO = idAsignarPantalla
+            End If
+
+            If mensaje <> "" Then
+                Master.MensajeError(mensaje)
+
+            Else
+                dsresult = Solicitudes.ValNegocio(1)
+                mensaje = dsresult.Tables(0).Rows(0).Item("MENSAJE").ToString
+                Solicitudes.MENSAJE = mensaje
+                Solicitudes.ManejaTarea(5)
+
+                If mensaje <> "Tarea Exitosa" And mensaje <> "SE RECHAZO  DOCUMENTO " And mensaje <> "TAREA EXITOSA" Then
+                    Throw New Exception(mensaje)
+                End If
+
+                dslink = objtarea.SiguienteTarea(Val(Request("sol")))
+
+                muestrapant = objpantalla.SiguientePantalla(Val(Request("sol")))
+                Dim dc As New clsDatosCliente
+                dc.idSolicitud = Request("sol")
+                dc.getDatosSol()
+
+                If muestrapant = 0 Then
+                    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "AbreError", "PopUpLetreroRedirect('" & mensaje & "', '" & "../aspx/" & dslink.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString & "?idPantalla=" & dslink.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString & "&sol=" & Val(Request("Sol")).ToString & "&usuario=" & Val(Request("usuario")).ToString & "');", True)
+                ElseIf muestrapant = 2 Then
+                    ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "AbreError", "PopUpLetreroRedirect('" & mensaje & "', '" & Session("Regresar") & "?NoSolicitud=" & Request("IdFolio") & "&Empresa=" & dc.idempresa & "&Producto=" & dc.idproducto & "&Persona=" & dc.idtpersona & "&sol=" & Val(Request("Sol")).ToString & "');", True)
+                    'Response.Redirect("../aspx/consultaPanelControl.aspx")
+                End If
+            End If
+
+        Catch ex As Exception
+
+            btnRegresar.Attributes.Remove("disabled")
+
+            Master.MensajeError(mensaje)
+        End Try
     End Sub
 
     Public Sub CargaCombos(opc As Integer)
@@ -494,7 +589,7 @@ Partial Class aspx_manejaDomiciliacion
                 ScriptManager.RegisterStartupScript(Page, GetType(String), "RedireccionaPagina", "window.location = '" & str & "';", True)
                 'Response.Redirect("../aspx/" & _dtsResult.Tables(0).Rows(0).Item("PDK_PANT_LINK").ToString & "?idPantalla=" & _dtsResult.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString & "&sol=" & Val(Request("Sol")).ToString & "&usuario=" & Val(Request("usuario")).ToString)
             End If
-            End If
+        End If
     End Sub
 
     Protected Sub btnLigarCuenta_Click(sender As Object, e As EventArgs)
@@ -974,10 +1069,13 @@ Partial Class aspx_manejaDomiciliacion
 
     End Sub
 
-  
+
     Public Sub VerificaEnable()
         txtNumClienteWS.Visible = True
         lblNumClienteWS.Visible = True
     End Sub
 
+    Protected Sub ddlTurnar_SelectedIndexChanged(sender As Object, e As EventArgs)
+
+    End Sub
 End Class

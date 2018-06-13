@@ -23,6 +23,7 @@ Imports System.Data.SqlClient
 'BUG-PD-204 GVARGAS 19/09/2017 WS biometrico
 'BUG-PD-211 GVARGAS 27/09/2017 Cambios mostrar info
 'BUG-PD-400: 14/03/2018: CGARCIA: CORRESCCION VALIDACION ID VS SOLICITUD
+'BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.
 
 Partial Class aspx_PantallaCuestionarioSolvsID
     Inherits System.Web.UI.Page
@@ -984,4 +985,28 @@ Partial Class aspx_PantallaCuestionarioSolvsID
         Public cod As String
         Public mensaje As String
     End Class
+
+    'BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.
+    <System.Web.Services.WebMethod()> _
+    Public Shared Function getBack(ByVal id As String, ByVal docType As String, ByVal folio As String, ByVal Check_VAL As String, ByVal Check_REC As String, ByVal Checked As String) As String
+        Dim respuesta As String = String.Empty
+        Dim clsDoc As clsDocumentos = New clsDocumentos
+        Dim dsDatos As DataSet
+
+        clsDoc.id = id
+        clsDoc.docType = docType
+        clsDoc.folio = folio
+        clsDoc.Check_VAL = Check_VAL
+        clsDoc.Check_REC = Check_REC
+        clsDoc.Checked = Checked
+
+        dsDatos = clsDoc.getActualizaDatosDocumentos(1)
+
+        If (dsDatos.Tables.Count > 1 AndAlso dsDatos.Tables(0).Rows.Count > 0 AndAlso dsDatos.Tables(1).Rows.Count > 0 AndAlso dsDatos.Tables(1).Rows(0).Item("RESULTADO").ToString <> String.Empty) Then
+            respuesta = CStr(dsDatos.Tables(1).Rows(0).Item("RESULTADO").ToString)
+
+        End If
+
+        Return respuesta
+    End Function
 End Class

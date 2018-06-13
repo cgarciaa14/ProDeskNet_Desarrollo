@@ -8,12 +8,13 @@
 <%--BUG-PD-198: CGARCIA: 23/08/2017: SE HIZI MERGE ENTRE VERSIONES DE TEST Y DESARROLLO--%>
 <%--RQ-PI7-PD2: ERODRIGUEZ: 19/10/2017: Se agrego validacion para abrir caja de notas en pestaña nueva, llevando id de solicitud de pantalla donde se este trabajando.--%>
 <%--RQ-PI7-PD13-3: ERODRIGUEZ: 21/12/2017: Se oculto Estatus de actividad--%>
+<%--BUG-PD-438 : egonzalez : 08/05/2018 Se agrega el botón de "Limpiar"--%>
 <script runat="server">
 
    
 </script>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPantallas" runat="Server">
-    <script type="text/javascript" src="../js/Funciones.js"></script>
+    <%--<script type="text/javascript" src="../js/Funciones.js"></script>--%>
 
     <script language="javascript" type="text/javascript">
 
@@ -112,13 +113,13 @@
                           <td style="width: 10%;" align="left">                           
                             <asp:Button runat="server" id="btnRegresar" Text="Regresar" Visible="false" CssClass="buttonBBVA2" OnClick="btnRegresar_Click"/>        
                         </td>
-                        <td style="width: 40%"></td>
+                        <td style="width: 40%" align="left"><input id="btnCleanClient" class="buttonBBVA2" onclick="location.reload(true);" value="Limpiar" type="button"></td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="right">
-                            <textarea style="width: 400px; height: 80px;" runat="server" id="textEditor"></textarea>
+                            <textarea style="width: 360px; height: 80px;" runat="server" id="textEditor" onkeypress="return ValCarac(event,26);"></textarea>
                             <asp:Button runat="server" CssClass="buttonSecBBVA2" ID="btnGuardar" Text="Guardar" />
                         </td>
 

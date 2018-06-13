@@ -11,6 +11,7 @@ Imports ProdeskNet.SN
 'BUG-PD-237: RHERNANDEZ: 23/10/17: SE COTTIGE PROBLEMA AL DAR CLICK EN PROCESAR SIN HABER RESPONDIDO NINGUNA PREGUNTA
 'BUG-PD-276: CGARCIA: 27/11/2017: CORRECCION DE MSJ Y REQUEST DE USUARIOS EN EMAILS
 'BUG-PD-322: ERODRIGUEZ: 03/01/2017: Se cambio el redireccionamiento al panel de control
+'BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.
 Partial Class aspx_PantConsultaIMAX
     Inherits System.Web.UI.Page
     Public idPantalla As Integer = 112
@@ -245,4 +246,28 @@ Partial Class aspx_PantConsultaIMAX
             Master.MensajeError(mensaje)
         End Try
     End Sub
+
+    'BUG-PD-423: CGARCIA: 23/04/2018: SE MANDA A BACK LA ACTUALIZACION DE STATUS DE LOS DOCUMENTOS.
+    <System.Web.Services.WebMethod()> _
+    Public Shared Function getBack(ByVal id As String, ByVal docType As String, ByVal folio As String, ByVal Check_VAL As String, ByVal Check_REC As String, ByVal Checked As String) As String
+        Dim respuesta As String = String.Empty
+        Dim clsDoc As clsDocumentos = New clsDocumentos
+        Dim dsDatos As DataSet
+
+        clsDoc.id = id
+        clsDoc.docType = docType
+        clsDoc.folio = folio
+        clsDoc.Check_VAL = Check_VAL
+        clsDoc.Check_REC = Check_REC
+        clsDoc.Checked = Checked
+
+        dsDatos = clsDoc.getActualizaDatosDocumentos(1)
+
+        If (dsDatos.Tables.Count > 1 AndAlso dsDatos.Tables(0).Rows.Count > 0 AndAlso dsDatos.Tables(1).Rows.Count > 0 AndAlso dsDatos.Tables(1).Rows(0).Item("RESULTADO").ToString <> String.Empty) Then
+            respuesta = CStr(dsDatos.Tables(1).Rows(0).Item("RESULTADO").ToString)
+
+        End If
+
+        Return respuesta
+    End Function
 End Class

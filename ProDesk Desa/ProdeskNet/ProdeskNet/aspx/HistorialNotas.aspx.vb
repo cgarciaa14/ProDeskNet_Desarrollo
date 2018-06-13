@@ -1,5 +1,6 @@
 ﻿'BUG-PD-254: ERODRIGUEZ: 27/10/2017: Se creo ventana para el historial de caja de notas externas e internas.
 'BUG-PD-268: RIGLESIAS:  10/11/2017: Se creo metodo para filtro de  busqueda de solicitud y boton de limpiar 
+'BUG-PD-438 : EGONZALEZ : 08/05/2018 : Se elimina la precarga de notas
 Imports ProdeskNet.Seguridad
 Imports ProdeskNet.Catalogos
 Imports ProdeskNet.Configurcion
@@ -14,17 +15,15 @@ Partial Class aspx_HistorialNotas
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
         Dim dsresult As DataSet
-        dsresult = BD.EjecutarQuery("EXEC getHistorialNotas " & 1)
-        If dsresult.Tables.Count > 0 Then
-            If dsresult.Tables(0).Rows.Count > 0 Then
-                Session("dtsConsultaG") = dsresult
-                GridViewGral.DataSource = dsresult
-                GridViewGral.DataBind()
-
-
+        If IsPostBack Then
+            dsresult = BD.EjecutarQuery("EXEC getHistorialNotas " & 1)
+            If dsresult.Tables.Count > 0 Then
+                If dsresult.Tables(0).Rows.Count > 0 Then
+                    Session("dtsConsultaG") = dsresult
+                    GridViewGral.DataSource = dsresult
+                    GridViewGral.DataBind()
+                End If
             End If
-
-
         End If
 
 

@@ -6,3 +6,4 @@ C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\P
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.dll
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.xml
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.BD\obj\Debug\ProdeskNet.BD.vbprojResolveAssemblyReference.cache

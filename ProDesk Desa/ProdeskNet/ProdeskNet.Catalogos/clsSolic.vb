@@ -1,6 +1,8 @@
 ﻿#Region "Trackers"
 'BBV-P-423 - RQADM-31 22/03/2017 MAPH Mensajes de Red
 'BBV-P-423 - RQXLS1: 23/05/2017 CGARCIA Se agrego la variable para la consulta de alianza 
+'RQ-PD33: DJUAREZ: 03/05/2018: Se crea nueva pantalla para visualizar biometría
+'BUG-PD-449 GVARGAS 23/05/2018 Cambio metodo obtenerSolicitudes
 #End Region
 
 Imports ProdeskNet.BD
@@ -20,6 +22,10 @@ Public Class clsSolic
     Private _TareaActual As String
     Private _StatusTareaActual As String
     Private _Alianza As String
+    Private _Mensaje As String
+    Private _PantallaAut As String
+    Private _PantallaError As String
+    Private _NumError As String
 #End Region
 
 #Region "Properties"
@@ -121,6 +127,42 @@ Public Class clsSolic
             _Alianza = value
         End Set
     End Property
+
+    Public Property Mensaje() As String
+        Get
+            Return _Mensaje
+        End Get
+        Set(value As String)
+            _Mensaje = value
+        End Set
+    End Property
+
+    Public Property PantallaAut() As String
+        Get
+            Return _PantallaAut
+        End Get
+        Set(value As String)
+            _PantallaAut = value
+        End Set
+    End Property
+
+    Public Property PantallaError() As String
+        Get
+            Return _PantallaError
+        End Get
+        Set(value As String)
+            _PantallaError = value
+        End Set
+    End Property
+
+    Public Property NumError() As String
+        Get
+            Return _NumError
+        End Get
+        Set(value As String)
+            _NumError = value
+        End Set
+    End Property
 #End Region
 
 End Class
@@ -149,6 +191,7 @@ Public Class clsSolictds
                                         ByVal FechaFin As String, _
                                         ByVal NombreCliente As String, _
                                         ByVal RFCCliente As String, _
+                                        Optional Opcion As Integer = 0, _
                                         Optional Estatus As Integer = 2) As clsSolictds
         dataManager = New clsManejaBD()
 
@@ -167,9 +210,13 @@ Public Class clsSolictds
         If RFCCliente <> String.Empty Then
             dataManager.AgregaParametro("@RFC_CLIENTE", ProdeskNet.BD.TipoDato.Cadena, Convert.ToString(RFCCliente))
         End If
-        If RFCCliente <> String.Empty Then
+        If Estatus <> 0 Then
             dataManager.AgregaParametro("@ESTATUS", ProdeskNet.BD.TipoDato.Entero, Convert.ToInt32(Estatus))
         End If
+        If Opcion <> 0 Then
+            dataManager.AgregaParametro("@OPCION", ProdeskNet.BD.TipoDato.Entero, Convert.ToInt32(Opcion))
+        End If
+
         tempResult = dataManager.EjecutaStoredProcedure("getSolicitudes")   
         If Not tempResult.Tables Is Nothing And tempResult.Tables.Count > 0 Then
             For Each itemRow As DataRow In tempResult.Tables(0).Rows
@@ -185,6 +232,30 @@ Public Class clsSolictds
                 .MontoSolicitado = itemRow("MONTO_SOLICITADO").ToString(), _
                 .TareaActual = itemRow("TAREA_ACTUAL").ToString(), _
                 .StatusTareaActual = itemRow("STATUS_TAREA").ToString() _
+                })
+
+            Next
+        Else
+            Return New clsSolictds
+        End If
+        Return Me
+    End Function
+
+    Public Function obtenerSolicitudesBiometrico(ByVal NoSolicitud As Integer, _
+                                                 ByVal Opcion As String) As clsSolictds
+        dataManager = New clsManejaBD()
+
+        dataManager.AgregaParametro("@PDK_ID_SECCCERO", ProdeskNet.BD.TipoDato.Entero, Convert.ToInt32(NoSolicitud))
+        dataManager.AgregaParametro("@OPCION", ProdeskNet.BD.TipoDato.Entero, Convert.ToInt32(Opcion))
+        tempResult = dataManager.EjecutaStoredProcedure("crud_Biometrico_SP")
+        If Not tempResult.Tables Is Nothing And tempResult.Tables.Count > 0 Then
+            For Each itemRow As DataRow In tempResult.Tables(0).Rows
+                Me.Add(New clsSolic With { _
+                .NumeroSolicitud = Convert.ToInt32(itemRow("PDK_ID_SECCCERO").ToString()), _
+                .Mensaje = itemRow("STATUS").ToString(), _
+                .PantallaAut = itemRow("PANT_AUT").ToString(), _
+                .PantallaError = itemRow("PANT_QUE").ToString(), _
+                .NumError = itemRow("NUM_QUE").ToString() _
                 })
 
             Next

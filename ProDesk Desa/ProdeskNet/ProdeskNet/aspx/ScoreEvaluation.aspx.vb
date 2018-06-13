@@ -21,6 +21,8 @@
 'BUG-PD-255 GVARGAS 30/10/2017 Cambio mensaje error Hermes
 'BUG-PD-313: DJUAREZ: 27/12/2017: Se evita el avanzar tareas cuando se presiona F5 cuando esta cargando una pagina.
 'RQ-PD-23: ERODRIGUEZ: 15/02/2018: Nuevo servicio getScoreEvaluation
+'BUG-PD-406: ERODRIGUEZ: 26/03/2018: Corrección en codigo postal de agencia
+'BUG-PD-419: ERODRIGUEZ: 13/04/18 cambio a clase de clsGetScoreEvaluation
 
 Imports System.Data
 Imports System.Data.SqlClient
@@ -45,7 +47,7 @@ Partial Class aspx_ScoreEvaluation
             Dim Url As String = Validate.ValidateRequest(Request)
 
             If Url <> String.Empty Then
-                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", Url, True)
+                ScriptManager.RegisterStartupScript(Me.Page, GetType(String), "RedireccionaPagina", "", True)
                 Exit Sub
             End If
             'Fin validacion de Request
@@ -69,9 +71,11 @@ Partial Class aspx_ScoreEvaluation
         Dim url As String = "PopUpLetreroRedirectSpecial('Ocurrio un error favor de intentarlo nuevamente.', '../aspx/consultaPanelControl.aspx');"
 
         Try
-            Dim Hermes As Hermes_Resp = fill_Info_Hermes(Val(Request("Sol").ToString()))
-
-            Dim msg As mensajeCod = getMessage(Hermes.dictamenFinal, Hermes.valido)
+            'Dim Hermes As Hermes_Resp = fill_Info_Hermes(Val(Request("Sol").ToString()))
+            Dim fillhermes As New clsGetScoreEvaluation
+            Dim Hermes As clsGetScoreEvaluation.Hermes_Resp = fillhermes.fill_Info_Hermes(Val(Request("Sol").ToString()))
+            'Dim msg As mensajeCod = getMessage(Hermes.dictamenFinal, Hermes.valido)
+            Dim msg As clsGetScoreEvaluation.mensajeCod = fillhermes.getMessage(Hermes.dictamenFinal, Hermes.valido)
 
             If (msg.path = 0) Then
                 url = asignaTarea(msg.mensaje)
@@ -1291,7 +1295,7 @@ Partial Class aspx_ScoreEvaluation
                 Hermes.referenceNumberUG = Fill_D_O(nq, Hermes_DB.referenceNumberUG)
                 Hermes.cbScore.loanToValue.amount = CDbl(Fill_D_O(nq, Hermes_DB.loanToValue))  ''checar conversion
                 Hermes.agency.id = CDbl(Fill_D_O(nq, Hermes_DB.agency_id)) ''checar conversion
-                Hermes.agency.address.zipCode = Fill_D_O(nq, Hermes_DB.addresses_zp)
+                Hermes.agency.address.zipCode = Fill_D_O(nq, Hermes_DB.agency_zipCode)
                 Hermes.agency.divisionId = CDbl(Fill_D_O(nq, Hermes_DB.divisionId))   ''checar conversion
                 Hermes.agency.status = CDbl(Fill_D_O(nq, Hermes_DB.agency_status))   ''checar conversion
 
@@ -1562,7 +1566,7 @@ Partial Class aspx_ScoreEvaluation
         Return save
     End Function
 
-  
+
     Private Function getMessage(ByVal mensaje As String, ByVal WSvalido As Boolean) As mensajeCod
         Dim msg As mensajeCod = New mensajeCod()
 

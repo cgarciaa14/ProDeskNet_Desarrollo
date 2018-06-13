@@ -12,6 +12,8 @@
 'BUG-PD-155: ERODRIGUEZ 15/07/2017 Se realizo validación, si es tarea automatica no se envia a mesa pool de credito
 'BUG-PD-217: ERODRIGUEZ:    02/10/2017:Se agrego guardar en bitacora turnados de mensajes de red.
 'BUG-PD-231:MPUESTO:11/10/2017:Corrección del orden de turnar, mensaje y búsqueda para reflejar cambios en solicitudes turnadas.
+'BUG-PD-449 GVARGAS 23/05/2018 Cambios llamado solicitudes.
+
 #End Region
 
 Imports ProdeskNet.Catalogos
@@ -70,7 +72,8 @@ Partial Class aspx_mensajesRed
                                                            FechaInicio:=_FechaInicio, _
                                                            FechaFin:=_FechaFin, _
                                                            NombreCliente:=_NombreCliente, _
-                                                           RFCCliente:=_RFCCliente)
+                                                           RFCCliente:=_RFCCliente, _
+                                                           Opcion:=1)
             repSolicitudes.DataSource = Nothing
             repSolicitudes.DataBind()
             If Not _clsSolictds Is Nothing And _clsSolictds.Count > 0 Then

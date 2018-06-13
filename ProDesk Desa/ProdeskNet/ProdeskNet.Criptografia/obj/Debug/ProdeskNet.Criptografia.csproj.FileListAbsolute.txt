@@ -3,3 +3,4 @@ C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Criptografia\b
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Criptografia\bin\Debug\AjaxControlToolkit.dll
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Criptografia\obj\Debug\ProdeskNet.Criptografia.dll
 C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Criptografia\obj\Debug\ProdeskNet.Criptografia.pdb
+C:\Users\CGARCIA\Documents\TFS\ProDesk Desa\ProdeskNet\ProdeskNet.Criptografia\obj\Debug\ProdeskNet.Criptografia.csprojResolveAssemblyReference.cache

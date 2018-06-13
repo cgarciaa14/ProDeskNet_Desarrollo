@@ -1,5 +1,6 @@
 ﻿#Region "trackers"
-'--RQ-PD19--DCORNEJO:  12/02/2018 Pantalla Consulta Redes Sociales.   
+'--RQ-PD19--DCORNEJO:  12/02/2018 Pantalla Consulta Redes Sociales.
+'BUG-PD-441: DCORNEJO: 09/05/2018: SE REALIZO VALIDACION AL EJECUTAR EL sp_ValidarEntrevista
 #End Region
 Imports System.Data
 Imports System.IO
@@ -31,7 +32,7 @@ Partial Class aspx_consultaRedesSociales
         Me.lblStDocumento.Text = sol.PStDocumento
         Me.LblSCorreo.Text = _corrreo.ToString()
         Session.Add("idSol", hdSolicitud.Value)
-        Dim dsresulta As New DataSet
+        'Dim dsresulta As New DataSet
         If Session("Regresar") Is Nothing Then
             Session("Regresar") = Request.UrlReferrer.LocalPath
             hdRutaEntrada.Value = Request.UrlReferrer.LocalPath
@@ -53,18 +54,18 @@ Partial Class aspx_consultaRedesSociales
         End Try
 
         Try
-            dsresulta = BD.EjecutarQuery("get_Path_Next_Tarea  " & hdPantalla.Value)
+            dsresult = BD.EjecutarQuery("get_Path_Next_Tarea  " & hdPantalla.Value)
             If dsresult.Tables(0).Rows.Count > 0 AndAlso dsresult.Tables.Count > 0 Then
                 Dim Mostrar As String
                 Dim pantallas As String
-                Mostrar = dsresulta.Tables(0).Rows(0).Item("PDK_PANT_MOSTRAR").ToString
-                pantallas = dsresulta.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString
+                Mostrar = dsresult.Tables(0).Rows(0).Item("PDK_PANT_MOSTRAR").ToString
+                pantallas = dsresult.Tables(0).Rows(0).Item("PDK_ID_PANTALLAS").ToString
                 If Mostrar = 2 Then
 
                     hdnResultado.Value = dsresult.Tables(0).Rows(0).Item("RUTA")
                 Else
-                    hdnResultado.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
-                    hdnResultado2.Value = (dsresulta.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
+                    hdnResultado.Value = (dsresult.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
+                    hdnResultado2.Value = (dsresult.Tables(0).Rows(0).Item("RUTA") & "?sol=" & hdSolicitud.Value & "&IdPantalla=" & pantallas & "&usuario=" & hdusuario.Value)
                 End If
             End If
 
@@ -213,13 +214,18 @@ Partial Class aspx_consultaRedesSociales
             clscuestionarioL._EMPLEO = 1
             clscuestionarioL._FOTO_PERFIL = ddlPerfilLinkedin.SelectedValue
 
-            If clscuestionarioF.insertaDatosFacebook() Then
-                If clscuestionarioL.insertaDatosLinkedin() Then
-                    ScriptManager.RegisterStartupScript(Me, Page.GetType, "Avanza_Tarea", "btnManejoMensaje('exec sp_validarEntrevista " + hdSolicitud.Value.ToString + ",2," + idPantalla.ToString + "', 'exec spValNegocio " + hdSolicitud.Value.ToString + ",64," + hdusuario.Value.ToString + "; select dbo.fnGetMensajeTarea (" + hdSolicitud.Value.ToString + ", " + idPantalla.ToString + ")')", True)
-                Else
-                    Throw New Exception("Error: Ocurrio un problema al guardar el cuestionario")
+            If ddlRedSocial.SelectedValue = 1 Or ddlRedSocialLinkedin.SelectedValue = 1 Then
+                If clscuestionarioF.insertaDatosFacebook() Then
+                    If clscuestionarioL.insertaDatosLinkedin() Then
+                        ScriptManager.RegisterStartupScript(Me, Page.GetType, "Avanza_Tarea", "btnManejoMensaje('exec sp_validarEntrevista " + hdSolicitud.Value.ToString + ",2," + idPantalla.ToString + "', 'exec spValNegocio " + hdSolicitud.Value.ToString + ",64," + hdusuario.Value.ToString + "; select dbo.fnGetMensajeTarea (" + hdSolicitud.Value.ToString + ", " + idPantalla.ToString + ")')", True)
+                    End If
                 End If
+            ElseIf clscuestionarioF.insertaDatosFacebook() And clscuestionarioL.insertaDatosLinkedin() Then
+                ScriptManager.RegisterStartupScript(Me, Page.GetType, "Avanza_Tarea", "btnManejoMensaje('','exec spValNegocio " + hdSolicitud.Value.ToString + ",64," + hdusuario.Value.ToString + "; select dbo.fnGetMensajeTarea (" + hdSolicitud.Value.ToString + ", " + idPantalla.ToString + ")')", True)
+            Else
+                Throw New Exception("Error: Ocurrio un problema al guardar el cuestionario")
             End If
+
 
         Catch ex As Exception
             Master.MensajeError(ex.Message)

@@ -26,6 +26,7 @@
 'BUG-PD-365 JMENDIETA 22/02/2018 Se actualiza CLIENTE_INCREDIT como null en la tabla PDK_TAB_DATOS_SOLICITANTE en metodo btnInsertarPanta
 'BUG-PC-165: CGARCIA: 05/03/2018: SE CAMBIA CONSULTA DE MUNICIPIO 
 'RQ-PD31: DJUAREZ: 08/03/2018: SE CREA POPUP PARA MODIFICAR LA COLONIA CUANDO SE GUARDE LA COLONIA "OTRO"
+'BUG-PD-441: DCORNEJO: 09/05/2018: SE CREA VALIDACION PARA VERIFICAR PROBLEMAS DE CONEXION
 #End Region
 
 Imports System.Web.Services
@@ -473,44 +474,47 @@ Public Class fillobjetos
     <WebMethod()>
     Public Function btnManejoMensaje(ByVal cadena As String, ByVal cadena2 As String) As String
         Dim dsresult As New DataSet
-
-        If cadena <> "" Then
-            dsresult = BD.EjecutarQuery(cadena)
-            If dsresult.Tables.Count > 0 AndAlso dsresult.Tables(0).Rows.Count > 0 Then
-                If dsresult.Tables(0).Rows(0).Item("MENSAJE") <> "" Then
-                    Return dsresult.Tables(0).Rows(0).Item("MENSAJE").ToString
-                Else
-                    'Dim countrows As Integer = BD.ExInsUpd(cadena2)
-                    Dim ds2 As New DataSet
-                    ds2 = BD.EjecutarQuery(cadena2)
-                    If ds2.Tables.Count > 0 AndAlso ds2.Tables(0).Rows.Count > 0 Then
-                        If IsDBNull(ds2) Then
-                            Return "Tarea Exitosa"
-                        Else
-                            If IsDBNull(ds2.Tables(0).Rows(0).Item("MENSAJE")) Then
+        Try
+            If cadena <> "" Then
+                dsresult = BD.EjecutarQuery(cadena)
+                If dsresult.Tables.Count > 0 AndAlso dsresult.Tables(0).Rows.Count > 0 Then
+                    If dsresult.Tables(0).Rows(0).Item("MENSAJE") <> "" Then
+                        Return dsresult.Tables(0).Rows(0).Item("MENSAJE").ToString
+                    Else
+                        'Dim countrows As Integer = BD.ExInsUpd(cadena2)
+                        Dim ds2 As New DataSet
+                        ds2 = BD.EjecutarQuery(cadena2)
+                        If ds2.Tables.Count > 0 AndAlso ds2.Tables(0).Rows.Count > 0 Then
+                            If IsDBNull(ds2) Then
                                 Return "Tarea Exitosa"
-1:                          Else
-                                Dim mensaje As String = ds2.Tables(0).Rows(0).Item("MENSAJE")
-                                If mensaje.Contains("Error") Then
-                                    Return mensaje
-                                Else
+                            Else
+                                If IsDBNull(ds2.Tables(0).Rows(0).Item("MENSAJE")) Then
                                     Return "Tarea Exitosa"
+1:                              Else
+                                    Dim mensaje As String = ds2.Tables(0).Rows(0).Item("MENSAJE")
+                                    If mensaje.Contains("Error") Then
+                                        Return mensaje
+                                    Else
+                                        Return "Tarea Exitosa"
+                                    End If
                                 End If
                             End If
                         End If
                     End If
                 End If
-            End If
-        Else
-            Dim countrows As Integer = BD.ExInsUpd(cadena2)
-            If countrows > 0 Then
-                Return "Tarea Exitosa"
             Else
-                Return "existio un error al insertar el registro."
+                Dim countrows As Integer = BD.ExInsUpd(cadena2)
+                If countrows > 0 Then
+                    Return "Tarea Exitosa"
+                Else
+                    Return "existio un error al insertar el registro."
+                End If
+
             End If
 
-        End If
-
+        Catch ex As Exception
+            dsresult = BD.EjecutarQuery(cadena)
+        End Try
 
     End Function
     <WebMethod()>

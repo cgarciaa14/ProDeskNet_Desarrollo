@@ -9,6 +9,7 @@
 'BUG-PD-230 : ERODRIGUEZ: 10/10/2017: Se ordenaron notas en orden descendente de fecha
 'RQ-PI7-PD2: ERODRIGUEZ: 19/10/2017: Se agrego validacion para abrir caja de notas en pestaña nueva, llevando id de solicitud de pantalla donde se este trabajando.
 'BUG-PD-262: ERODRIGUEZ: 07/11/2017: Se agrego validacion para cuando el id de la pantalla no este, en formato correcto.
+'BUG-PD-438 : EGONZALEZ : 08/05/2018 : Se elimina la precarga de notas
 
 Imports ProdeskNet.Seguridad
 Imports ProdeskNet.Catalogos
@@ -37,7 +38,7 @@ Partial Class aspx_CajadeNotas
                             If (dss.Tables.Count > 0) Then
                                 If (dss.Tables(0).Rows.Count > 0) Then
 
-                                    Dim solicitudes As String = BuscaPermiso(Session("IdUsua"))
+                                    Dim solicitudes As String = BuscaPermiso(Session("IdUsua"), Text1.Value)
                                     If solicitudes.Contains(Text1.Value) Then
                                         Dim ds As New DataSet
                                         Dim tareag As String = ""
@@ -47,7 +48,7 @@ Partial Class aspx_CajadeNotas
                                         'Dim strquery = "INSERT INTO PDK_CAJA_NOTAS (fe_creacion, mensaje,usu_creacion,PDK_ID_SOLICITUD,Tarea,Usuario) VALUES (GETDATE(),'" & Session("cveUsuAcc") & ": " & textEditor.Value & "'," & Session("IdUsua") & "," & Text1.Value & ",'" & LabelTarea.Text.Substring(7) & "','" & ObtenNombre(Session("IdUsua").ToString()) & "')"
                                         ds = BD.EjecutarQuery("INSERT INTO PDK_CAJA_NOTAS (fe_creacion, mensaje,usu_creacion,PDK_ID_SOLICITUD,Tarea,Usuario) VALUES (GETDATE(),'" & Session("cveUsuAcc") & ": " & textEditor.Value & "'," & Session("IdUsua") & "," & Text1.Value & ",'" & tareag & "','" & ObtenNombre(Session("IdUsua").ToString()) & "')")
                                         'Page_Load(Me, e)
-                                        BuscaMensajes(1, BuscaPermiso(Session("IdUsua")))
+                                        BuscaMensajes(1, BuscaPermiso(Session("IdUsua"), Text1.Value))
                                         textEditor.Value = ""
                                     Else
                                         Throw New Exception("La solicitud proporcionada no es valida")
@@ -180,7 +181,7 @@ Partial Class aspx_CajadeNotas
                     Dim nusu As Int64
                     Dim resultusu As Boolean = Int64.TryParse(hdnUsuario.Value, nusu)
                     If (resultusu) Then
-                        BuscaMensajes(1, BuscaPermiso(nusu))
+                        BuscaMensajes(1, BuscaPermiso(nusu, Text1.Value))
                     End If
                 Else
                     'Master.EjecutaJS("$(""#tabs"").tabs(); $(""[id$='inSolicitud']"").autocomplete({ source: $('[id$=""hdACNombre""]').val().split(',') }); $(""#divsol"").css(""display"", ""none"");fnOcultaObjetos(document.location.href.match(/[^\/]+$/)[0], $('[id$=""hdPerfilUsuario""]').val());")
@@ -191,7 +192,7 @@ Partial Class aspx_CajadeNotas
                 Dim nusu As Int64
                 Dim resultusu As Boolean = Int64.TryParse(hdnUsuario.Value, nusu)
                 If (resultusu) Then
-                    BuscaMensajes(2, BuscaPermiso(nusu))
+                    BuscaMensajes(2, BuscaPermiso(nusu, Text1.Value))
                 End If
                 Master.MensajeError("Debe introducir un numero")
             End If
@@ -216,7 +217,7 @@ Partial Class aspx_CajadeNotas
             Dim nusu As Int64
             Dim resultusu As Boolean = Int64.TryParse(hdnUsuario.Value, nusu)
             If (resultusu) Then
-                BuscaMensajes(1, BuscaPermiso(nusu))
+                BuscaMensajes(1, BuscaPermiso(nusu, Text1.Value))
                 'Page_Load(Me, e)
             End If
         End If
@@ -232,7 +233,7 @@ Partial Class aspx_CajadeNotas
             Dim nusu As Int64
             Dim resultusu As Boolean = Int64.TryParse(hdnUsuario.Value, nusu)
             If (resultusu) Then
-                BuscaMensajes(2, BuscaPermiso(nusu))
+                BuscaMensajes(2, BuscaPermiso(nusu, Text1.Value))
                 'Page_Load(Me, e)
             End If
         End If
@@ -403,10 +404,10 @@ Partial Class aspx_CajadeNotas
                     gvMensajes.DataSource = Nothing
                     tmp.Clear()
                     GridViewGral.Visible = True
-                    tmp = BD.EjecutarQuery("select A.id id_nota, A.fe_creacion, A.fe_borrado, A.mensaje, A.estatus, A.usu_creacion, A.usu_borrado, A.PDK_ID_SOLICITUD, A.leido , A.Tarea ,B.PDK_USU_NOMBRE +' '+ B.PDK_USU_APE_PAT +' '+ B.PDK_USU_APE_MAT as Usuario FROM PDK_CAJA_NOTAS A INNER JOIN PDK_USUARIO B on B.PDK_ID_USUARIO = A.usu_creacion WHERE estatus = 1 and A.PDK_ID_SOLICITUD in(" + lista_solicitudes + ") and A.leido = 0 ORDER BY fe_creacion DESC")
-                    Session("dtsConsultaG") = tmp
-                    GridViewGral.DataSource = tmp
-                    GridViewGral.DataBind()
+                    'tmp = BD.EjecutarQuery("select A.id id_nota, A.fe_creacion, A.fe_borrado, A.mensaje, A.estatus, A.usu_creacion, A.usu_borrado, A.PDK_ID_SOLICITUD, A.leido , A.Tarea ,B.PDK_USU_NOMBRE +' '+ B.PDK_USU_APE_PAT +' '+ B.PDK_USU_APE_MAT as Usuario FROM PDK_CAJA_NOTAS A INNER JOIN PDK_USUARIO B on B.PDK_ID_USUARIO = A.usu_creacion WHERE estatus = 1 and A.PDK_ID_SOLICITUD in(" + lista_solicitudes + ") and A.leido = 0 ORDER BY fe_creacion DESC")
+                    'Session("dtsConsultaG") = tmp
+                    'GridViewGral.DataSource = tmp
+                    'GridViewGral.DataBind()
 
                 Catch ex As Exception
                     gvMensajes.Visible = False
@@ -418,7 +419,10 @@ Partial Class aspx_CajadeNotas
 
             End If
         Else
+            If (Text1.Value <> "") Then
             Master.MensajeError("El usuario debe tener agencias asignadas")
+        End If
+
         End If
     End Sub
 
@@ -433,21 +437,21 @@ Partial Class aspx_CajadeNotas
         End If
         If paramIsNumber Then
             If (resultusu) Then
-                BuscaMensajes(1, BuscaPermiso(nusu))
+                BuscaMensajes(1, BuscaPermiso(nusu, Text1.Value))
             End If
         Else
             If (resultusu) Then
-                BuscaMensajes(2, BuscaPermiso(nusu))
+                BuscaMensajes(2, BuscaPermiso(nusu, Text1.Value))
             End If
         End If
 
     End Sub
 
-    Function BuscaPermiso(usuario As Int64) As String
+    Function BuscaPermiso(usuario As Int64, Optional ByVal Solicitud As Integer = 0) As String
         'Dim lista_usuario As New List(Of Int32)
         Dim string_in As String = ""
         Dim dsresult As DataSet
-        dsresult = BD.EjecutarQuery("EXEC getUsuariosPerfilDist " & usuario & "," & 1 & "")
+        dsresult = BD.EjecutarQuery("EXEC getUsuariosPerfilDist " & usuario & "," & 1 & "," & Solicitud & "")
         If dsresult.Tables.Count > 0 Then
             If dsresult.Tables(0).Rows.Count > 0 Then
                 For index As Integer = 0 To dsresult.Tables(0).Rows.Count - 1
@@ -456,7 +460,7 @@ Partial Class aspx_CajadeNotas
                 Next
             End If
         Else
-            dsresult = BD.EjecutarQuery("EXEC getUsuariosPerfilDist " & usuario & "," & 2 & "")
+            dsresult = BD.EjecutarQuery("EXEC getUsuariosPerfilDist " & usuario & "," & 2 & "," & Solicitud & "")
             If dsresult.Tables.Count > 0 Then
                 If dsresult.Tables(0).Rows.Count > 0 Then
                     For index As Integer = 0 To dsresult.Tables(0).Rows.Count - 1

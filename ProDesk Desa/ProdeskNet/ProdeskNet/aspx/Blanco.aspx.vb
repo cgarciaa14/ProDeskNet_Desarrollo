@@ -6,6 +6,7 @@ Imports ProdeskNet.Buro
 Imports System.Data
 Imports System.Data.SqlClient
 Imports ProdeskNet.WCF
+Imports System.IO
 
 #Region "trackers"
 'INC-B-2019:JDRA:Regresar
@@ -38,6 +39,9 @@ Imports ProdeskNet.WCF
 ' BUG-PD-234 12/10/2017 GVARGAS Cambio urgente Blanco
 ' BBVA-P-423 RQ-PI7-PD1 GVARGAS 23/10/2017 Mejoras CI Precalificaciòn & Preforma
 ' BUG-PD-393 GVARGAS 12/03/2018 Validar campos obligatorios sin ERROR
+' BUG-PD-412 DJUAREZ 05/04/2018 Validar que la antiguedad de trabajo se mayor o igual a 14 años
+' BUG-PD-449 GVARGAS 23/05/2018 New save method
+
 #End Region
 
 Partial Class aspx_Blanco
@@ -1467,74 +1471,54 @@ Partial Class aspx_Blanco
             Dim cls As aspx_Blanco = New aspx_Blanco()
             Dim queryToExec As List(Of Querys) = cls.dinamicQuery(Tablas, procesar)
 
-            For Each query As Querys In queryToExec
-                Dim cmd As New SqlCommand
-                Dim reader As SqlDataReader
-                cmd.CommandText = "exec_SP"
-                cmd.CommandType = CommandType.StoredProcedure
-                If query.validQuery Then
-                    cmd.Parameters.AddWithValue("@query", query.query.Replace("'NULL'", "NULL"))
-                    cmd.Connection = sqlConnection1
-                    sqlConnection1.Open()
-                    reader = cmd.ExecuteReader()
+            Dim XmlSerializer As System.Xml.Serialization.XmlSerializer = New System.Xml.Serialization.XmlSerializer(queryToExec.GetType)
+            Dim xmlINE As StringWriter = New StringWriter()
+            XmlSerializer.Serialize(xmlINE, queryToExec)
 
-                    Do While reader.Read()
-                        COT = "1"
-                    Loop
-                    sqlConnection1.Close()
-                End If
-            Next
+            Dim cmd As New SqlCommand
+            Dim reader As SqlDataReader
+            cmd.CommandText = "set_PrecaSolicitud_SP"
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@PDK_ID_SECCCERO", Tablas(0).Folio.ToString())
+            cmd.Parameters.AddWithValue("@XML_INFO", xmlINE.ToString())
+            cmd.Connection = sqlConnection1
+            sqlConnection1.Open()
+            reader = cmd.ExecuteReader()
+
+            Do While reader.Read()
+                COT = "1"
+            Loop
+            sqlConnection1.Close()
 
             If (procesar = "0") Then
                 COT = "Información Guardada Correctamente"
             ElseIf (procesar = "1") Then
-                Dim continuar As String = "SI"
+                COT = "OK"
+
                 For Each query As Querys In queryToExec
                     If (query.validQuery = False) Then
-                        continuar = "NO"
+                        COT = "Todos los campos con * son obligatorios"
                         Exit For
                     End If
                 Next
-                If (continuar = "SI") Then
-                    For Each query As Querys In queryToExec
-                        Dim cmd As New SqlCommand
-                        Dim reader As SqlDataReader
-                        cmd.CommandText = "exec_SP"
-                        cmd.CommandType = CommandType.StoredProcedure
-                        If query.validQuery Then
-                            cmd.Parameters.AddWithValue("@query", query.query.Replace("'NULL'", "NULL"))
-                            cmd.Connection = sqlConnection1
-                            sqlConnection1.Open()
-                            reader = cmd.ExecuteReader()
-
-                            Do While reader.Read()
-                                COT = "1"
-                            Loop
-                            sqlConnection1.Close()
-                        End If
-                    Next
-                    COT = "OK"
-                Else
-                    COT = "Todos los campos con * son obligatorios"
-                End If
             End If
         Catch ex As Exception
             COT = "Hubo un error al procesar la información."
+            sqlConnection1.Close()
         End Try
-        sqlConnection1.Close()
+
         Return COT
     End Function
 
     Private Function dinamicQuery(ByVal Tablas As List(Of jsonfields), ByVal procesar As String) As List(Of Querys)
         Dim querys As List(Of Querys) = New List(Of Querys)
-        Dim i As Integer = 0
         Dim condiciones As condicionesBLL = New condicionesBLL()
 
         For Each tabla As jsonfields In Tablas
-            Dim typeQuery As String = (tabla.tableName.Replace("ctl00_ctl00_cphCuerpo_cphPantallas_", "")).Substring(0, 1)
             Dim nombreTabla As String = tabla.tableName.Replace("ctl00_ctl00_cphCuerpo_cphPantallas_U_", "").Replace("ctl00_ctl00_cphCuerpo_cphPantallas_I_", "")
             Dim LQuery As Querys = New Querys()
-            Dim strQuery As StringBuilder = New StringBuilder()
+            Dim strQuery_insert As StringBuilder = New StringBuilder()
+            Dim strQuery_update As StringBuilder = New StringBuilder()
             Dim Lastcampo As fields = tabla.field.Item(tabla.field.Count - 1)
             Dim coma As String = ", "
             Dim evaluate As deniedCauses = New deniedCauses()
@@ -1545,67 +1529,64 @@ Partial Class aspx_Blanco
                 validQuery = evaluate.isValid
             End If
 
-            If (typeQuery = "I") Then
-                Dim strQueryFields As StringBuilder = New StringBuilder()
-                Dim strQueryValues As StringBuilder = New StringBuilder()
-                strQuery.Append("INSERT INTO " + nombreTabla + "  ")
-                For Each campo As fields In tabla.field
-                    If (campo.Equals(Lastcampo)) Then
-                        coma = ""
-                    End If
-                    If (campo.valueField = "on") Then 'AVOID CHECKBOX
-                        campo.valueField = "True"
-                    ElseIf (campo.valueField = "off") Then
-                        campo.valueField = "False"
-                    ElseIf (campo.valueField = "") Then
-                        campo.valueField = "NULL"
-                    ElseIf (campo.valueField.ToUpper() = "ERROR") Then
-                        campo.valueField = "NULL"
-                    End If
 
-                    Dim str = replaceNumbers(campo.nameField.Replace("ctl00_ctl00_cphCuerpo_cphPantallas_txt", "").Replace("ctl00_ctl00_cphCuerpo_cphPantallas_ddltxt", ""))
-                    'strQueryFields.Append(campo.nameField + coma)
-                    strQueryFields.Append(str + coma)
-                    strQueryValues.Append("'" + campo.valueField + "'" + coma)
+            Dim strQueryFields As StringBuilder = New StringBuilder()
+            Dim strQueryValues As StringBuilder = New StringBuilder()
+            strQuery_insert.Append("INSERT INTO " + nombreTabla + "  ")
+            For Each campo As fields In tabla.field
+                If (campo.Equals(Lastcampo)) Then
+                    coma = ""
+                End If
+                If (campo.valueField = "on") Then 'AVOID CHECKBOX
+                    campo.valueField = "True"
+                ElseIf (campo.valueField = "off") Then
+                    campo.valueField = "False"
+                ElseIf (campo.valueField = "") Then
+                    campo.valueField = "NULL"
+                ElseIf (campo.valueField.ToUpper() = "ERROR") Then
+                    campo.valueField = "NULL"
+                End If
 
-                Next
-                'strQuery.Append("(PDK_ID_SECCCERO, " + replaceNumbers(strQueryFields.ToString().Replace("ctl00_ctl00_cphCuerpo_cphPantallas_txt", "").Replace("ctl00_ctl00_cphCuerpo_cphPantallas_ddltxt", "")))
-                strQuery.Append("(PDK_ID_SECCCERO, " + strQueryFields.ToString())
-                strQuery.Append(") VALUES ('" + tabla.Folio + "', " + strQueryValues.ToString() + ")")
-            ElseIf (typeQuery = "U") Then
-                strQuery.Append("UPDATE " + nombreTabla + " SET ")
-                Dim strQuerySettings As StringBuilder = New StringBuilder()
+                Dim str = replaceNumbers(campo.nameField.Replace("ctl00_ctl00_cphCuerpo_cphPantallas_txt", "").Replace("ctl00_ctl00_cphCuerpo_cphPantallas_ddltxt", ""))
+                strQueryFields.Append(str + coma)
+                strQueryValues.Append("'" + campo.valueField + "'" + coma)
 
-                For Each campo As fields In tabla.field
-                    If (campo.Equals(Lastcampo)) Then
-                        coma = ""
-                    End If
-                    If (campo.valueField = "on") Then 'AVOID CHECKBOX
-                        campo.valueField = "True"
-                    ElseIf (campo.valueField = "off") Then
-                        campo.valueField = "False"
-                    ElseIf (campo.valueField = "") Then
-                        campo.valueField = "NULL"
-                    ElseIf (campo.valueField.ToUpper() = "ERROR") Then
-                        campo.valueField = "NULL"
-                    End If
+            Next
 
-                    'If (campo.valueField <> "") Then
-                    strQuerySettings.Append(replaceNumbers(campo.nameField.Replace("ctl00_ctl00_cphCuerpo_cphPantallas_txt", "").Replace("ctl00_ctl00_cphCuerpo_cphPantallas_ddltxt", "")) + " = '" + campo.valueField + "'" + coma + " ")
-                    'End If
-                Next
-                strQuery.Append(strQuerySettings.ToString())
-                strQuery.Append("WHERE PDK_ID_SECCCERO = " + tabla.Folio)
-            End If
+            strQuery_insert.Append("(PDK_ID_SECCCERO, " + strQueryFields.ToString())
+            strQuery_insert.Append(") VALUES ('" + tabla.Folio + "', " + strQueryValues.ToString() + ")")
 
+            strQuery_update.Append("UPDATE " + nombreTabla + " SET ")
+            Dim strQuerySettings As StringBuilder = New StringBuilder()
 
-            LQuery.typeQuery = typeQuery.ToString()
-            LQuery.query = strQuery.ToString()
+            coma = ", "
+
+            For Each campo As fields In tabla.field
+                If (campo.Equals(Lastcampo)) Then
+                    coma = ""
+                End If
+                If (campo.valueField = "on") Then 'AVOID CHECKBOX
+                    campo.valueField = "True"
+                ElseIf (campo.valueField = "off") Then
+                    campo.valueField = "False"
+                ElseIf (campo.valueField = "") Then
+                    campo.valueField = "NULL"
+                ElseIf (campo.valueField.ToUpper() = "ERROR") Then
+                    campo.valueField = "NULL"
+                End If
+
+                strQuerySettings.Append(replaceNumbers(campo.nameField.Replace("ctl00_ctl00_cphCuerpo_cphPantallas_txt", "").Replace("ctl00_ctl00_cphCuerpo_cphPantallas_ddltxt", "")) + " = '" + campo.valueField + "'" + coma + " ")
+            Next
+            strQuery_update.Append(strQuerySettings.ToString())
+            strQuery_update.Append("WHERE PDK_ID_SECCCERO = " + tabla.Folio)
+
+            LQuery.query_insert = strQuery_insert.ToString().Replace("'NULL'", "NULL")
+            LQuery.query_update = strQuery_update.ToString().Replace("'NULL'", "NULL")
             LQuery.validQuery = validQuery
-            'LQuery.evaluateBLL = evaluate.listDeniedCausess
+            LQuery.nameTable = nombreTabla
             querys.Add(LQuery)
-            i = i + 1
         Next
+
         Return querys
     End Function
 
@@ -1934,9 +1915,10 @@ Partial Class aspx_Blanco
     End Class
 
     Public Class Querys
-        Public query As String
-        Public typeQuery As String
+        Public query_insert As String
+        Public query_update As String
         Public validQuery As Boolean
+        Public nameTable As String
         Public evaluateBLL As List(Of String) = New List(Of String)
     End Class
 
@@ -2083,5 +2065,36 @@ Partial Class aspx_Blanco
         sqlConnection1.Close()
 
         Return lastRecibo
+    End Function
+
+    <System.Web.Services.WebMethod()> _
+    Public Shared Function ParamAntiguedadLaboral(ByVal param As String, ByVal opcion As String) As String
+        Dim msg_Param As List(Of String) = New List(Of String)
+        Dim sqlConnection1 As New SqlConnection(System.Configuration.ConfigurationManager.AppSettings("Conexion").ToString())
+        Dim cmd As New SqlCommand
+        Dim reader As SqlDataReader
+        Try
+            cmd.CommandText = "spCatalogos"
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@opcion", opcion)
+            cmd.Parameters.AddWithValue("@parametro", param)
+            cmd.Connection = sqlConnection1
+            sqlConnection1.Open()
+            reader = cmd.ExecuteReader()
+
+            Do While reader.Read()
+                msg_Param.Add("OK")
+                msg_Param.Add(reader(2).ToString())
+            Loop
+
+        Catch ex As Exception
+            msg_Param = New List(Of String)
+            msg_Param.Add("Error de conexion: " + ex.Message.ToString())
+        End Try
+
+        sqlConnection1.Close()
+        Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer()
+        Dim json_Respuesta As String = serializer.Serialize(msg_Param)
+        Return json_Respuesta
     End Function
 End Class

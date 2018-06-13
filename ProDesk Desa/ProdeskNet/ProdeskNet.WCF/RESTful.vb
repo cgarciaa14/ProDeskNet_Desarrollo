@@ -18,6 +18,8 @@
 '        contenidos en los headers de respuesta, modificados los metodos GetTsec() y Connection() permitiendo leer el bosy de respuesta en caso de error
 'V 3.0.2 Mejorado el Catch de errores de Red y logicos para los metodos GetTsec() y Connection(), agregada la opcion de no usar TSEC para el consumo de Servicios REST
 'BBVA-P-423: RQCONYFOR-07_2: AVH: 11/04/2017 Se modifica JSON 
+'AUTOMIK-TASK-379: RHERNANDEZ: 06/02/2018 : Configuración para usuario Automik en la obtención del iv_ticket, contraseña y consumerID
+'AUTOMIK-BUG-435: ERODRIGUEZ: 10/04/18 LLAMADO A SERVICIO getScoreEvaluation
 
 Imports System
 Imports System.Net
@@ -34,6 +36,7 @@ Public Class RESTful
     Private _bodyHTML As String = String.Empty
     Private _userID As String = String.Empty
     Private _iv_ticket As String = String.Empty
+    Private _password As String = System.Configuration.ConfigurationManager.AppSettings("automikPassword")
     Private _tsec As String = String.Empty
     Private _counterConnection As Integer = 0
     Private _Interval As Integer = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings("Interval").ToString())
@@ -46,6 +49,7 @@ Public Class RESTful
     Private _SinTSEC As Boolean = False
     Private _logicalTerm As String = String.Empty
     Private _accountTerm As String = String.Empty
+    Private _automikRequest As Boolean
 
     Public Property Uri() As String
         Get
@@ -74,10 +78,13 @@ Public Class RESTful
         End Get
     End Property
 
-    Public ReadOnly Property consumerID() As String
+    Public Property consumerID() As String
         Get
             Return Me._consumerID
         End Get
+        Set(value As String)
+            Me._consumerID = value
+        End Set
     End Property
 
     Public ReadOnly Property valorHeader() As String
@@ -102,6 +109,18 @@ Public Class RESTful
             Me._accountTerm = value
         End Set
     End Property
+    Public Property automikRequest() As Boolean
+        Get
+            Return _automikRequest
+        End Get
+        Set(ByVal value As Boolean)
+            _automikRequest = value
+        End Set
+    End Property
+
+    'Public Sub RESTful()
+    '    _automikRequest = False
+    'End Sub
 
     Private Function Connection(ByVal verbo As String) As String
         Dim json As String
@@ -236,21 +255,29 @@ Public Class RESTful
     Public Sub GetTsec()
 
         Dim header As headerTsec = New headerTsec()
-        header.authentication.userID = Me._userID
-
-        'If (Me._userID = System.Configuration.ConfigurationManager.AppSettings("GENERIC_userID").ToString()) Then
-        If Me._userID.IndexOf("EXT") <> -1 Then
-            header.authentication.consumerID = System.Configuration.ConfigurationManager.AppSettings("GENERIC_consumerID").ToString()
-        Else
-            header.authentication.consumerID = Me._consumerID
-        End If
-        Me._consumerID = header.authentication.consumerID.ToString
-
-        header.authentication.authenticationType = "00"
 
         Dim authenticationDataBody As authenticationDataBody = New authenticationDataBody()
-        authenticationDataBody.idAuthenticationData = "iv_ticketService"
-        authenticationDataBody.authenticationData.Add(Me._iv_ticket)
+        'If (Me._userID = System.Configuration.ConfigurationManager.AppSettings("GENERIC_userID").ToString()) Then
+        If Not Me._automikRequest Then
+            header.authentication.authenticationType = "00"
+            header.authentication.userID = Me._userID
+            authenticationDataBody.idAuthenticationData = "iv_ticketService"
+            authenticationDataBody.authenticationData.Add(Me._iv_ticket)
+            If Me._userID.IndexOf("EXT") <> -1 Then
+                header.authentication.consumerID = System.Configuration.ConfigurationManager.AppSettings("GENERIC_consumerID").ToString()
+            Else
+                header.authentication.consumerID = Me._consumerID
+            End If
+            Me._consumerID = header.authentication.consumerID
+        Else
+            header.authentication.authenticationType = "04"
+            authenticationDataBody.idAuthenticationData = "password"
+            authenticationDataBody.authenticationData.Add(Me._password)
+            header.authentication.userID = System.Configuration.ConfigurationManager.AppSettings("automikUserID").ToString()
+            header.authentication.consumerID = System.Configuration.ConfigurationManager.AppSettings("automikConsumerID").ToString()
+        End If
+
+
 
         header.authentication.authenticationData.Add(authenticationDataBody)
         header.backendUserRequest.userId = ""

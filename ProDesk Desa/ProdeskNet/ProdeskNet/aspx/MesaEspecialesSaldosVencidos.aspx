@@ -10,13 +10,32 @@
 <%--BUG-PD-193: RHERNANDEZ: 21/08/17 SE MODIFICA EVALUACION DE CARGA DE ARCHIVOS PARA PANTALLAS QUE NO REQUERIRAN VER EL COMPARADOR DE ARCAIVIN--%>
 <%--BUG-PD-199: RHERNANDEZ: 24/08/17 SE MODIFICA CARGA DE ARCHIVOS PARA ABRIR VISOR TELEPRO--%>
 <%--BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit--%>
+<%--BUG-PD-416: RHERNANDEZ: 12/04/2018: Se ocultan los botones de cancelar cuando la tarea ya fue procesada--%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPantallas" runat="Server">
 
     <script type="text/javascript" src="../js/Funciones.js"></script>
     <script src="../js/jquery.fileupload.js"></script>
     <script type="text/javascript" language="javascript">
+        function pageLoad() {
 
+
+            var habilitado = getParameterByName('Enable');
+
+            if (habilitado == 1) {
+
+                $('#ctl00_ctl00_cphCuerpo_cphPantallas_cmbguardar1C').hide();
+                $('#btnCancelar').hide();
+                $('#btnCancelarNew').hide();
+            } else {
+
+
+                $('#ctl00_ctl00_cphCuerpo_cphPantallas_cmbguardar1C').show();
+
+
+            }
+
+        }
         function fnChequea() {
             fillUpload('tbValidarObjetos', 'hdPantalla, hdSolicitud, hdusuario', 'per1', '');
                 PopUpLetrero("Documento procesado exitosamente");
@@ -82,6 +101,17 @@
                 btnInserteaBoton_dos(cadena + ' ' + cadenaUp + ' ', pantalla, f, 1, u, txtUsu, txtpsswor, idpantalla, 47, 2, txtmotivoOb)
 
             }
+        }
+        function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
         $(document).ready(function () { $.urlParam = function (name) { var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href); if (results == null) { return null; } else { return results[1] || 0; } }; if ($.urlParam("Enable").toString() == "1") { $("#btnCancelarNew").hide(); }; });
     </script>

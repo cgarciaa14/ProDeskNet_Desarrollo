@@ -59,6 +59,8 @@
     <!-- BUG-PD-323 DJUAREZ 03/01/2018: Se coloca el RFC en mayusculas al quitar el focus del cuadro de texto de RFC -->
     <!-- BUG-PD-364 GVARGAS 21/02/2018 Correccion panel avoid Ajax Tool Kit-->
     <!-- BUG-PD-393 GVARGAS 12/03/2018 Validar campos obligatorios sin ERROR-->
+    <!-- BUG-PD-412 DJUAREZ 05/04/2018 Validar que la antiguedad de trabajo se mayor o igual a 14 años-->
+    <!-- BUG-PD-445 GVARGAS 17/05/2018 Add usuario query String-->
 
        <script language="javascript" type ="text/javascript" >
            //--- INC-B-1922 
@@ -168,7 +170,7 @@
                    else {
                        var usu = $("#ctl00_ctl00_cphCuerpo_hdidUsuario").val();
                        var sol = $.urlParam("idFolio").toString();
-                       url = url + "?idPantalla=" + id_pantalla + "&sol=" + sol + "&Enable=0&usu=" + usu;//nuevobug
+                       url = url + "?idPantalla=" + id_pantalla + "&sol=" + sol + "&Enable=0&usu=" + usu + "&usuario=" + usu;//nuevobug
                    }
                  
                    PopUpLetreroRedirect(msg, "../aspx/" + url);
@@ -1708,6 +1710,13 @@
                        if ((ultimo == " ") && (penultimo == " ")) { $("#" + $(this).attr('id').toString()).val(newTEXT.toString()); }
                    }
                });
+
+               $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtANOS_ANTIGUEDAD42").blur(function(){
+                   ValidarAntiguedadLaboral();
+               });
+               $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtMESES_ANTIGUEDAD553").blur(function () {
+                   ValidarAntiguedadLaboral();
+               });
            });
 
            function validaCot(response) {
@@ -2243,7 +2252,7 @@
                                  ||
                                  ((valorInput == "0-cancelado") && (span[0].innerText.toString().indexOf('*') > -1))
                                  ||
-                                 ((valorInput.toUpperCase() == "ERROR") && (span[0].innerText.toString().indexOf('*') > -1))) {
+                                 ((valorInput.toString().toUpperCase() == "ERROR") && (span[0].innerText.toString().indexOf('*') > -1))) {
                                if (bandera == 0) {
                                    var myTable = $('#' + tables[table].id);
                                    var myCaptionText = myTable.find('caption').text();
@@ -3061,6 +3070,47 @@
                });
 
                $(document).ready(function () { $.urlParam = function (name) { var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href); if (results == null) { return null; } else { return results[1] || 0; } }; if ($.urlParam("Enable").toString() == "1") { $("#btnCancelarNew").hide(); }; });
+
+               function ValidarAntiguedadLaboral() {
+                   obtenerParamAntiguedadLaboral("446");
+               }
+
+               function obtenerParamAntiguedadLaboral(parametro) {
+                   var destino = "Blanco.aspx/ParamAntiguedadLaboral";
+                   var successfully = OnSuccesParamAntiguedadLaboral;
+                   var datos = '{"param":"' + parametro.toString() + '", "opcion": "5"}';
+                   jsonBack('No fue posible obtener el parametro', destino, successfully, datos);
+               }
+
+               function OnSuccesParamAntiguedadLaboral(response) {
+                   var items = $.parseJSON(response.d);
+                   if (items[0].toString() == "OK") {
+                       var antiguedad = $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtANOS_ANTIGUEDAD42").val();
+                       var mesesAnt = $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtMESES_ANTIGUEDAD553").val();
+                       var edad1 = $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtFECHA_NACIMIENTO24").val();
+                       var edad2 = edad1.split("/");
+                       var dia = edad2[0];
+                       var mes = edad2[1];
+                       var anio = edad2[2];
+                       var fechaNew = anio + "/" + mes + "/" + dia;
+                       var date = new Date(fechaNew);
+                       if (mesesAnt != "") {
+                           date.setMonth(date.getMonth() + parseInt(mesesAnt));
+                       }
+                       var age = getAge(date);
+                       var diferencia = age - antiguedad;
+
+                       if (diferencia < parseInt(items[1].toString())) {
+                           alert("La edad minima para laboral debe ser mayor o igual a 14 años");
+                           $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtANOS_ANTIGUEDAD42").val("");
+                           $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtMESES_ANTIGUEDAD553").val("");
+                           $("#ctl00_ctl00_cphCuerpo_cphPantallas_txtANOS_ANTIGUEDAD42").focus();
+                       }
+                   }
+                   else {
+                       alert(items[0].toString());
+                   }
+               }
 </script>
     <style>
         #ctl00_ctl00_cphCuerpo_cphPantallas_btnCancela {
